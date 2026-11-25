@@ -287,7 +287,7 @@ if(CAMP){document.body.classList.add('cam');if(PORTRAIT)document.body.classList.
  const v=document.getElementById('view'),h=document.getElementById('head');v.style.left=OX+'px';v.style.width=VW+'px';h.style.left=OX+'px';h.style.right=(1920-OX-VW)+'px';
  document.getElementById('camcol').style.left=(CAMP==='gauche'?0:1280)+'px'}
 const feedEl=document.getElementById('feed');
-if(FEED){document.body.classList.add('feed');if(COLFEED)document.getElementById('camcol').appendChild(feedEl);else feedEl.style.setProperty('--fw',(CAMP?860:1000)+'px');
+if(FEED){document.body.classList.add('feed');if(COLFEED)document.getElementById('camcol').appendChild(feedEl);else feedEl.style.setProperty('--fw',(CAMP?760:1000)+'px');
  feedEl.innerHTML='<div class="line hint"><span>Écris dans le chat pour monter en tribune</span></div>'}
 const RES=FEED&&!COLFEED?480:360; // hauteur réservée en haut (titre + fil + couloir des banderoles)
 const hash=s=>{let h=2166136261;for(const c of s)h=Math.imul(h^c.charCodeAt(0),16777619);return h>>>0};
