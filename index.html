@@ -21,7 +21,36 @@ body.clear{background:transparent}
 #bg{position:absolute;inset:-400px 0 0 0}
 #bg svg.layer{position:absolute;left:0;top:0;width:100%;height:100%}
 #world{position:absolute;left:0;top:0;width:2304px;height:1296px;transform-origin:0 0;transition:transform 2.8s cubic-bezier(.5,0,.2,1);--inv:1}
+#view{position:absolute;left:0;top:0;width:1920px;height:1080px;overflow:hidden}
 #sfx{position:absolute;inset:0;z-index:190;pointer-events:none;overflow:hidden}
+#hrow{display:inline-flex;gap:18px;align-items:flex-start;margin-top:20px;text-align:left}#hrow #count{margin-top:0;flex:none}
+/* fil de chat (remplace les grosses bulles) */
+#feed{display:none;width:var(--fw,1000px);height:146px;flex-direction:column;justify-content:flex-end;gap:7px;overflow:hidden;-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 38%);mask-image:linear-gradient(to bottom,transparent 0,#000 38%)}
+body.feed #feed{display:flex}.scene-end #head #feed{display:none}
+#feed .line{display:flex;align-items:flex-start;flex:none;font:600 30px/1.12 "Barlow Condensed",sans-serif;animation:lineIn .35s cubic-bezier(.2,.8,.2,1) both;transition:opacity 1s}
+#feed .line b{flex:none;font-weight:800;text-transform:uppercase;letter-spacing:.5px;background:#000;color:#fff;padding:6px 12px 4px;border-left:7px solid var(--c,#f26b1d)}
+#feed .line span{background:#fff;color:#000;padding:6px 14px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+#feed .line img{height:1.15em;vertical-align:-.22em;margin:0 .06em}
+#feed .line.join span{background:#f26b1d;color:#fff;text-transform:uppercase;font-weight:800;letter-spacing:.5px}
+#feed .line.ola b{background:#ffc21a;color:#000;border-left-color:#000}
+#feed .line.hint span{background:rgba(0,0,0,.6);color:#fff;font-style:italic}
+#feed .line.old{opacity:.55}
+@keyframes lineIn{from{opacity:0;transform:translateY(26px)}}
+/* petite bulle vide au-dessus de celui qui parle */
+.ping{position:absolute;left:56%;bottom:86%;width:var(--pw);z-index:6;pointer-events:none;transform-origin:10% 100%;animation:pingIn .4s cubic-bezier(.2,1.6,.4,1) both}
+.ping svg{display:block;width:100%;fill:#fff;stroke:#f26b1d;stroke-width:3.5;stroke-linejoin:round;filter:drop-shadow(0 3px 5px rgba(0,0,0,.55))}
+.ping.bye{animation:pingOut .3s ease-in forwards}
+@keyframes pingIn{from{transform:scale(0)}}@keyframes pingOut{to{transform:scale(0);opacity:0}}
+/* emplacement caméra (1/3 de l'écran) */
+#camcol{display:none;position:absolute;top:0;width:640px;height:1080px;z-index:210;pointer-events:none;overflow:hidden}
+body.cam #camcol{display:block}
+#camframe{position:absolute;left:20px;right:20px;top:20px;aspect-ratio:16/9;outline:6px solid #f26b1d;box-shadow:0 0 0 2000px rgba(6,6,8,.92)}
+body.portrait #camframe{bottom:20px;aspect-ratio:auto}
+#camframe i{position:absolute;left:-6px;top:-6px;font:italic 800 28px/1 "Barlow Condensed",sans-serif;text-transform:uppercase;background:#f26b1d;color:#fff;padding:7px 14px 5px}
+#camframe em{position:absolute;inset:0;display:none;place-items:center;font:italic 800 40px "Barlow Condensed",sans-serif;text-transform:uppercase;color:rgba(255,255,255,.35);border:3px dashed rgba(255,255,255,.25)}
+body:not(.nohud) #camframe em{display:grid}
+#camcol #feed{position:absolute;left:20px;right:20px;top:398px;bottom:20px;width:auto;height:auto;gap:10px}
+#camcol #feed .line span{white-space:normal;overflow-wrap:anywhere}
 body.clear #bg{display:none}
 #fx{position:absolute;inset:0;z-index:150;pointer-events:none}
 #head{position:absolute;left:0;right:0;top:40px;text-align:center;z-index:200;pointer-events:none}
@@ -203,13 +232,16 @@ body.nohud .panel{display:none}
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><pattern id="hexp" width="8" height="14" patternUnits="userSpaceOnUse"><path d="M4 0L8 2.3V7L4 9.3L0 7V2.3Z M4 9.3V14" fill="none" stroke="#fff" stroke-width=".7"/></pattern><pattern id="dots" width="6" height="6" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="1.3" fill="#000"/></pattern></defs></svg>
 <div id="stage">
+<div id="view">
 <div id="world">
  <div id="bg"></div>
  <div id="rows"></div>
  <div id="front"></div>
 </div>
- <div id="head"><div id="title">Le live va commencer</div><br><div id="count"><i></i><span><b>0</b> <span id="cl">supporter en tribune</span></span></div><div id="evt"></div><div id="mvp"></div></div>
  <div id="sfx"></div>
+</div>
+ <div id="head"><div id="title">Le live va commencer</div><br><div id="hrow"><div id="count"><i></i><span><b>0</b> <span id="cl">supporter en tribune</span></span></div><div id="feed"></div></div><div id="evt"></div><div id="mvp"></div></div>
+ <div id="camcol"><div id="camframe"><i>Live</i><em>Ta caméra ici</em></div></div>
  <div id="fx"></div>
  <div id="warn"></div>
 </div>
@@ -246,6 +278,17 @@ if(P.has('title')){const t=P.get('title');if(t==='0')document.body.classList.add
 const stage=document.getElementById('stage');
 const fit=()=>{const s=Math.min(innerWidth/1920,innerHeight/1080);stage.style.transform=`translate(${(innerWidth-1920*s)/2}px,${(innerHeight-1080*s)/2}px) scale(${s})`};
 addEventListener('resize',fit);fit();
+// mise en page : fil de chat sous le titre (chat=bulles pour l'ancien mode) et emplacement caméra (cam=droite|gauche, camformat=paysage|portrait)
+const FEED=showMsg&&P.get('chat')!=='bulles';
+const CAMP=['droite','gauche'].includes(P.get('cam'))?P.get('cam'):'',PORTRAIT=P.get('camformat')==='portrait';
+const VW=CAMP?1280:1920,OX=CAMP==='gauche'?640:0,COLFEED=FEED&&CAMP&&!PORTRAIT;
+if(CAMP){document.body.classList.add('cam');if(PORTRAIT)document.body.classList.add('portrait');
+ const v=document.getElementById('view'),h=document.getElementById('head');v.style.left=OX+'px';v.style.width=VW+'px';h.style.left=OX+'px';h.style.right=(1920-OX-VW)+'px';
+ document.getElementById('camcol').style.left=(CAMP==='gauche'?0:1280)+'px'}
+const feedEl=document.getElementById('feed');
+if(FEED){document.body.classList.add('feed');if(COLFEED)document.getElementById('camcol').appendChild(feedEl);else feedEl.style.setProperty('--fw',(CAMP?860:1000)+'px');
+ feedEl.innerHTML='<div class="line hint"><span>Écris dans le chat pour monter en tribune</span></div>'}
+const RES=FEED&&!COLFEED?480:360; // hauteur réservée en haut (titre + fil + couloir des banderoles)
 const hash=s=>{let h=2166136261;for(const c of s)h=Math.imul(h^c.charCodeAt(0),16777619);return h>>>0};
 const rng=seed=>()=>{seed=Math.imul(seed^seed>>>15,seed|1);seed^=seed+Math.imul(seed^seed>>>7,seed|61);return((seed^seed>>>14)>>>0)/4294967296};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -438,9 +481,9 @@ geo.forEach((g,r)=>{const gap=g.w*.06,pitch=g.w+gap,n=Math.floor((WW+pitch*.5)/p
 
 /* ---------- caméra : zoom serré au début, dézoome par paliers quand la partie visible se remplit ---------- */
 const world=document.getElementById('world'),sfx=document.getElementById('sfx');
-const FULL=1920/WW,ZOOM=P.get('zoom')!=='0',FILL=+(P.get('remplissage')||75)/100;
-function camAt(S){const vw=1920/S,vh=1080/S,x0=Math.min(Math.max(WW/2-vw/2,0),WW-vw),y0=Math.max(Math.min(STAND_TOP-vh*.5,STAND_TOP-360/S,WH-vh),-400);
- const vis=seats.filter(t=>t.x>=x0+2&&t.x+t.g.w<=x0+vw-2&&t.g.b-t.g.h>=y0+360/S&&t.g.b+t.g.h*.2<=y0+vh);return{S,x0,y0,vw,vh,vis}}
+const FULL=Math.max(VW/WW,1080/WH),ZOOM=P.get('zoom')!=='0',FILL=+(P.get('remplissage')||75)/100;
+function camAt(S){const vw=VW/S,vh=1080/S,x0=Math.min(Math.max(WW/2-vw/2,0),WW-vw),y0=Math.max(Math.min(STAND_TOP-vh*.5,STAND_TOP-RES/S,WH-vh),-400);
+ const vis=seats.filter(t=>t.x>=x0+2&&t.x+t.g.w<=x0+vw-2&&t.g.b-t.g.h>=y0+RES/S&&t.g.b+t.g.h*.2<=y0+vh);return{S,x0,y0,vw,vh,vis}}
 const LEVELS=[];
 {const targets=[20,40,80,160,320];for(const tg of targets){let lo=FULL,hi=8;if(camAt(lo).vis.length<tg*1.3)break;for(let k=0;k<30;k++){const m=(lo+hi)/2;camAt(m).vis.length>=tg?lo=m:hi=m}LEVELS.push(lo)}
  LEVELS.push(FULL)}
@@ -517,8 +560,19 @@ function tokens(msg,emotes){const chars=Array.from(msg),at={};
  if(emotes)emotes.split('/').forEach(e=>{const [id,ranges]=e.split(':');(ranges||'').split(',').forEach(r=>{const [a,b]=r.split('-').map(Number);if(!isNaN(a))at[a]={id,end:b}})});
  const out=[];for(let i=0;i<chars.length;i++){if(at[i]){out.push({img:EMOTE(at[i].id)});i=at[i].end}else out.push(chars[i])}
  if(out.length>90){out.length=88;out.push('…')}return out}
+function feedLine(name,toks,cls,color){feedEl.querySelector('.hint')?.remove();
+ const l=document.createElement('div');l.className='line '+(cls||'');const b=document.createElement('b');b.textContent=name;if(color)b.style.setProperty('--c',color);
+ const sp=document.createElement('span');let buf='';for(const t of toks){if(typeof t==='string')buf+=t;else{if(buf)sp.append(buf),buf='';const im=new Image();im.src=t.img;im.alt='';sp.append(im)}}if(buf)sp.append(buf);
+ l.append(b,sp);feedEl.appendChild(l);const max=COLFEED?20:5;while(feedEl.children.length>max)feedEl.firstChild.remove();
+ setTimeout(()=>l.classList.add('old'),60000)}
+const PING='<svg viewBox="0 0 42 36"><path d="M7 3h28a5 5 0 0 1 5 5v15a5 5 0 0 1-5 5H18l-9 6 1.5-6H7a5 5 0 0 1-5-5V8a5 5 0 0 1 5-5z"/></svg>';
+function ping(f){const fan=f.seat.el.querySelector('.fan:not(.leaving)');if(!fan)return;fan.querySelector('.ping')?.remove();
+ const p=document.createElement('div');p.className='ping';p.style.setProperty('--pw',Math.max(30/cam.S,f.seat.g.w*.45)+'px');p.innerHTML=PING;
+ fan.appendChild(p);fan.classList.add('speaking');clearTimeout(fan._pt);
+ fan._pt=setTimeout(()=>{p.classList.add('bye');setTimeout(()=>{p.remove();if(!fan.querySelector('.chat,.ping'))fan.classList.remove('speaking')},300)},3400)}
 const Q=[];let active=0;const MAXB=+(P.get('bulles')||3);
 function say(f,kind,toks){if(!showMsg&&kind==='msg')return;
+ if(FEED){if(kind==='msg')ping(f);feedLine(f.name,toks,kind,f.color);return}
  const i=Q.findIndex(q=>q.f===f);if(i>=0)Q.splice(i,1);Q.push({f,kind,toks});pump()}
 function pump(){while(active<MAXB&&Q.length){const q=Q.shift();if(!crowd.has(q.f.login)||crowd.get(q.f.login)!==q.f)continue;show(q)}}
 function show({f,kind,toks}){const fan=f.seat.el.querySelector('.fan:not(.leaving)');if(!fan)return;
@@ -544,7 +598,7 @@ const norm=m=>m.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[
 function hype(login,msg){const k=norm(msg);if(!k||k.length>20)return;const now=Date.now();recent.push({k,login,t:now});
  while(recent.length&&now-recent[0].t>20000)recent.shift();
  const who=new Set(recent.filter(r=>r.k===k).map(r=>r.login));if(who.size>=OLA&&now-lastWave>25000){lastWave=now;wave(msg.slice(0,24),who.size)}}
-function wave(label,n){notify('Ola !',label?`« ${label} » ×${n}`:'La tribune se lève','ola');
+function wave(label,n){const tx=label?`« ${label} » ×${n}`:'La tribune se lève';if(FEED)feedLine('Ola !',Array.from(tx),'ola');else notify('Ola !',tx,'ola');
  for(const [,f] of crowd){const s=f.seat.el.querySelector('.fan:not(.leaving) svg');if(!s)continue;const d=Math.max(0,(f.seat.x-cam.x0)/cam.vw)*1500;
   s.animate([{transform:'none'},{transform:'translateY(-30%) scale(1.06,1.1)',offset:.4},{transform:'translateY(-30%) scale(1.06,1.1)',offset:.55},{transform:'none'}],{duration:800,delay:d,easing:'ease-out'})}}
 
@@ -564,7 +618,7 @@ function fireworks(seat){const {x,y}=seatXY(seat);for(let i=0;i<3;i++)setTimeout
  let h='<div class="fla"></div><div class="ring"></div>';for(let j=0;j<12;j++)h+=`<div class="deb" style="--a:${j*30}deg;--d:${60+Math.random()*50}px;background:${['#f26b1d','#fff','#ffc21a'][j%3]}"></div>`;b.innerHTML=h;front.appendChild(b);setTimeout(()=>b.remove(),1100)},i*350)}
 /* alertes : un vaisseau traverse l'écran en tirant une banderole (une alerte à la fois) */
 // couloir libre entre le bandeau du haut (titre/compteur/MVP) et les têtes du premier rang visible
-function laneTop(h){const hd=document.getElementById('head');const sr=stage.getBoundingClientRect(),k=sr.width/1920||1;let hb=20;if(!document.body.classList.contains('notitle'))for(const e of hd.querySelectorAll('#title,#count,#evt,#mvp')){const r=e.getBoundingClientRect();if(r.height)hb=Math.max(hb,(r.bottom-sr.top)/k+14)}
+function laneTop(h){const hd=document.getElementById('head');const sr=stage.getBoundingClientRect(),k=sr.width/1920||1;let hb=20;if(!document.body.classList.contains('notitle'))for(const e of hd.querySelectorAll('#title,#hrow,#evt,#mvp')){const r=e.getBoundingClientRect();if(r.height)hb=Math.max(hb,(r.bottom-sr.top)/k+14)}
  let st=1080;for(const t of cam.vis){const y=(t.g.b-t.g.h*1.75-cam.y0)*cam.S;if(y<st)st=y}
  const free=st-hb;return Math.round(free>=h?hb+(free-h)/2:hb)}
 const shipQ=[];let shipOn=false;
