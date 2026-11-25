@@ -23,6 +23,7 @@
  color-scheme:dark;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 body{background:radial-gradient(ellipse 70% 50% at 15% -10%,var(--accA),transparent 70%),linear-gradient(#0e0f13,var(--ink) 40%);background-color:var(--ink);color:var(--fg);font:400 16px/1.5 var(--body);min-height:100vh}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:#0e0f13}
 .wrap{max-width:1240px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
@@ -138,6 +139,9 @@ main.wrap{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:2
 .savebar .st i{width:10px;height:10px;flex:none;background:#f5c242}
 .savebar .st.ok i{background:var(--acc)}
 @media (max-width:520px){.savebar .st{font-size:13px;line-height:1.2}}
+.note{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--twitch);padding:14px 16px;margin-bottom:20px;--cut:12px}
+.note p{margin:0;flex:1;min-width:220px;color:var(--fg)}
+.note.err{border-left-color:#ff5a6a}
 .toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;pointer-events:none;transition:.25s;background:var(--fg);color:var(--ink);font:700 17px/1.2 var(--display);text-transform:uppercase;letter-spacing:.5px;padding:12px 16px;z-index:11;max-width:calc(100% - 32px);text-align:center;--cut:10px}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 details.json{color:var(--mute);font-size:14px}
@@ -152,15 +156,17 @@ details.json pre{margin:8px 0 0;background:#0d0e12;border:1px solid var(--line);
 <header><div class="wrap">
  <div class="logo"><i></i>Tribune <span>wire_fps</span> <small>Vestiaire</small></div>
  <div class="sp"></div>
- <div class="who" id="who"><div class="pic" id="whopic"></div><span id="whoname">shaunz</span></div>
- <button class="btn tw cut" id="login" type="button"><svg viewBox="0 0 24 24" fill="#fff"><path d="M4 2L2 6v14h5v3h3l3-3h4l5-5V2H4zm16 12l-3 3h-5l-3 3v-3H5V4h15v10zM15 7h2v5h-2zm-5 0h2v5h-2z"/></svg><span>Changer de compte</span></button>
+ <div class="who" id="who" hidden><div class="pic" id="whopic"></div><span id="whoname"></span></div>
+ <button class="btn tw cut" id="login" type="button"><svg viewBox="0 0 24 24" fill="#fff"><path d="M4 2L2 6v14h5v3h3l3-3h4l5-5V2H4zm16 12l-3 3h-5l-3 3v-3H5V4h15v10zM15 7h2v5h-2zm-5 0h2v5h-2z"/></svg><span>Se connecter avec Twitch</span></button>
+ <button class="btn ghost cut" id="logout" type="button" hidden>Déconnexion</button>
 </div></header>
 
 <section class="wrap intro">
  <h1>Ton <span>supporter</span><br>en tribune</h1>
  <p>Choisis ton casque, ta visière, ton armure et la couleur de ton siège. Dès que tu écris dans le chat du live, c'est ce supporter qui monte en tribune.</p>
- <span class="mock cut">Maquette</span>
+ <span class="mock cut">Bêta</span>
 </section>
+<div class="wrap" id="notice"></div>
 
 <main class="wrap">
  <aside class="card cut" aria-label="Aperçu">
@@ -170,7 +176,7 @@ details.json pre{margin:8px 0 0;background:#0d0e12;border:1px solid var(--line);
    <span class="rgbtag" id="rgbtag"><i></i><span>RGB</span></span>
    <div class="chair" id="bigchair"></div>
    <div class="big" id="big"></div>
-   <div class="tagname cut" id="tagname">shaunz</div>
+   <div class="tagname cut" id="tagname">invité</div>
   </div>
   <div class="quick">
    <button class="btn ghost cut" id="rand" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 7h3l9 10h6M3 17h3l3-3.3M14 8.3L15 7h6M18 4l3 3-3 3M18 14l3 3-3 3"/></svg>Aléatoire</button>
@@ -245,9 +251,14 @@ function armorFan(L){
 const chair=(c,n)=>`<svg viewBox="0 0 100 80" preserveAspectRatio="none" aria-hidden="true"><path d="M6 4H82L94 16V74H6Z" fill="#15171c" stroke="#2b2e37" stroke-width="2"/><path d="M6 4H82L94 16" fill="none" style="stroke:${c||`hsl(calc(var(--hue) + ${(n*9)%360}) 92% 60%)`}" stroke-width="5"/><path d="M6 58H94V74H6Z" fill="#000" opacity=".3"/><text x="50" y="42" font-size="14" text-anchor="middle" font-family="Barlow Condensed,Arial" font-weight="800" fill="#fff" opacity=".16">${String(n).padStart(2,'0')}</text></svg>`;
 
 /* ---------- état ---------- */
-const LOGIN='shaunz';                 // maquette : à l'étape 2, ce sera le compte Twitch connecté
+/* ---------- connexion Twitch (flux implicite, aucun droit demandé : on lit seulement l'identité) ---------- */
+const CLIENT_ID='ygbm2p21bscx0ckd37l3i8mufsw6m9'; // Client ID public de l'application Twitch (pas un secret)
+const REDIRECT=location.origin+location.pathname;
+const store={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+let user=null; // {login,name,id,tok,exp}
+let LOGIN='invité';
 const PLACE=7;
-let look=defaultLook(LOGIN),saved=JSON.stringify(look),tab='hair';
+let look=defaultLook('wire_fps_demo'),saved=JSON.stringify(look),tab='hair';
 const NEIGH=['wakz','skyyart','xari','m4rco_','luna_gg','kz_rider','nova'];
 
 const TABS=[
@@ -262,7 +273,7 @@ const $=id=>document.getElementById(id);
 function render(){
  $('big').innerHTML=armorFan(look);
  $('bigchair').innerHTML=chair(look.seat,PLACE);
- const tc=SKINS[look.suit].g;$('tagname').style.setProperty('--tc',tc);
+ const tc=SKINS[look.suit].g;$('tagname').style.setProperty('--tc',tc);$('tagname').textContent=user?user.name:'invité';
  const seatName=look.seat?(SEATS.find(s=>s.c===look.seat)||{n:'Perso'}).n:'RGB';
  $('rgbtag').querySelector('span').textContent=seatName;
  $('rgbtag').querySelector('i').style.background=look.seat||'';
@@ -323,14 +334,41 @@ $('pane').addEventListener('input',e=>{
  if(e.target.id==='pick'){look={...look,seat:e.target.value};render();$('pick')&&$('pick').focus()}
  if(e.target.id==='num'){const v=Math.max(1,Math.min(99,parseInt(e.target.value)||1));look={...look,num:v};render();const n=$('num');n.focus();n.setSelectionRange&&0}});
 $('rand').onclick=()=>{const R=()=>Math.random(),i=n=>Math.floor(R()*n);look={hair:i(6),glyph:i(7),suit:i(9),extra:[0,1,3][i(3)],num:1+i(98),seat:R()<.5?'':SEATS[1+i(7)].c};render()};
-$('reset').onclick=()=>{look=defaultLook(LOGIN);render();toast('Retour à ton supporter tiré au hasard par ton pseudo')};
+$('reset').onclick=()=>{look=defaultLook(user?user.login:'wire_fps_demo');render();toast('Retour à ton supporter tiré au hasard par ton pseudo')};
 $('undo').onclick=()=>{look=JSON.parse(saved);render()};
-$('save').onclick=()=>{saved=JSON.stringify(look);render();toast('Maquette : à l\'étape 3, ce bouton enverra ton look à l\'overlay')};
-$('login').onclick=()=>toast('Maquette : la connexion Twitch arrive à l\'étape 2');
+$('save').onclick=()=>{if(!user){goTwitch();return}
+ saved=JSON.stringify(look);store.set('look:'+user.login,look);render();toast('Enregistré sur cet appareil. Bientôt, il montera aussi sur l\'overlay')};
+$('login').onclick=goTwitch;
+$('logout').onclick=()=>{store.del('session');user=null;LOGIN='invité';look=defaultLook('wire_fps_demo');saved=JSON.stringify(look);showUser();render()};
+function goTwitch(){
+ let st='';try{st=crypto.getRandomValues(new Uint32Array(4)).join('');sessionStorage.setItem('st',st)}catch(e){}
+ location.href=`https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT)}&scope=&state=${st}`}
+function notice(html,cls=''){$('notice').innerHTML=html?`<div class="note cut ${cls}">${html}</div>`:'';const b=$('notice').querySelector('[data-login]');if(b)b.onclick=goTwitch}
+function showUser(){
+ $('who').hidden=!user;$('logout').hidden=!user;$('login').hidden=!!user;
+ if(user){$('whoname').textContent=user.name;notice('')}
+ else notice(`<p>Connecte-toi avec ton compte Twitch pour créer ton supporter. Sans compte, tu gardes l'avatar tiré au hasard par ton pseudo.</p><button class="btn tw cut" type="button" data-login>Se connecter avec Twitch</button>`)}
+function signIn(u){user=u;LOGIN=u.login;store.set('session',u);
+ look=store.get('look:'+u.login)||defaultLook(u.login);saved=JSON.stringify(look);showUser();render()}
+async function boot(){
+ const h=new URLSearchParams(location.hash.slice(1));
+ if(h.get('error')){history.replaceState(null,'',REDIRECT);showUser();notice(`<p>Connexion annulée sur Twitch. Tu peux réessayer quand tu veux.</p><button class="btn tw cut" type="button" data-login>Réessayer</button>`,'err');return}
+ const tok=(h.get('access_token')||'').replace(/[^a-z0-9]/gi,'');
+ if(tok){history.replaceState(null,'',REDIRECT);
+  let st=null;try{st=sessionStorage.getItem('st')}catch(e){}
+  if(st&&h.get('state')!==st){showUser();notice('<p>Réponse Twitch inattendue. Recommence la connexion.</p><button class="btn tw cut" type="button" data-login>Réessayer</button>','err');return}
+  try{
+   const v=await fetch('https://id.twitch.tv/oauth2/validate',{headers:{Authorization:'OAuth '+tok}}).then(r=>{if(!r.ok)throw 0;return r.json()});
+   let name=v.login;
+   try{const u=await fetch('https://api.twitch.tv/helix/users',{headers:{Authorization:'Bearer '+tok,'Client-Id':CLIENT_ID}}).then(r=>r.json());if(u.data&&u.data[0])name=u.data[0].display_name||name}catch(e){}
+   signIn({login:v.login,id:v.user_id,name,tok,exp:Date.now()+(v.expires_in||0)*1000});return
+  }catch(e){showUser();notice('<p>Twitch n\'a pas pu confirmer ton compte. Recommence la connexion.</p><button class="btn tw cut" type="button" data-login>Réessayer</button>','err');return}}
+ const s=store.get('session');
+ if(s&&s.login&&(!s.exp||s.exp>Date.now()))signIn(s);else{store.del('session');showUser()}}
 let tt;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),2600)}
 
 /* cycle RGB des sièges (un tour en 20 s ici, 90 s sur l'overlay) */
 if(!matchMedia('(prefers-reduced-motion: reduce)').matches){const t0=performance.now();(function f(t){document.documentElement.style.setProperty('--hue',((t-t0)/20000*360%360).toFixed(1));requestAnimationFrame(f)})(t0)}
-render();
+render();boot();
 </script>
 </body></html>
