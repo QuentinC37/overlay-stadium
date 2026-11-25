@@ -421,7 +421,9 @@ const updateCount=()=>{countB.textContent=crowd.size;countL.textContent=crowd.si
 function bubble(seat,text,hi){seat.el.querySelector('.burst')?.remove();const b=document.createElement('div');b.className='burst'+(hi?' hi':'');b.textContent=text;b.style.setProperty('--fs',Math.max(17,seat.g.w*.2)+'px');seat.el.appendChild(b);setTimeout(()=>b.remove(),4300)}
 function beam(seat,c){if(!th.beam)return;const b=document.createElement('div');b.className='beam';b.style.setProperty('--c',c);seat.el.appendChild(b);setTimeout(()=>b.remove(),1200)}
 function freeSeat(lurk){const empty=seats.filter(s=>!s.user);
- if(empty.length){const score=s=>s.row*2.2-Math.abs(s.x+s.g.w/2-960)/260+Math.random()*3+(lurk?-s.row*3:0);return empty.sort((a,b)=>score(b)-score(a))[0]}
+ if(empty.length){ // place au hasard sur toute la tribune, en évitant si possible de coller un voisin (bulles lisibles)
+  const crowdNear=s=>seats.filter(o=>o.user&&Math.abs(o.row-s.row)<=1&&Math.abs((o.x+o.g.w/2)-(s.x+s.g.w/2))<s.g.w*1.6).length;
+  let best=null,bs=1e9;for(let i=0;i<5;i++){const c=empty[Math.floor(Math.random()*empty.length)],n=crowdNear(c);if(n<bs){bs=n;best=c}}return best}
  let old=null;for(const [k,v] of crowd)if(!old||(v.lurk&&!old[1].lurk)||(v.lurk===old[1].lurk&&v.last<old[1].last))old=[k,v];
  if(lurk&&!old[1].lurk)return null;leave(old[0]);return old[1].seat}
 function leave(login){const f=crowd.get(login);if(!f)return;crowd.delete(login);const el=f.seat.el.querySelector('.fan');f.seat.user=null;f.seat.el.style.zIndex='';if(el){el.className='fan out';setTimeout(()=>el.remove(),500)}updateCount();save()}
