@@ -178,7 +178,10 @@ body.calm #space{display:none}
 .flare{position:absolute;width:14px;height:14px;margin:-7px;border-radius:50%;background:#fff;box-shadow:0 0 20px 10px #f26b1d,0 0 60px 30px rgba(242,107,29,.6);animation:flk .15s steps(2) infinite,fadeo 3s ease-in forwards}
 @keyframes flk{50%{transform:scale(1.35)}}@keyframes fadeo{80%{opacity:1}to{opacity:0}}
 .ship.tow{display:flex;align-items:center}
-.towban{font:800 34px/1 "Barlow Condensed",sans-serif;text-transform:uppercase;background:#fff;color:#000;padding:9px 18px 6px;border-left:10px solid #f26b1d;white-space:nowrap;margin-right:46px;position:relative;box-shadow:0 8px 20px rgba(0,0,0,.5)}
+.towban{display:flex;font:800 38px/1 "Barlow Condensed",sans-serif;text-transform:uppercase;white-space:nowrap;margin-right:46px;position:relative;box-shadow:0 8px 24px rgba(0,0,0,.55);animation:flag 1.2s ease-in-out infinite alternate;transform-origin:100% 50%}
+.towban b{background:#f26b1d;color:#fff;padding:11px 18px 8px}.towban span{background:#fff;color:#000;padding:11px 22px 8px}
+.tow.raid .towban{font-size:46px}.tow.raid .towban b{background:#000;color:#f26b1d;outline:3px solid #f26b1d;outline-offset:-3px}.tow.bits .towban b{background:#ffc21a;color:#000}.tow.follow .towban b{background:#fff;color:#000;border-right:3px solid #000}
+@keyframes flag{from{transform:skewY(-1.5deg)}to{transform:skewY(1.5deg) translateY(4px)}}
 .towban::after{content:"";position:absolute;right:-46px;top:50%;width:46px;border-top:3px dashed #fff}
 .map{position:absolute;inset:-40px;background-size:cover;background-position:center;filter:blur(4px) brightness(.45) saturate(.9);animation:kb 45s ease-in-out infinite alternate}
 .mapfade{position:absolute;inset:0;background:linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.05) 35%,rgba(0,0,0,.85) 62%,#000 80%)}
@@ -559,16 +562,23 @@ function standSmoke(){const front=sfx;for(let i=0;i<16;i++){const p=document.cre
  p.style.setProperty('--dx',(Math.random()*200-100).toFixed(0)+'px');p.style.setProperty('--s',(2+Math.random()*2).toFixed(2));p.style.animationDelay=(Math.random()*600)+'ms';front.appendChild(p);setTimeout(()=>p.remove(),5200)}}
 function fireworks(seat){const {x,y}=seatXY(seat);for(let i=0;i<3;i++)setTimeout(()=>{const b=document.createElement('div');b.className='boom';b.style.left=(x+Math.random()*120-60)+'px';b.style.top=(y-60-Math.random()*90)+'px';
  let h='<div class="fla"></div><div class="ring"></div>';for(let j=0;j<12;j++)h+=`<div class="deb" style="--a:${j*30}deg;--d:${60+Math.random()*50}px;background:${['#f26b1d','#fff','#ffc21a'][j%3]}"></div>`;b.innerHTML=h;front.appendChild(b);setTimeout(()=>b.remove(),1100)},i*350)}
-function followShip(name,then){const front=sfx;const el=document.createElement('div');el.className='ship tow';el.style.top='236px';el.style.setProperty('--x0','-700px');el.style.setProperty('--x1','2000px');el.style.setProperty('--dy','0px');el.style.setProperty('--t','6s');
- const ban=document.createElement('div');ban.className='towban';ban.textContent='Nouveau follow · '+name;el.innerHTML=`<div class="in">${SHIPS[0].svg}</div>`;el.prepend(ban);front.appendChild(el);setTimeout(()=>el.remove(),6200);setTimeout(then,2200)}
-function onSub(login,name,months,gifter){const f=crowd.get(login);
- notify(gifter?'Sub offert':'Nouveau sub',gifter?`${gifter} → ${name}`:(months>1?`${name} · ${months} mois`:name),'sub');
+/* alertes : un vaisseau traverse l'écran en tirant une banderole (une alerte à la fois) */
+const shipQ=[];let shipOn=false;
+function alertShip(label,text,cls,then){shipQ.push({label,text,cls,then});if(!shipOn)nextShip()}
+function nextShip(){const a=shipQ.shift();if(!a){shipOn=false;return}shipOn=true;
+ const big=a.cls==='raid',S=SHIPS[big?2:a.cls==='bits'?1:0],t=big?8:6.5;
+ const el=document.createElement('div');el.className='ship tow '+a.cls;el.style.top=(big?210:236)+'px';
+ el.style.setProperty('--x0','-1100px');el.style.setProperty('--x1','2100px');el.style.setProperty('--dy','0px');el.style.setProperty('--t',t+'s');
+ const ban=document.createElement('div');ban.className='towban';const b=document.createElement('b');b.textContent=a.label;const sp=document.createElement('span');sp.textContent=a.text;ban.append(b,sp);
+ el.innerHTML=`<div class="in">${S.svg}</div>`;el.prepend(ban);sfx.appendChild(el);
+ setTimeout(()=>el.remove(),t*1000+200);if(a.then)setTimeout(a.then,t*1000*.38);setTimeout(nextShip,t*1000*.55)}
+function onSub(login,name,months,gifter){
  const go=()=>{const g=crowd.get(login);if(!g)return;g.badges=Object.assign(g.badges||{},{sub:1});deco(g);smoke(g.seat,12)};
- if(!f){arrive(login,name,{});setTimeout(go,2600)}else go();standSmoke()}
-function onRaid(login,name,count){notify('Raid',`${name} débarque avec ${count} viewers`,'raid');arrive(login,name,{});
- const n=Math.min(count,+(P.get('raidmax')||24));for(let i=0;i<n;i++)setTimeout(()=>arrive('raid~'+login+'~'+i,'Raider '+name,{raid:true}),400+i*180)}
-function onBits(f,bits){notify('Bits',`${f.name} · ${bits} bits`,'bits');fireworks(f.seat)}
-function onFollow(login,name){followShip(name,()=>arrive(login,name,{}))}
+ alertShip(gifter?'Sub offert':'Sub',gifter?`${gifter} → ${name}`:(months>1?`${name} · ${months} mois`:name),'sub',()=>{if(!crowd.get(login)){arrive(login,name,{});setTimeout(go,2600)}else go();standSmoke()})}
+function onRaid(login,name,count){alertShip('Raid',`${name} débarque avec ${count} viewers`,'raid',()=>{arrive(login,name,{});standSmoke()});
+ const n=Math.min(count,+(P.get('raidmax')||24));for(let i=0;i<n;i++)setTimeout(()=>arrive('raid~'+login+'~'+i,'Raider '+name,{raid:true}),3400+i*180)}
+function onBits(f,bits){alertShip('Bits',`${f.name} · ${bits} bits`,'bits',()=>fireworks(f.seat))}
+function onFollow(login,name){alertShip('Follow',name,'follow',()=>arrive(login,name,{}))}
 
 /* ---------- arrivée / départ ---------- */
 function freeSeat(lurk,prefer){let empty=cam.vis.filter(s=>!s.user);
@@ -632,7 +642,7 @@ function connect(delay=1000){let ws;try{ws=new WebSocket('wss://irc-ws.chat.twit
   if(u){const id=tags['msg-id'],login=tags.login||'',name=tags['display-name']||login;
    if(id==='sub'||id==='resub')onSub(login,name,+tags['msg-param-cumulative-months']||1);
    else if(id==='subgift')onSub((tags['msg-param-recipient-user-name']||'').toLowerCase(),tags['msg-param-recipient-display-name']||'',1,name);
-   else if(id==='submysterygift')notify('Subs offerts',`${name} offre ${tags['msg-param-mass-gift-count']||''} subs`,'sub'),standSmoke();
+   else if(id==='submysterygift')alertShip('Subs offerts',`${name} offre ${tags['msg-param-mass-gift-count']||''} subs`,'sub',standSmoke);
    else if(id==='raid')onRaid(login,tags['msg-param-displayName']||name,+tags['msg-param-viewerCount']||1);
    return}
   const m=rest.match(/^:([^!]+)!\S+ (PRIVMSG|JOIN|PART) #\S+(?: :(.*))?$/);if(!m)return;
