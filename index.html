@@ -178,6 +178,8 @@ body.calm #space{display:none}
 
 /* 6. FRAG CARDS */
 body{--acc:#3dff8f;--accA:rgba(61,255,143,.18)}
+body.rgb{--acc:hsl(var(--hue) 92% 60%);--accA:hsla(var(--hue),92%,60%,.18)}
+.seat.owned .chair .ln{stroke:var(--sc)!important}
 .t-frag #bg{background:radial-gradient(ellipse 60% 55% at 18% 0%,rgba(61,255,143,.10),transparent 70%),linear-gradient(#0e0f13,#0a0b0d 60%,#060607)}
 .t-frag .map{filter:blur(5px) brightness(.32) saturate(.5)}
 .t-frag .fragtint{position:absolute;inset:0;background:linear-gradient(rgba(10,11,13,.55),rgba(10,11,13,.2) 40%,rgba(6,6,7,.9) 62%)}
@@ -313,9 +315,12 @@ const showMsg=P.get('messages')!=='0';
 const ignore=new Set((P.get('ignore')||'nightbot,streamelements,streamlabs,moobot,fossabot,wizebot,soundalerts,sery_bot,commanderroot').toLowerCase().split(','));
 if(channel)ignore.add(channel);
 if(P.get('hud')==='0'||(channel&&!P.has('hud')))document.body.classList.add('nohud');
+// cycle RGB très lent du fond et des sièges (rgb=1 : un tour en 90 s ; rgb=40 : un tour en 40 s)
+const RGBS=P.get('rgb')==='1'?90:Math.max(0,+P.get('rgb')||0);
+if(RGBS){document.body.classList.add('rgb');const tick=()=>document.body.style.setProperty('--hue',((Date.now()/1000/RGBS*360)%360).toFixed(1));tick();setInterval(tick,200)}
 function setTitle(t){const el=document.getElementById('title'),i=t.trim().lastIndexOf(' ');el.textContent=i>0?t.trim().slice(0,i+1):'';const h=document.createElement('span');h.className='hl';h.textContent=i>0?t.trim().slice(i+1):t;el.append(h)}
 if(P.has('title')&&P.get('title')==='0')document.body.classList.add('notitle');else setTitle(P.get('title')||'Le live va commencer');
-{const a=(P.get('accent')||'').toLowerCase(),A={orange:'#f26b1d',vert:'#3dff8f',bleu:'#3aa0ff',violet:'#9b6bff',or:'#f5c242'};const v=A[a]||(/^[0-9a-f]{6}$/.test(a)?'#'+a:'');if(v){document.body.style.setProperty('--acc',v);const n=parseInt(v.slice(1),16);document.body.style.setProperty('--accA',`rgba(${n>>16},${n>>8&255},${n&255},.18)`)}}
+{const a=(P.get('accent')||'').toLowerCase(),A={orange:'#f26b1d',vert:'#3dff8f',bleu:'#3aa0ff',violet:'#9b6bff',or:'#f5c242'};const v=A[a]||(/^[0-9a-f]{6}$/.test(a)?'#'+a:'');if(v&&!RGBS){document.body.style.setProperty('--acc',v);const n=parseInt(v.slice(1),16);document.body.style.setProperty('--accA',`rgba(${n>>16},${n>>8&255},${n&255},.18)`)}}
 const stage=document.getElementById('stage');
 const fit=()=>{const s=Math.min(innerWidth/1920,innerHeight/1080);stage.style.transform=`translate(${(innerWidth-1920*s)/2}px,${(innerHeight-1080*s)/2}px) scale(${s})`};
 addEventListener('resize',fit);fit();
@@ -339,6 +344,7 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
    Le futur site de personnalisation enregistrera ces mêmes index (coiffure, yeux, bouche, accessoire, couleur). ---------- */
 const SKIN=['#ffd9b8','#f1bd8e','#d99a6c','#b07650','#82502f','#5a3620'];
 const customLooks={};
+const SEATPAL=['#ff4fa3','#3aa0ff','#f5c242','#9b6bff','#3dff8f','#ff7a1a','#19e3e3'];
 function getLook(login){const R=rng(hash(login)),i=n=>Math.floor(R()*n);
  return Object.assign({skin:i(6),color:i(6),hairColor:i(7),hair:i(6),eyes:i(3),mouth:i(4),extra:i(4),num:1+i(98)},customLooks[login]||{})}
 
@@ -484,7 +490,7 @@ T.frag={name:'Frag cards',seats:[...Array(12).fill('#2b2e37'),'var(--acc)','var(
  bg:()=>{let g='';const H=560,VX=960;for(let i=-24;i<=24;i++)g+=`<path d="M${VX+i*14} ${H-260}L${VX+i*190} ${H+520}"/>`;for(let k=0;k<12;k++){const y=H-260+Math.pow(k/11,1.9)*780;g+=`<path d="M0 ${y.toFixed(0)}H1920"/>`}
   let st='';const R=rng(5);for(let i=0;i<120;i++)st+=`<circle class="${R()<.25?'tw':''}" cx="${(R()*1920).toFixed(0)}" cy="${(R()*520).toFixed(0)}" r="${(.5+R()*1.3).toFixed(1)}" fill="#fff" opacity="${(.2+R()*.6).toFixed(2)}"/>`;
   return `${MAP?`<div class="map" style="background-image:url(maps/${MAP}.jpg)"></div>`:''}<div class="fragtint"></div><svg class="layer fraggrid" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke-width="1.4">${g}</g></svg><svg class="layer" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">${st}</svg><div class="fragglow"></div><div class="sheen"></div><div id="space"></div>`},
- chair:(c,n)=>`<svg class="chair" viewBox="0 0 100 80" preserveAspectRatio="none"><path d="M6 4H82L94 16V74H6Z" fill="#15171c" stroke="#2b2e37" stroke-width="2"/><path d="M6 4H82L94 16" fill="none" style="stroke:${c}" stroke-width="5"/><path d="M6 58H94V74H6Z" fill="#000" opacity=".3"/><text x="50" y="42" font-size="14" text-anchor="middle" font-family="Barlow Condensed,Arial" font-weight="800" fill="#fff" opacity=".16">${String(n).padStart(2,'0')}</text></svg>`};
+ chair:(c,n)=>`<svg class="chair" viewBox="0 0 100 80" preserveAspectRatio="none"><path d="M6 4H82L94 16V74H6Z" fill="#15171c" stroke="#2b2e37" stroke-width="2"/><path class="ln" d="M6 4H82L94 16" fill="none" style="stroke:${RGBS?`hsl(calc(var(--hue) + ${(n*9)%360}) 92% 60%)`:c}" stroke-width="5"/><path d="M6 58H94V74H6Z" fill="#000" opacity=".3"/><text x="50" y="42" font-size="14" text-anchor="middle" font-family="Barlow Condensed,Arial" font-weight="800" fill="#fff" opacity=".16">${String(n).padStart(2,'0')}</text></svg>`};
 
 
 /* ---------- bataille spatiale en fond (style Broadcast) ---------- */
@@ -594,6 +600,8 @@ function place(login,f,quiet){const seat=f.seat,fan=document.createElement('div'
  fan.className='fan'+(quiet||w?'':' in')+(f.lurk?' lurk':'');fan.innerHTML=th.fan(f.look);
  const tag=document.createElement('div');tag.className='tag';tag.textContent=f.name;tag.style.fontSize=`max(${(seat.g.w*.17).toFixed(1)}px, calc(14px * var(--inv)))`;tag.style.setProperty('--c',f.color||th.tag(f.look));
  fan.appendChild(tag);seat.el.appendChild(fan);seat.el.style.zIndex=2;f.el=fan;deco(f);
+ // couleur de siège choisie par le viewer (futur site : customLooks[login].seat) ; en démo, un supporter sur trois en a une
+ const sc=f.look.seat||(demo&&hash(login)%3===0?SEATPAL[hash(login+'s')%SEATPAL.length]:'');seat.el.classList.toggle('owned',!!sc);if(sc)seat.el.style.setProperty('--sc',sc);
  if(w)return walk(fan,seat);
  if(!quiet)setTimeout(()=>fan.classList.remove('in'),1100);return 500}
 
@@ -696,7 +704,7 @@ function freeSeat(lurk,prefer){let empty=cam.vis.filter(s=>!s.user);
  let old=null;for(const [k,v] of crowd)if(!v.medal&&(!old||(v.lurk&&!old[1].lurk)||(v.lurk===old[1].lurk&&v.last<old[1].last)))old=[k,v];
  if(!old||(lurk&&!old[1].lurk))return null;const s=old[1].seat;leave(old[0]);return s}
 function leave(login){const f=crowd.get(login);if(!f)return;crowd.delete(login);Q.splice(0,Q.length,...Q.filter(q=>q.f!==f));
- const el=f.seat.el.querySelector('.fan:not(.leaving)');f.seat.user=null;
+ const el=f.seat.el.querySelector('.fan:not(.leaving)');f.seat.user=null;f.seat.el.classList.remove('owned');
  if(el){if(WALK)walkOut(el,f.seat);else{el.className='fan out';setTimeout(()=>el.remove(),500)}}else f.seat.el.style.zIndex='';
  updateCount();crownCheck();save()}
 function crownCheck(){let top=null;for(const [,f] of crowd)if((f.count||0)>=3&&(!top||f.count>top.count))top=f;
@@ -727,7 +735,7 @@ function save(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setIt
 
 /* ---------- 8. écran de fin : MVP au premier rang ---------- */
 const mvpEl=document.getElementById('mvp');
-function moveTo(f,seat){const old=f.seat;f.el?.remove();if(old.user===f.login){old.user=null;old.el.style.zIndex=''}seat.user=f.login;f.seat=seat;place(f.login,f,true)}
+function moveTo(f,seat){const old=f.seat;f.el?.remove();if(old.user===f.login){old.user=null;old.el.style.zIndex='';old.el.classList.remove('owned')}seat.user=f.login;f.seat=seat;place(f.login,f,true)}
 function endScene(){SCENE='end';document.body.classList.add('scene-end');
  if(!P.has('title'))setTitle("Merci d'être venus");updateCount();
  const top=[...crowd.values()].filter(f=>(f.count||0)>0).sort((a,b)=>b.count-a.count).slice(0,5);
@@ -811,7 +819,7 @@ const pick=document.getElementById('pick'),keys=Object.keys(T);
 keys.forEach((k,i)=>{const b=document.createElement('button');b.dataset.k=k;b.textContent=(i+1)+'. '+T[k].name;b.onclick=()=>{render(k);try{history.replaceState(null,'','#'+k)}catch(e){}};pick.appendChild(b)});
 addEventListener('keydown',e=>{if(e.target.closest&&e.target.closest('input'))return;const i=+e.key-1;if(keys[i])render(keys[i])});
 const start=P.get('theme')||location.hash.replace(/^#/,'');
-render(T[start]?start:'tv');
+render(T[start]?start:'frag');
 let restored=0;
 try{if(P.get('reset')==='1')localStorage.removeItem(KEY);const d=JSON.parse(localStorage.getItem(KEY)||'null');
  if(d&&Date.now()-d.t<6*3600e3&&!demo){restored=d.u.length;setLevel(levelFor(restored),true);d.u.forEach(([l,nm,lk,ct,bg,col],i)=>setTimeout(()=>arrive(l,nm,{lurk:lk,quiet:true,count:ct||0,badges:bg||{},color:col||''}),i*30))}}catch(e){}
