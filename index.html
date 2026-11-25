@@ -18,7 +18,7 @@ LAYOUT: scène fixe 1920x1080 mise à l'échelle ; titre et compteur en haut, tr
 html,body{margin:0;height:100%;overflow:hidden;background:#000}
 body.clear{background:transparent}
 #stage{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;overflow:hidden}
-#bg{position:absolute;inset:0}
+#bg{position:absolute;inset:-400px 0 0 0}
 #bg svg.layer{position:absolute;left:0;top:0;width:100%;height:100%}
 #world{position:absolute;left:0;top:0;width:2304px;height:1296px;transform-origin:0 0;transition:transform 2.8s cubic-bezier(.5,0,.2,1);--inv:1}
 #sfx{position:absolute;inset:0;z-index:190;pointer-events:none;overflow:hidden}
@@ -439,8 +439,8 @@ geo.forEach((g,r)=>{const gap=g.w*.06,pitch=g.w+gap,n=Math.floor((WW+pitch*.5)/p
 /* ---------- caméra : zoom serré au début, dézoome par paliers quand la partie visible se remplit ---------- */
 const world=document.getElementById('world'),sfx=document.getElementById('sfx');
 const FULL=1920/WW,ZOOM=P.get('zoom')!=='0',FILL=+(P.get('remplissage')||75)/100;
-function camAt(S){const vw=1920/S,vh=1080/S,x0=Math.min(Math.max(WW/2-vw/2,0),WW-vw),y0=Math.min(Math.max(STAND_TOP-vh*.5,0),WH-vh);
- const vis=seats.filter(t=>t.x>=x0+2&&t.x+t.g.w<=x0+vw-2&&t.g.b-t.g.h>=y0+280/S&&t.g.b+t.g.h*.2<=y0+vh);return{S,x0,y0,vw,vh,vis}}
+function camAt(S){const vw=1920/S,vh=1080/S,x0=Math.min(Math.max(WW/2-vw/2,0),WW-vw),y0=Math.max(Math.min(STAND_TOP-vh*.5,STAND_TOP-360/S,WH-vh),-400);
+ const vis=seats.filter(t=>t.x>=x0+2&&t.x+t.g.w<=x0+vw-2&&t.g.b-t.g.h>=y0+360/S&&t.g.b+t.g.h*.2<=y0+vh);return{S,x0,y0,vw,vh,vis}}
 const LEVELS=[];
 {const targets=[20,40,80,160,320];for(const tg of targets){let lo=FULL,hi=8;if(camAt(lo).vis.length<tg*1.3)break;for(let k=0;k<30;k++){const m=(lo+hi)/2;camAt(m).vis.length>=tg?lo=m:hi=m}LEVELS.push(lo)}
  LEVELS.push(FULL)}
@@ -563,6 +563,10 @@ function standSmoke(){const front=sfx;for(let i=0;i<16;i++){const p=document.cre
 function fireworks(seat){const {x,y}=seatXY(seat);for(let i=0;i<3;i++)setTimeout(()=>{const b=document.createElement('div');b.className='boom';b.style.left=(x+Math.random()*120-60)+'px';b.style.top=(y-60-Math.random()*90)+'px';
  let h='<div class="fla"></div><div class="ring"></div>';for(let j=0;j<12;j++)h+=`<div class="deb" style="--a:${j*30}deg;--d:${60+Math.random()*50}px;background:${['#f26b1d','#fff','#ffc21a'][j%3]}"></div>`;b.innerHTML=h;front.appendChild(b);setTimeout(()=>b.remove(),1100)},i*350)}
 /* alertes : un vaisseau traverse l'écran en tirant une banderole (une alerte à la fois) */
+// couloir libre entre le bandeau du haut (titre/compteur/MVP) et les têtes du premier rang visible
+function laneTop(h){const hd=document.getElementById('head');const sr=stage.getBoundingClientRect(),k=sr.width/1920||1;let hb=20;if(!document.body.classList.contains('notitle'))for(const e of hd.querySelectorAll('#title,#count,#evt,#mvp')){const r=e.getBoundingClientRect();if(r.height)hb=Math.max(hb,(r.bottom-sr.top)/k+14)}
+ let st=1080;for(const t of cam.vis){const y=(t.g.b-t.g.h*1.75-cam.y0)*cam.S;if(y<st)st=y}
+ const free=st-hb;return Math.round(free>=h?hb+(free-h)/2:hb)}
 const shipQ=[];let shipOn=false;
 function alertShip(label,text,cls,then){shipQ.push({label,text,cls,then});if(!shipOn)nextShip()}
 function nextShip(){const a=shipQ.shift();if(!a){shipOn=false;return}shipOn=true;
@@ -571,6 +575,7 @@ function nextShip(){const a=shipQ.shift();if(!a){shipOn=false;return}shipOn=true
  el.style.setProperty('--x0','-1100px');el.style.setProperty('--x1','2100px');el.style.setProperty('--dy','0px');el.style.setProperty('--t',t+'s');
  const ban=document.createElement('div');ban.className='towban';const b=document.createElement('b');b.textContent=a.label;const sp=document.createElement('span');sp.textContent=a.text;ban.append(b,sp);
  el.innerHTML=`<div class="in">${S.svg}</div>`;el.prepend(ban);sfx.appendChild(el);
+ el.style.top=laneTop(el.offsetHeight)+'px';
  setTimeout(()=>el.remove(),t*1000+200);if(a.then)setTimeout(a.then,t*1000*.38);setTimeout(nextShip,t*1000*.55)}
 function onSub(login,name,months,gifter){
  const go=()=>{const g=crowd.get(login);if(!g)return;g.badges=Object.assign(g.badges||{},{sub:1});deco(g);smoke(g.seat,12)};
