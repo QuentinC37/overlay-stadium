@@ -29,7 +29,7 @@ textarea{width:100%;height:110px;margin-top:10px;padding:10px;color:#e8ff3a;back
 </main>
 <script>
 {
-const CLIENT_ID=''; // à remplir avec le Client ID de l'application Twitch
+const CLIENT_ID='ygbm2p21bscx0ckd37l3i8mufsw6m9'; // Client ID public de l'application Twitch (pas un secret)
 const box=document.getElementById('box');
 const q=new URLSearchParams(location.search),h=new URLSearchParams(location.hash.slice(1));
 const cid=(CLIENT_ID||q.get('client_id')||sessionStorage.getItem('cid')||'').replace(/[^a-z0-9]/gi,'');

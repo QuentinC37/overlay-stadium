@@ -309,7 +309,7 @@ const P=new URLSearchParams(location.search+'&'+location.hash.replace(/^#/,''));
 if(P.get('bg')==='0')document.body.classList.add('clear');
 const channel=(P.get('channel')||'').toLowerCase().replace(/[^a-z0-9_]/g,'');
 const token=(P.get('token')||'').replace(/[^a-z0-9]/gi,'');
-const CLIENT_ID=(P.get('client_id')||'').replace(/[^a-z0-9]/gi,'');
+const CLIENT_ID=(P.get('client_id')||'ygbm2p21bscx0ckd37l3i8mufsw6m9').replace(/[^a-z0-9]/gi,'');
 const demo=P.has('demo')?P.get('demo')!=='0':!channel;
 const showMsg=P.get('messages')!=='0';
 const ignore=new Set((P.get('ignore')||'nightbot,streamelements,streamlabs,moobot,fossabot,wizebot,soundalerts,sery_bot,commanderroot').toLowerCase().split(','));
