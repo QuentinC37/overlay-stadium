@@ -33,6 +33,7 @@ body.feed #feed{display:flex}.scene-end #head #feed{display:none}
 #feed .line img{height:1.15em;vertical-align:-.22em;margin:0 .06em}
 #feed .line.join span{background:#f26b1d;color:#fff;text-transform:uppercase;font-weight:800;letter-spacing:.5px}
 #feed .line.ola b{background:#ffc21a;color:#000;border-left-color:#000}
+#feed .line.host b{background:#fff;color:#000;border-left-color:#000}.t-frag #feed .line.host b{background:var(--acc);color:#000;border-left-color:var(--acc)}
 #feed .line.hint span{background:rgba(0,0,0,.6);color:#fff;font-style:italic}
 #feed .line.old{opacity:.55}
 @keyframes lineIn{from{opacity:0;transform:translateY(26px)}}
@@ -716,7 +717,8 @@ function leave(login){const f=crowd.get(login);if(!f)return;crowd.delete(login);
 function crownCheck(){let top=null;for(const [,f] of crowd)if((f.count||0)>=3&&(!top||f.count>top.count))top=f;
  for(const [,f] of crowd){const want=f===top;if(!!f.crown!==want){f.crown=want;deco(f)}}}
 function parseBadges(s){const b={};(s||'').split(',').forEach(x=>{const k=x.split('/')[0];if(k==='subscriber'||k==='founder')b.sub=1;if(k==='moderator'||k==='broadcaster')b.mod=1;if(k==='vip')b.vip=1});return b}
-function arrive(login,display,o={}){login=login.toLowerCase();if(!login||ignore.has(login))return;const f=crowd.get(login),lurk=!!o.lurk;
+function arrive(login,display,o={}){login=login.toLowerCase();if(!login||ignore.has(login)||/^justinfan\d+$/.test(login))return; // justinfanNNNN = lecteurs anonymes (dont l'overlay lui-même)
+const f=crowd.get(login),lurk=!!o.lurk;
  if(f){f.seen=Date.now();if(lurk)return;f.last=Date.now();if(o.badges)f.badges=o.badges;if(o.color){f.color=o.color;f.seat.el.querySelector('.fan:not(.leaving) .tag')?.style.setProperty('--c',o.color)}
   const el=f.seat.el.querySelector('.fan:not(.leaving)');if(!el)return;
   if(f.lurk){f.lurk=false;el.classList.remove('lurk');beam(f.seat,th.tag(f.look));say(f,'join',Array.from('sort du lurk !'))}
@@ -768,6 +770,7 @@ function connect(delay=1000){let ws;try{ws=new WebSocket('wss://irc-ws.chat.twit
    return}
   const m=rest.match(/^:([^!]+)!\S+ (PRIVMSG|JOIN|PART) #\S+(?: :(.*))?$/);if(!m)return;
   if(m[2]==='PRIVMSG'){let msg=m[3]||'';const act=msg.match(/^\u0001ACTION (.*)\u0001$/);if(act)msg=act[1];
+   if(m[1]===channel){if(FEED)feedLine(tags['display-name']||m[1],tokens(msg,tags.emotes),'host')}else // le streamer : dans le fil, sans siège
    arrive(m[1],tags['display-name']||m[1],{msg,emotes:tags.emotes,color:tags.color,badges:parseBadges(tags.badges)});hype(m[1],msg);
    if(+tags.bits>0){const f=crowd.get(m[1]);if(f)setTimeout(()=>onBits(f,+tags.bits),300)}}
   else if(m[2]==='JOIN')arrive(m[1],m[1],{lurk:true});
