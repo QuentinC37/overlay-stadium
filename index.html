@@ -128,7 +128,7 @@ body.nohud .panel{display:none}
 </style>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><pattern id="dots" width="6" height="6" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="1.3" fill="#000"/></pattern></defs></svg>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><pattern id="hexp" width="8" height="14" patternUnits="userSpaceOnUse"><path d="M4 0L8 2.3V7L4 9.3L0 7V2.3Z M4 9.3V14" fill="none" stroke="#fff" stroke-width=".7"/></pattern><pattern id="dots" width="6" height="6" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="1.3" fill="#000"/></pattern></defs></svg>
 <div id="stage">
  <div id="bg"></div>
  <div id="head"><div id="title">Le match va commencer</div><br><div id="count"><i></i><span><b>0</b> <span id="cl">supporter en tribune</span></span></div></div>
@@ -265,6 +265,49 @@ const T={};
   const mouth=[`<path d="M44 64H56" ${O} stroke-width="3"/>`,`<path d="M42 62Q50 68 58 62" fill="none" ${O} stroke-width="3"/>`,`<path d="M43 61H57L54 68H46Z" fill="#3a0d10" ${O} stroke-width="2.5"/>`,`<path d="M30 58H70L64 74H36Z" fill="${W}" ${O}/><path d="M42 64V70M50 64V70M58 64V70" stroke="#05080b" stroke-width="2"/>`][L.mouth];
   const extra=L.extra===1?`<path d="M30 56L36 54L36 60L30 62Z" fill="${c}"/>`:L.extra===3?`<text x="80" y="100" font-size="12" text-anchor="middle" font-family="Saira Condensed" font-weight="800" fill="#05080b">${L.num}</text>`:'';
   return `<svg viewBox="0 0 100 118"><path d="M8 118Q8 82 50 80Q92 82 92 118Z" fill="#1f2731" ${O}/><path d="M8 100L14 84L34 80L30 96Z M92 100L86 84L66 80L70 96Z" fill="${c}" ${O}/><path d="M50 84V118M40 100H60" stroke="${c}" stroke-width="2.5"/>${L.extra===3?`<rect x="72" y="90" width="16" height="13" fill="${W}" ${O} stroke-width="2"/>`:''}<path d="M42 70V83Q50 87 58 83V70Z" fill="${sk}" ${O}/><ellipse cx="50" cy="48" rx="25" ry="27" fill="${sk}" ${O}/>${hair}${eyes}${mouth}${extra}</svg>`}}}
+
+/* ---------- Avatars « pilotes en armure » (style Broadcast) ----------
+   Personnages originaux inspirés de l'ambiance arène SF : casque, visière à symbole lumineux,
+   épaulettes avec anneau de lumière. Palette = un « skin » ; le futur site pourra en fixer un. */
+const SKINS=[
+ {a:'#1b2a5a',g:'#3da5ff',t:'#0f1836'},{a:'#e9edf2',g:'#2dffa8',t:'#8a2be2'},{a:'#eceff3',g:'#ff9a1f',t:'#c2c7cf'},
+ {a:'#b49a5c',g:'#f4f19a',t:'#6f5e35'},{a:'#1d4f6e',g:'#ffb21f',t:'#0f2c40'},{a:'#262234',g:'#b56bff',t:'#151320'},
+ {a:'#b3202a',g:'#ffffff',t:'#1b2a5a'},{a:'#e86a1c',g:'#ffb547',t:'#c9ccd2'},{a:'#efe8da',g:'#33e0ff',t:'#b8893a'}];
+const skinOf=L=>SKINS[L.suit!=null?L.suit:(L.color*3+L.hairColor)%SKINS.length];
+function armorFan(L){
+ const s=skinOf(L),A=s.a,G=s.g,TR=s.t,D='#0b0f18',SU='#1c2230';
+ const glow=(d,w=3)=>`<path d="${d}" fill="none" stroke="${G}" stroke-width="${w*2.6}" stroke-linecap="round" stroke-linejoin="round" opacity=".28"/><path d="${d}" fill="none" stroke="${G}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`;
+ const glyphs=[glow('M42 40L58 56M58 40L42 56'),glow('M41 41H59L50 56Z',2.6),
+  `<circle cx="44" cy="47" r="3.2" fill="${G}"/><circle cx="56" cy="47" r="3.2" fill="${G}"/><circle cx="50" cy="55" r="3.2" fill="${G}"/>`+glow('M47 38H53L50 42Z',1.6),
+  glow('M38 41L45 48M45 41L38 48M55 41L62 48M62 41L55 48',2.4)+glow('M41 55V59M45 56V58M55 56V58M59 55V59',1.8),
+  glow('M38 40V56M41 40V56M45 40V56M47 40V56M51 40V56M55 40V56M57 40V56M61 40V56',1.6),
+  glow('M35 44L46 49M65 44L54 49',3),glow('M35 48H65',3.4)];
+ const glyph=glyphs[(L.eyes*4+L.mouth)%glyphs.length];
+ const shell=`<ellipse cx="50" cy="46" rx="27" ry="29" fill="${A}"/><path d="M50 17A27 29 0 0 1 50 75Z" fill="#000" opacity=".12"/>`;
+ const face=`<path d="M28 38Q50 31 72 38L70 63Q50 71 30 63Z" fill="${D}"/><path d="M32 39Q50 34 60 36" stroke="#fff" stroke-width="2" opacity=".25" fill="none"/>`;
+ const jaw=`<path d="M38 64H62L58 74H42Z" fill="#2a3140"/><path d="M43 67H57M44 70H56" stroke="#0b0f18" stroke-width="1.5"/>`;
+ const ear=`<rect x="73" y="40" width="7" height="14" rx="3" fill="${TR}"/>${glow('M76.5 44V50',1.6)}`;
+ const head=[
+  shell+face+glyph+ear,
+  shell+`<path d="M50 17V33M42 19L44 33M58 19L56 33" stroke="${TR}" stroke-width="3"/>`+`<path d="M29 40Q50 33 71 40L69 60Q50 66 31 60Z" fill="${D}"/>`+glyph+jaw,
+  `<circle cx="50" cy="46" r="30" fill="#d9dde3"/><path d="M50 16A30 30 0 0 1 50 76Z" fill="#000" opacity=".1"/><ellipse cx="50" cy="48" rx="21" ry="19" fill="#9c6f22"/><path d="M33 42Q38 32 52 30" stroke="#ffe2a0" stroke-width="4" opacity=".7" fill="none" stroke-linecap="round"/><rect x="76" y="38" width="9" height="18" rx="3" fill="${A}"/><path d="M28 24L40 20" stroke="${A}" stroke-width="4"/>`,
+  `<path d="M14 86Q10 12 50 10Q90 12 86 86L72 82Q78 34 50 30Q22 34 28 82Z" fill="${A}"/><path d="M50 10Q90 12 86 86L72 82Q78 34 50 30Z" fill="#000" opacity=".12"/><path d="M30 38H70L67 66Q50 77 33 66Z" fill="#9aa0a8"/><path d="M36 58H64L60 68Q50 72 40 68Z" fill="#c9ced6"/><path d="M45 61H55" stroke="#5b6270" stroke-width="2"/>`+glow('M33 43H67',4),
+  shell+`<path d="M34 22H66" stroke="${D}" stroke-width="7"/><path d="M38 20V26M42 19V27M46 19V27M50 19V27M54 19V27M58 19V27M62 20V26" stroke="#fff" stroke-width="1.6" opacity=".8"/>`+face+glyph+jaw,
+  shell+face+glyph+`<path d="M24 52L30 50M76 52L70 50" stroke="${G}" stroke-width="2"/>`+ear];
+ const hex=L.extra===1?`<path d="M30 88L50 84L70 88L66 108L50 112L34 108Z" fill="url(#hexp)" opacity=".5"/>`:'';
+ const deco=L.extra===3?`<text x="60" y="98" font-size="7" font-family="Barlow Condensed,Arial" font-weight="800" fill="${TR}" transform="rotate(-8 60 98)">X-${L.num}</text>`:'';
+ return `<svg viewBox="0 0 100 118">
+<path d="M10 118Q12 84 50 82Q88 84 90 118Z" fill="${SU}"/>
+<path d="M30 88L50 84L70 88L66 108L50 112L34 108Z" fill="${A}"/><path d="M50 84L70 88L66 108L50 112Z" fill="#000" opacity=".12"/>${hex}${deco}
+<path d="M44 90L50 88L56 90" stroke="${TR}" stroke-width="2.5" fill="none"/>
+<rect x="47" y="94" width="6" height="10" rx="1.5" fill="${G}"/><rect x="45" y="92" width="10" height="14" rx="3" fill="${G}" opacity=".25"/>
+<path d="M6 108Q4 84 24 80L36 86Q32 102 22 110Z" fill="${A}"/><path d="M8 100Q10 88 22 84" stroke="${TR}" stroke-width="2.5" fill="none"/>
+<path d="M94 108Q96 84 76 80L64 86Q68 102 78 110Z" fill="${A}"/><path d="M94 108Q96 84 76 80L64 86Q68 102 78 110Z" fill="#000" opacity=".12"/>
+<circle cx="81" cy="95" r="6" fill="none" stroke="${G}" stroke-width="6" opacity=".28"/><circle cx="81" cy="95" r="6" fill="none" stroke="${G}" stroke-width="2.6"/>
+<path d="M34 82Q50 93 66 82L64 76Q50 86 36 76Z" fill="#11151d"/>
+${head[L.hair]}</svg>`}
+T.tv.civil=T.tv.fan;
+if(P.get('avatars')!=='civils'){T.tv.fan=armorFan;T.tv.tag=L=>skinOf(L).g}
 
 /* ---------- géométrie commune de la tribune ---------- */
 const ROWS=8,geo=[];
