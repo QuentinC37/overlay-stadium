@@ -35,7 +35,9 @@ https://quentinc37.github.io/overlay-stadium/?channel=TACHAINE
 | `chat=bulles` | Revenir aux grandes bulles au-dessus des avatars (par défaut : petite bulle vide + fil de chat sous le titre) |
 | `cam=droite` / `cam=gauche` | Réserve un tiers de l'écran pour ta caméra (place ta source caméra au-dessus de l'overlay, dans le cadre orange) |
 | `cam=portrait` | Raccourci : caméra verticale à droite (équivaut à `cam=droite&camformat=portrait`) |
-| `rgb=1` | Cycle RGB très lent du fond, de l'accent et des sièges (un tour en 90 s ; `rgb=40` pour un tour en 40 s) |
+| `max=100` | Nombre maximum de places à l'écran (100 par défaut) ; au-delà, le supporter le moins actif cède sa place |
+| `sieges=fixe` | Liserés de sièges en couleurs fixes au lieu du cycle RGB (par défaut) |
+| `rgb=1` | Étend le cycle RGB lent au fond et à l'accent (vert sinon) (un tour en 90 s ; `rgb=40` pour un tour en 40 s) |
 | `theme=frag` | Style par défaut : « cartes à collectionner » : panneaux anthracite à coins coupés, accent néon, jauge de remplissage de la tribune |
 | `accent=vert` | Couleur d'accent du style frag : `vert` (défaut), `orange`, `bleu`, `violet`, `or` ou un code hexa (`accent=f26b1d`) |
 | `badges=1` | Réafficher les badges Twitch (sub, modo, VIP) sur les avatars, masqués par défaut |
