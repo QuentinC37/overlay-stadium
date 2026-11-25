@@ -1,0 +1,10 @@
+// Réglages Cloudflare : le Worker « tribune » sert les pages du dépôt (overlay, vestiaire).
+// À l'étape 3, il gérera aussi l'enregistrement des looks des viewers.
+{
+  "name": "tribune",
+  "compatibility_date": "2025-11-01",
+  "assets": {
+    "directory": "./",
+    "html_handling": "auto-trailing-slash"
+  }
+}
