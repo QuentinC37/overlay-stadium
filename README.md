@@ -34,6 +34,8 @@ https://quentinc37.github.io/overlay-stadium/?channel=TACHAINE
 | `bulles=3` | Nombre maximum de bulles de chat affichées en même temps |
 | `chat=bulles` | Revenir aux grandes bulles au-dessus des avatars (par défaut : petite bulle vide + fil de chat sous le titre) |
 | `cam=droite` / `cam=gauche` | Réserve un tiers de l'écran pour ta caméra (place ta source caméra au-dessus de l'overlay, dans le cadre orange) |
+| `cam=portrait` | Raccourci : caméra verticale à droite (équivaut à `cam=droite&camformat=portrait`) |
+| `badges=1` | Réafficher les badges Twitch (sub, modo, VIP) sur les avatars, masqués par défaut |
 | `camformat=portrait` | Cadre caméra vertical sur toute la hauteur (par défaut : paysage 16:9, avec le fil de chat dessous) |
 | `ola=3` | Nombre de viewers qui doivent écrire la même chose pour lancer une ola |
 | `away=20` | Minutes sans message avant qu'un viewer quitte la tribune |
