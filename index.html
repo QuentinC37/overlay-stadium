@@ -348,7 +348,7 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 /* ---------- Look d'un supporter : des index neutres, chaque style les dessine à sa façon.
    Le futur site de personnalisation enregistrera ces mêmes index (coiffure, yeux, bouche, accessoire, couleur). ---------- */
 const SKIN=['#ffd9b8','#f1bd8e','#d99a6c','#b07650','#82502f','#5a3620'];
-const customLooks={};
+const customLooks={}; // rempli par loadLooks() depuis le vestiaire (Worker Cloudflare)
 const SEATPAL=['#ff4fa3','#3aa0ff','#f5c242','#9b6bff','#3dff8f','#ff7a1a','#19e3e3'];
 function getLook(login){const R=rng(hash(login)),i=n=>Math.floor(R()*n);
  return Object.assign({skin:i(6),color:i(6),hairColor:i(7),hair:i(6),eyes:i(3),mouth:i(4),extra:i(4),num:1+i(98)},customLooks[login]||{})}
@@ -464,7 +464,7 @@ function armorFan(L){
   glow('M38 41L45 48M45 41L38 48M55 41L62 48M62 41L55 48',2.4)+glow('M41 55V59M45 56V58M55 56V58M59 55V59',1.8),
   glow('M38 40V56M41 40V56M45 40V56M47 40V56M51 40V56M55 40V56M57 40V56M61 40V56',1.6),
   glow('M35 44L46 49M65 44L54 49',3),glow('M35 48H65',3.4)];
- const glyph=glyphs[(L.eyes*4+L.mouth)%glyphs.length];
+ const glyph=glyphs[L.glyph!=null?L.glyph%glyphs.length:(L.eyes*4+L.mouth)%glyphs.length]; // glyph : choisi sur le vestiaire
  const shell=`<ellipse cx="50" cy="46" rx="27" ry="29" fill="${A}"/><path d="M50 17A27 29 0 0 1 50 75Z" fill="#000" opacity=".12"/>`;
  const face=`<path d="M28 38Q50 31 72 38L70 63Q50 71 30 63Z" fill="${D}"/><path d="M32 39Q50 34 60 36" stroke="#fff" stroke-width="2" opacity=".25" fill="none"/>`;
  const jaw=`<path d="M38 64H62L58 74H42Z" fill="#2a3140"/><path d="M43 67H57M44 70H56" stroke="#0b0f18" stroke-width="1.5"/>`;
@@ -831,6 +831,16 @@ keys.forEach((k,i)=>{const b=document.createElement('button');b.dataset.k=k;b.te
 addEventListener('keydown',e=>{if(e.target.closest&&e.target.closest('input'))return;const i=+e.key-1;if(keys[i])render(keys[i])});
 const start=P.get('theme')||location.hash.replace(/^#/,'');
 render(T[start]?start:'frag');
+/* ---------- looks choisis sur le vestiaire (tribune.tribunewire.workers.dev/perso) ; looks=0 pour couper ---------- */
+const LOOKS_API=P.get('looks')==='0'?'':(/\.workers\.dev$/.test(location.hostname)?'':'https://tribune.tribunewire.workers.dev')+'/api/looks';
+function refreshFan(f){if(!f.el)return;f.look=getLook(f.login);const svg=f.el.querySelector('svg');if(svg)svg.outerHTML=th.fan(f.look);
+ const tag=f.el.querySelector('.tag');if(tag&&!f.color)tag.style.setProperty('--c',th.tag(f.look));
+ const sc=f.look.seat||'';f.seat.el.classList.toggle('owned',!!sc);if(sc)f.seat.el.style.setProperty('--sc',sc)}
+function loadLooks(){if(!LOOKS_API)return Promise.resolve();
+ return fetch(LOOKS_API,{cache:'no-store'}).then(r=>r.ok?r.json():null).then(all=>{if(!all||typeof all!=='object')return;
+  const before=JSON.stringify(customLooks);Object.keys(customLooks).forEach(k=>delete customLooks[k]);Object.assign(customLooks,all);
+  if(JSON.stringify(customLooks)!==before)crowd.forEach(f=>{if(f.look&&JSON.stringify(f.look)!==JSON.stringify(getLook(f.login)))refreshFan(f)})}).catch(()=>{})}
+loadLooks();setInterval(loadLooks,60e3);
 let restored=0;
 try{if(P.get('reset')==='1')localStorage.removeItem(KEY);const d=JSON.parse(localStorage.getItem(KEY)||'null');
  if(d&&Date.now()-d.t<6*3600e3&&!demo){restored=d.u.length;setLevel(levelFor(restored),true);d.u.forEach(([l,nm,lk,ct,bg,col],i)=>setTimeout(()=>arrive(l,nm,{lurk:lk,quiet:true,count:ct||0,badges:bg||{},color:col||''}),i*30))}}catch(e){}

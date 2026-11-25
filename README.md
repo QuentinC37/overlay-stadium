@@ -40,6 +40,7 @@ https://quentinc37.github.io/overlay-stadium/?channel=TACHAINE
 | `rgb=1` | Étend le cycle RGB lent au fond et à l'accent (vert sinon) (un tour en 90 s ; `rgb=40` pour un tour en 40 s) |
 | `theme=frag` | Style par défaut : « cartes à collectionner » : panneaux anthracite à coins coupés, accent néon, jauge de remplissage de la tribune |
 | `accent=vert` | Couleur d'accent du style frag : `vert` (défaut), `orange`, `bleu`, `violet`, `or` ou un code hexa (`accent=f26b1d`) |
+| `looks=0` | Ignorer les looks choisis par les viewers sur le vestiaire (`https://tribune.tribunewire.workers.dev`) |
 | `badges=1` | Réafficher les badges Twitch (sub, modo, VIP) sur les avatars, masqués par défaut |
 | `camformat=portrait` | Cadre caméra vertical sur toute la hauteur (par défaut : paysage 16:9, avec le fil de chat dessous) |
 | `ola=3` | Nombre de viewers qui doivent écrire la même chose pour lancer une ola |
@@ -47,3 +48,9 @@ https://quentinc37.github.io/overlay-stadium/?channel=TACHAINE
 | `raidmax=24` | Nombre maximum de supporters ajoutés lors d'un raid |
 | `zoom=0` | Désactive le zoom progressif (stade entier visible dès le début) |
 | `remplissage=75` | % de sièges visibles occupés avant de dézoomer au palier suivant (20 → 40 → 80 → 160 → ~370 places) |
+
+## Vestiaire des viewers
+
+`https://tribune.tribunewire.workers.dev` : chaque viewer se connecte avec Twitch et choisit son casque, sa visière, son armure, son plastron et la couleur de son siège. L'overlay relit les looks toutes les minutes.
+
+Hébergé par un Worker Cloudflare (`wrangler.jsonc`, `src/worker.js`) déployé automatiquement à chaque fusion sur `main`. Les looks sont gardés dans un espace KV (`LOOKS`).
