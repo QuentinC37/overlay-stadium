@@ -43,6 +43,9 @@ body.notitle #head{display:none}
 .beam{position:absolute;left:10%;width:80%;bottom:20%;height:900px;pointer-events:none;z-index:4;background:linear-gradient(transparent,var(--c) 70%,#fff);opacity:0;mix-blend-mode:screen;animation:beam 1.1s ease-out both}
 @keyframes beam{0%{opacity:0;transform:scaleX(.1)}20%{opacity:.9;transform:scaleX(1)}100%{opacity:0;transform:scaleX(.05)}}
 
+.fan.walking svg{animation:bob .32s ease-in-out infinite alternate;transform-origin:50% 100%}
+.fan.walking.fromR svg{--tilt:-4deg}.fan.walking.fromL svg{--tilt:4deg}
+@keyframes bob{from{transform:translateY(0) rotate(calc(var(--tilt) * -1))}to{transform:translateY(-6%) rotate(var(--tilt))}}
 /* ===== 1. POP ART ===== */
 .t-pop #bg{background:radial-gradient(circle at 50% 22%,rgba(255,255,255,.18) 0 2px,transparent 2.5px) 0 0/14px 14px,repeating-conic-gradient(from 0deg at 50% 18%,#1d4fb8 0 7.5deg,#2a67d6 7.5deg 15deg)}
 .t-pop #title{font:118px/1 Bangers,Impact,sans-serif;letter-spacing:2px;color:#ffc21a;-webkit-text-stroke:5px #0b0b12;paint-order:stroke fill;text-shadow:8px 8px 0 #0b0b12;transform:rotate(-2deg)}
@@ -394,11 +397,23 @@ function render(key){
  for(const [login,f] of crowd)place(login,f,true);
  document.querySelectorAll('#pick button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===key));
 }
+const WALK=P.get('entree')!=='pop';
+function walk(fan,seat){ // entre par le côté le plus proche et longe la rangée jusqu'à son siège
+ const left=seat.x+seat.g.w/2<960,dx=left?-(seat.x+seat.g.w*1.3):(1920-seat.x+seat.g.w*.3);
+ const dur=Math.min(3200,Math.max(900,Math.abs(dx)/650*1000)),up=-seat.g.h*.12;
+ seat.el.style.zIndex=5;fan.classList.add('walking',left?'fromL':'fromR');
+ const a1=fan.animate([{transform:`translate(${dx}px,${up}px)`},{transform:`translate(0,${up}px)`}],{duration:dur,easing:'cubic-bezier(.25,.1,.35,1)',fill:'both'});
+ a1.onfinish=()=>{fan.classList.remove('walking');
+  const a2=fan.animate([{transform:`translate(0,${up}px)`},{transform:'translate(0,4%) scale(1.06,.9)',offset:.6},{transform:'none'}],{duration:380,easing:'ease-out',fill:'both'});
+  a2.onfinish=()=>{a1.cancel();a2.cancel();seat.el.style.zIndex=2}};
+ return dur+380}
 function place(login,f,quiet){const seat=f.seat,fan=document.createElement('div');
- fan.className='fan'+(quiet?'':' in')+(f.lurk?' lurk':'');fan.innerHTML=th.fan(f.look);
+ const w=!quiet&&WALK;
+ fan.className='fan'+(quiet||w?'':' in')+(f.lurk?' lurk':'');fan.innerHTML=th.fan(f.look);
  const tag=document.createElement('div');tag.className='tag';tag.textContent=f.name;tag.style.fontSize=Math.max(12,seat.g.w*.17)+'px';tag.style.setProperty('--c',th.tag(f.look));
  fan.appendChild(tag);seat.el.appendChild(fan);seat.el.style.zIndex=2;
- if(!quiet)setTimeout(()=>fan.classList.remove('in'),1100)}
+ if(w)return walk(fan,seat);
+ if(!quiet)setTimeout(()=>fan.classList.remove('in'),1100);return 500}
 
 /* ---------- arrivée / départ ---------- */
 const countB=document.querySelector('#count b'),countL=document.getElementById('cl');
@@ -416,10 +431,10 @@ function arrive(login,display,o={}){login=login.toLowerCase();if(!login||ignore.
   if(f.lurk){f.lurk=false;el.classList.remove('lurk');beam(f.seat,th.tag(f.look));bubble(f.seat,f.name,true)}
   el.classList.remove('in','hop');void el.offsetWidth;el.classList.add('hop');if(showMsg&&o.msg)bubble(f.seat,cut(o.msg));save();return}
  const seat=freeSeat(lurk);if(!seat)return;seat.user=login;
- const nf={seat,last:lurk?0:Date.now(),seen:Date.now(),lurk,name:display||login,look:getLook(login)};crowd.set(login,nf);place(login,nf,!!o.quiet);
+ const nf={seat,last:lurk?0:Date.now(),seen:Date.now(),lurk,name:display||login,look:getLook(login)};crowd.set(login,nf);const t=place(login,nf,!!o.quiet);
  if(!o.quiet)beam(seat,th.tag(nf.look));updateCount();
- if(!lurk&&!o.quiet)setTimeout(()=>bubble(seat,nf.name,true),500);
- if(!lurk&&showMsg&&o.msg)setTimeout(()=>bubble(seat,cut(o.msg)),2600);save()}
+ if(!lurk&&!o.quiet)setTimeout(()=>bubble(seat,nf.name,true),t);
+ if(!lurk&&showMsg&&o.msg)setTimeout(()=>bubble(seat,cut(o.msg)),t+2100);save()}
 
 /* ---------- mémoire entre Starting et Ending (6 h) ---------- */
 const KEY='tribune3:'+(channel||'demo');let saveT=0;
