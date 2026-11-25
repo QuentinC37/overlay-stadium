@@ -5,7 +5,8 @@
   "main": "src/worker.js",
   "compatibility_date": "2025-11-01",
   "workers_dev": true,
-  "preview_urls": false,
+  // requis par la commande de prévisualisation des branches (npx wrangler preview)
+  "previews": {},
   "assets": {
     "directory": "./",
     "binding": "ASSETS",
