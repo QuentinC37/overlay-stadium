@@ -3,108 +3,153 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tribune néon</title>
+<title>Tribune des supporters</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Chakra+Petch:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Orbitron:wght@700;900&family=Chakra+Petch:wght@500;700&family=Press+Start+2P&family=Barlow+Condensed:ital,wght@0,600;0,800;1,800&family=Saira+Condensed:wght@600;800&display=swap" rel="stylesheet">
 <style>
 /*
-VOICE: un match de nuit dans une mégapole cyberpunk, électrique mais lisible de loin dans OBS.
-IDEA: le stade est un terminal : chaque supporter se « téléporte » dans son siège quand il se connecte au chat.
-PICTURE: gradins sombres bordés de LED, skyline sous la pluie, supporters à visières, crêtes et implants néon.
-COLOUR and TYPE: nuit violette, cyan et magenta en néon, jaune acide rare ; Orbitron pour le titre, Chakra Petch pour les pseudos.
+VOICE: cinq maquettes d'overlay à comparer en un clic, chacune avec son propre caractère.
+IDEA: une même tribune, cinq « habillages » : la scène est identique, seul le style change.
+PICTURE: la tribune qui se remplit, plein écran, avec un sélecteur de style en haut à droite.
+COLOUR and TYPE: chaque style a sa palette et sa police (Bangers, Orbitron, Press Start 2P, Barlow Condensed, Saira Condensed).
 LAYOUT: scène fixe 1920x1080 mise à l'échelle ; titre et compteur en haut, tribune sur les trois quarts du bas.
 */
-:root{--ink:#05030a;--night:#0b0618;--cyan:#00f0ff;--pink:#ff2bd6;--violet:#8a5cff;--acid:#e8ff3a;--text:#f3ecff}
 *{box-sizing:border-box;min-width:0}
-html,body{margin:0;height:100%;overflow:hidden;background:var(--night)}
+html,body{margin:0;height:100%;overflow:hidden;background:#000}
 body.clear{background:transparent}
-body{font-family:"Chakra Petch",system-ui,sans-serif;color:var(--text)}
 #stage{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;overflow:hidden}
-#bg{position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 0%,#3a0f6e 0%,#170833 45%,#07030f 100%)}
-#bg svg{position:absolute;left:0;top:0;width:1920px;height:520px}
-.beamL,.beamR{position:absolute;top:-120px;width:900px;height:900px;opacity:.22;mix-blend-mode:screen;animation:sway 9s ease-in-out infinite alternate}
-.beamL{left:-260px;background:conic-gradient(from 120deg at 30% 10%,transparent 0 8deg,var(--cyan) 12deg,transparent 22deg)}
-.beamR{right:-260px;background:conic-gradient(from 210deg at 70% 10%,transparent 0 8deg,var(--pink) 12deg,transparent 22deg);animation-delay:-4s}
-@keyframes sway{to{transform:rotate(6deg)}}
-#rain{position:absolute;inset:0;z-index:150;pointer-events:none;opacity:.5;
- background:repeating-linear-gradient(103deg,transparent 0 22px,rgba(170,210,255,.07) 22px 23px,transparent 23px 61px);
- background-size:200px 200px;animation:rain .45s linear infinite}
-@keyframes rain{to{background-position:-40px 200px}}
-body.clear #bg,body.norain #rain{display:none}
+#bg{position:absolute;inset:0}
+#bg svg.layer{position:absolute;left:0;top:0;width:1920px;height:1080px}
+body.clear #bg{display:none}
+#fx{position:absolute;inset:0;z-index:150;pointer-events:none}
 #head{position:absolute;left:0;right:0;top:40px;text-align:center;z-index:200;pointer-events:none}
-#title{display:inline-block;font:900 104px/1 Orbitron,sans-serif;letter-spacing:4px;text-transform:uppercase;color:#fff;
- text-shadow:-4px 0 var(--pink),4px 0 var(--cyan),0 0 28px rgba(255,43,214,.8),0 0 60px rgba(0,240,255,.5);animation:glitch 5s steps(1) infinite}
-@keyframes glitch{0%,92%,100%{transform:none;clip-path:none}93%{transform:translate(6px,-2px) skewX(-8deg);clip-path:inset(10% 0 45% 0)}95%{transform:translate(-8px,2px);clip-path:inset(55% 0 5% 0)}97%{transform:translate(3px,0)}}
-#count{display:inline-flex;gap:14px;align-items:center;margin-top:22px;padding:10px 28px;font:700 38px/1 "Chakra Petch",sans-serif;
- text-transform:uppercase;letter-spacing:3px;background:rgba(5,3,10,.82);border:2px solid var(--cyan);
- clip-path:polygon(18px 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%,0 18px);box-shadow:inset 0 0 24px rgba(0,240,255,.35)}
-#count b{color:var(--acid);text-shadow:0 0 14px var(--acid);font-family:Orbitron}
-#count i{width:14px;height:14px;border-radius:50%;background:var(--pink);box-shadow:0 0 12px var(--pink);animation:blink 1.2s infinite}
-@keyframes blink{50%{opacity:.2}}
+#title{display:inline-block}
+#count{display:inline-flex;gap:14px;align-items:center;margin-top:20px}
 body.notitle #head{display:none}
 .row{position:absolute;left:0;width:1920px}
-.step{position:absolute;left:0;right:0;background:linear-gradient(#141026,#07050f 70%);border-top:3px solid var(--c);box-shadow:0 -2px 18px var(--c)}
+.step{position:absolute;left:0;right:0}
 .seat{position:absolute}
 .seat>svg.chair{position:absolute;left:0;bottom:0;width:100%;height:100%;overflow:visible}
 .fan{position:absolute;left:2.5%;width:95%;bottom:8%;transform-origin:50% 100%}
 .fan svg{display:block;width:100%;height:auto;overflow:visible}
-.fan.in{animation:warp 1s steps(12) both}
+.fan.lurk svg{opacity:.5;filter:grayscale(1)}
 .fan.hop{animation:hop .5s ease-out}
-.fan.out{animation:derez .6s steps(6) both}
-.fan.lurk svg{opacity:.5;filter:grayscale(1) sepia(1) hue-rotate(140deg) saturate(5)}
-.fan.lurk{animation:flicker 7s steps(1) infinite}
-.fan.lurk.in{animation:warp 1s steps(12) both}
-@keyframes warp{0%{clip-path:inset(0 0 100% 0);opacity:0;transform:scaleX(.2)}30%{opacity:1;transform:scaleX(1.2)}50%{transform:translateX(4%) skewX(-10deg)}60%{transform:none}100%{clip-path:inset(-60% -40% -10% -40%);transform:none}}
-@keyframes hop{40%{transform:translateY(-20%) scaleY(1.06)}70%{transform:scaleY(.94)}}
-@keyframes derez{to{clip-path:inset(100% 0 0 0);opacity:0;transform:scaleX(1.4)}}
-@keyframes flicker{0%,100%{opacity:1}61%{opacity:.4}62%{opacity:1}88%{opacity:.6}89%{opacity:1}}
-.beam{position:absolute;left:10%;width:80%;bottom:20%;height:900px;pointer-events:none;z-index:4;
- background:linear-gradient(transparent,var(--c) 70%,#fff);opacity:0;mix-blend-mode:screen;animation:beam 1.1s ease-out both}
+.fan.out{animation:fade .5s ease-in both}
+@keyframes hop{40%{transform:translateY(-20%)}70%{transform:scaleY(.93)}}
+@keyframes fade{to{opacity:0;transform:translateY(-30%) scale(.6)}}
+.tag{position:absolute;left:50%;bottom:-3%;transform:translateX(-50%);max-width:124%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.1}
+.burst{position:absolute;left:50%;bottom:108%;transform:translateX(-50%);z-index:5;pointer-events:none;white-space:nowrap;max-width:380px;overflow:hidden;text-overflow:ellipsis;font-size:var(--fs);animation:pop 4.2s ease both}
+@keyframes pop{0%{opacity:0;transform:translateX(-50%) scale(.3)}8%{opacity:1;transform:translateX(-50%) scale(1.1)}14%,88%{opacity:1;transform:translateX(-50%)}100%{opacity:0;transform:translateX(-50%) translateY(-20px)}}
+.beam{position:absolute;left:10%;width:80%;bottom:20%;height:900px;pointer-events:none;z-index:4;background:linear-gradient(transparent,var(--c) 70%,#fff);opacity:0;mix-blend-mode:screen;animation:beam 1.1s ease-out both}
 @keyframes beam{0%{opacity:0;transform:scaleX(.1)}20%{opacity:.9;transform:scaleX(1)}100%{opacity:0;transform:scaleX(.05)}}
-.tag{position:absolute;left:50%;bottom:-3%;transform:translateX(-50%);max-width:124%;padding:.18em .5em .1em;
- background:rgba(5,3,10,.88);border:.1em solid var(--c,var(--cyan));color:#fff;font-weight:700;white-space:nowrap;
- overflow:hidden;text-overflow:ellipsis;line-height:1.05;letter-spacing:.3px;text-shadow:0 0 .4em var(--c,var(--cyan));
- clip-path:polygon(.35em 0,100% 0,100% calc(100% - .35em),calc(100% - .35em) 100%,0 100%,0 .35em)}
-.lurk .tag{color:#aef;border-style:dashed;background:rgba(5,3,10,.6)}
-.burst{position:absolute;left:50%;bottom:108%;transform:translateX(-50%);z-index:5;pointer-events:none;
- padding:.35em .75em .25em;background:rgba(8,4,20,.92);border:.08em solid var(--pink);color:#fff;white-space:nowrap;
- font:700 var(--fs) "Chakra Petch",sans-serif;box-shadow:0 0 .6em rgba(255,43,214,.7);animation:pop 4.2s ease both;max-width:380px;
- overflow:hidden;text-overflow:ellipsis;clip-path:polygon(.5em 0,100% 0,100% calc(100% - .5em),calc(100% - .5em) 100%,0 100%,0 .5em)}
-.burst.hi{border-color:var(--cyan);box-shadow:0 0 .6em rgba(0,240,255,.7);color:var(--cyan)}
-@keyframes pop{0%{opacity:0;transform:translateX(-50%) scaleY(0)}6%{opacity:1;transform:translateX(-46%) scaleY(1.2)}10%,88%{opacity:1;transform:translateX(-50%)}100%{opacity:0;transform:translateX(-50%) translateY(-24px)}}
-#warn{position:absolute;right:16px;bottom:12px;z-index:300;padding:6px 12px;font:700 18px "Chakra Petch";background:#2a0010;border:2px solid #ff3355;color:#ff8899;display:none}
-#hud{position:fixed;left:12px;bottom:12px;z-index:999;display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:calc(100vw - 24px);
- padding:10px;background:rgba(8,4,20,.94);border:2px solid var(--cyan);box-shadow:0 0 18px rgba(0,240,255,.4);font:15px/1.3 "Chakra Petch",system-ui}
-#hud button{min-height:40px;padding:0 14px;font:700 16px "Chakra Petch",sans-serif;text-transform:uppercase;letter-spacing:1px;color:var(--ink);
- background:var(--cyan);border:0;cursor:pointer;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
-#hud button.ghost{background:var(--pink)}
-#hud button:focus-visible{outline:3px solid var(--acid);outline-offset:2px}
-#hud .st{padding:0 6px;color:#cfe}
-body.nohud #hud{display:none}
+
+/* ===== 1. POP ART ===== */
+.t-pop #bg{background:radial-gradient(circle at 50% 22%,rgba(255,255,255,.18) 0 2px,transparent 2.5px) 0 0/14px 14px,repeating-conic-gradient(from 0deg at 50% 18%,#1d4fb8 0 7.5deg,#2a67d6 7.5deg 15deg)}
+.t-pop #title{font:118px/1 Bangers,Impact,sans-serif;letter-spacing:2px;color:#ffc21a;-webkit-text-stroke:5px #0b0b12;paint-order:stroke fill;text-shadow:8px 8px 0 #0b0b12;transform:rotate(-2deg)}
+.t-pop #count{padding:6px 26px 4px;font:44px Bangers,sans-serif;background:#f4f6f9;border:5px solid #0b0b12;border-radius:14px;box-shadow:7px 7px 0 #0b0b12;transform:rotate(1.5deg)}
+.t-pop #count b{color:#e8333a;font-weight:400}.t-pop #count i{display:none}
+.t-pop .step{background:radial-gradient(circle,rgba(0,0,0,.16) 1.4px,transparent 1.8px) 0 0/9px 9px,linear-gradient(#d9dee6,#aeb7c4);border-top:4px solid #0b0b12}
+.t-pop .fan.in{animation:drop .9s cubic-bezier(.3,1.4,.5,1) both}
+@keyframes drop{0%{transform:translateY(-520px) scale(.7,1.2);opacity:0}55%{transform:translateY(0) scale(1.15,.82);opacity:1}75%{transform:translateY(-8%) scale(.95,1.06)}100%{transform:none}}
+.t-pop .tag{font-family:Bangers,sans-serif;letter-spacing:.5px;padding:.12em .4em 0;background:#f4f6f9;color:#0b0b12;border:.14em solid #0b0b12;border-radius:.35em;box-shadow:.12em .12em 0 #0b0b12}
+.t-pop .burst{font-family:Bangers,sans-serif;padding:.3em .7em .15em;background:#fff;color:#0b0b12;border:.13em solid #0b0b12;border-radius:1em;box-shadow:.15em .15em 0 #0b0b12}
+.t-pop .burst.hi{background:#ffc21a}
+
+/* ===== 2. NÉON (cyberpunk) ===== */
+.t-neon #bg{background:radial-gradient(ellipse 70% 50% at 50% 0%,#3a0f6e 0%,#170833 45%,#07030f 100%)}
+.t-neon #fx{opacity:.5;background:repeating-linear-gradient(103deg,transparent 0 22px,rgba(170,210,255,.07) 22px 23px,transparent 23px 61px);background-size:200px 200px;animation:rain .45s linear infinite}
+@keyframes rain{to{background-position:-40px 200px}}
+.t-neon #title{font:900 104px/1 Orbitron,sans-serif;letter-spacing:4px;text-transform:uppercase;color:#fff;text-shadow:-4px 0 #ff2bd6,4px 0 #00f0ff,0 0 28px rgba(255,43,214,.8),0 0 60px rgba(0,240,255,.5);animation:glitch 5s steps(1) infinite}
+@keyframes glitch{0%,92%,100%{transform:none;clip-path:none}93%{transform:translate(6px,-2px) skewX(-8deg);clip-path:inset(10% 0 45% 0)}95%{transform:translate(-8px,2px);clip-path:inset(55% 0 5% 0)}}
+.t-neon #count{padding:10px 28px;font:700 38px/1 "Chakra Petch",sans-serif;text-transform:uppercase;letter-spacing:3px;color:#f3ecff;background:rgba(5,3,10,.82);border:2px solid #00f0ff;clip-path:polygon(18px 0,100% 0,100% calc(100% - 18px),calc(100% - 18px) 100%,0 100%,0 18px);box-shadow:inset 0 0 24px rgba(0,240,255,.35)}
+.t-neon #count b{color:#e8ff3a;text-shadow:0 0 14px #e8ff3a;font-family:Orbitron}
+.t-neon #count i{width:14px;height:14px;border-radius:50%;background:#ff2bd6;box-shadow:0 0 12px #ff2bd6;animation:blink 1.2s infinite}
+@keyframes blink{50%{opacity:.2}}
+.t-neon .step{background:linear-gradient(#141026,#07050f 70%);border-top:3px solid var(--c);box-shadow:0 -2px 18px var(--c)}
+.t-neon .fan.in{animation:warp 1s steps(12) both}
+@keyframes warp{0%{clip-path:inset(0 0 100% 0);opacity:0;transform:scaleX(.2)}30%{opacity:1;transform:scaleX(1.2)}50%{transform:translateX(4%) skewX(-10deg)}60%{transform:none}100%{clip-path:inset(-60% -40% -10% -40%);transform:none}}
+.t-neon .fan.lurk svg{filter:grayscale(1) sepia(1) hue-rotate(140deg) saturate(5)}
+.t-neon .tag{font:700 1em "Chakra Petch",sans-serif;padding:.18em .5em .1em;background:rgba(5,3,10,.88);border:.1em solid var(--c);color:#fff;text-shadow:0 0 .4em var(--c);clip-path:polygon(.35em 0,100% 0,100% calc(100% - .35em),calc(100% - .35em) 100%,0 100%,0 .35em)}
+.t-neon .burst{font-family:"Chakra Petch",sans-serif;font-weight:700;padding:.35em .75em .25em;background:rgba(8,4,20,.92);border:.08em solid #ff2bd6;color:#fff;box-shadow:0 0 .6em rgba(255,43,214,.7)}
+.t-neon .burst.hi{border-color:#00f0ff;color:#00f0ff}
+
+/* ===== 3. ARCADE 8-BIT ===== */
+.t-arcade #bg{background:#0b0b2a}
+.t-arcade #fx{background:repeating-linear-gradient(transparent 0 3px,rgba(0,0,0,.28) 3px 4px);box-shadow:inset 0 0 220px rgba(0,0,0,.75)}
+.t-arcade #title{font:64px/1.2 "Press Start 2P",monospace;color:#ffcd3a;text-shadow:6px 6px 0 #e83b3b,12px 12px 0 #0b0b2a;text-transform:uppercase}
+.t-arcade #count{margin-top:28px;padding:14px 22px;font:26px/1 "Press Start 2P",monospace;color:#fff;background:#0b0b2a;border:6px solid #fff;box-shadow:0 0 0 6px #0b0b2a,0 0 0 12px #41a6f6;text-transform:uppercase}
+.t-arcade #count b{color:#ffcd3a;font-weight:400}.t-arcade #count i{width:18px;height:18px;background:#e83b3b;animation:blink 1s steps(1) infinite}
+.t-arcade .step{background:repeating-linear-gradient(90deg,#3c3c5c 0 24px,#33334f 24px 48px);border-top:6px solid #8b8bb0}
+.t-arcade .fan.in{animation:pix .6s steps(5) both}
+@keyframes pix{0%{transform:translateY(-200%);opacity:0}40%{opacity:1}100%{transform:none}}
+.t-arcade .fan.lurk{animation:blink 2s steps(1) infinite}
+.t-arcade .tag{font:.5em/1.4 "Press Start 2P",monospace;padding:.35em .45em .2em;background:#0b0b2a;color:#fff;border:.25em solid var(--c)}
+.t-arcade .burst{font-family:"Press Start 2P",monospace;font-size:calc(var(--fs) * .6);line-height:1.5;padding:.6em .8em .4em;background:#fff;color:#0b0b2a;border:.3em solid #0b0b2a;box-shadow:0 0 0 .3em #fff}
+.t-arcade .burst.hi{background:#ffcd3a}
+
+/* ===== 4. BROADCAST (plateau TV / esport) ===== */
+.t-tv #bg{background:linear-gradient(115deg,transparent 0 55%,rgba(255,255,255,.05) 55% 62%,transparent 62%),radial-gradient(ellipse at 50% -20%,#2d4f9e,#0a1430 60%,#060b1c)}
+.t-tv #title{font:italic 800 112px/1 "Barlow Condensed",sans-serif;text-transform:uppercase;color:#fff;letter-spacing:1px;padding:4px 40px 0 34px;border-left:16px solid #d7263d;background:linear-gradient(90deg,rgba(6,11,28,.85),rgba(6,11,28,0))}
+.t-tv #count{font:800 36px/1 "Barlow Condensed",sans-serif;text-transform:uppercase;color:#14224a;background:#fff;padding:0 22px 0 0;gap:18px;letter-spacing:1px}
+.t-tv #count b{background:#d7263d;color:#fff;padding:10px 20px;font-weight:800}.t-tv #count i{display:none}
+.t-tv .step{background:linear-gradient(#26314b,#121a2e);border-top:2px solid rgba(255,255,255,.25)}
+.t-tv .fan.in{animation:rise .7s cubic-bezier(.2,.8,.2,1) both}
+@keyframes rise{0%{transform:translateY(40%);opacity:0}100%{transform:none;opacity:1}}
+.t-tv .fan.lurk svg{opacity:.4}
+.t-tv .tag{font:600 1.05em "Barlow Condensed",sans-serif;text-transform:uppercase;letter-spacing:.5px;padding:.15em .55em .1em .45em;background:#14224a;color:#fff;border-left:.3em solid var(--c)}
+.t-tv .burst{font:600 var(--fs) "Barlow Condensed",sans-serif;padding:.3em .8em;background:#fff;color:#14224a;border-left:.3em solid #d7263d}
+.t-tv .burst.hi{background:#d7263d;color:#fff;border-left-color:#fff}
+
+/* ===== 5. ARÈNE FUTURISTE ===== */
+.t-arena #bg{background:radial-gradient(ellipse 60% 40% at 50% 12%,rgba(255,122,26,.25),transparent 70%),#0b0f14}
+.t-arena #title{font:800 112px/1 "Saira Condensed",sans-serif;text-transform:uppercase;letter-spacing:6px;color:#ff7a1a;text-shadow:0 0 30px rgba(255,122,26,.5);padding:0 40px;border-left:6px solid #19e3c4;border-right:6px solid #19e3c4}
+.t-arena #count{font:600 36px/1 "Saira Condensed",sans-serif;text-transform:uppercase;letter-spacing:4px;color:#e8edf2;padding:10px 26px;background:rgba(11,15,20,.85);border-top:3px solid #ff7a1a;border-bottom:3px solid #ff7a1a}
+.t-arena #count b{color:#19e3c4;font-weight:800}.t-arena #count i{width:12px;height:28px;background:#ff7a1a;animation:blink .9s infinite}
+.t-arena .step{background:linear-gradient(#1a2129,#0b0f14 80%);border-top:6px solid transparent;border-image:repeating-linear-gradient(45deg,#ff7a1a 0 14px,#0b0f14 14px 28px) 6}
+.t-arena .fan.in{animation:scan .8s ease-out both}
+@keyframes scan{0%{clip-path:inset(50% 0 50% 0);opacity:0;transform:scale(1.1)}50%{clip-path:inset(0 0 45% 0);opacity:1}100%{clip-path:inset(-60% -40% -10% -40%);transform:none}}
+.t-arena .fan.lurk svg{filter:grayscale(1) sepia(1) hue-rotate(120deg) saturate(3)}
+.t-arena .tag{font:600 1.05em "Saira Condensed",sans-serif;text-transform:uppercase;letter-spacing:1px;padding:.1em .5em 0;background:rgba(11,15,20,.92);color:#e8edf2;border:.08em solid var(--c);border-left-width:.3em}
+.t-arena .burst{font:600 var(--fs) "Saira Condensed",sans-serif;text-transform:uppercase;letter-spacing:1px;padding:.3em .8em .2em;background:rgba(11,15,20,.95);color:#e8edf2;border:.08em solid #19e3c4;clip-path:polygon(0 0,100% 0,100% 70%,92% 100%,0 100%)}
+.t-arena .burst.hi{color:#ff7a1a;border-color:#ff7a1a}
+
+/* panneaux de test */
+.panel{position:fixed;z-index:999;display:flex;flex-wrap:wrap;gap:8px;align-items:center;max-width:calc(100vw - 24px);padding:10px;background:#fff;color:#111;border:3px solid #111;border-radius:10px;box-shadow:4px 4px 0 #111;font:15px/1.3 system-ui,sans-serif}
+#hud{left:12px;bottom:12px}#pick{right:12px;top:12px}
+.panel button{min-height:40px;padding:0 14px;font:600 15px system-ui,sans-serif;background:#f1f1f1;color:#111;border:2px solid #111;border-radius:8px;cursor:pointer}
+.panel button[aria-pressed=true]{background:#111;color:#fff}
+.panel button:focus-visible{outline:3px solid #2e7cf6;outline-offset:2px}
+#pick strong{padding:0 4px}
+body.nohud .panel{display:none}
+#warn{position:absolute;right:16px;bottom:12px;z-index:300;padding:6px 12px;font:700 20px system-ui,sans-serif;background:#2a0010;border:2px solid #ff3355;color:#ff9aaa;display:none}
+.fan.tagc .tag{border-color:var(--c)}
+@media (max-width:700px){.panel{font-size:13px}.panel button{min-height:36px;padding:0 9px;font-size:13px}#pick{left:12px}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-iteration-count:1!important}}
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><pattern id="dots" width="6" height="6" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="1.3" fill="#000"/></pattern></defs></svg>
 <div id="stage">
- <div id="bg"><div class="beamL"></div><div class="beamR"></div><svg id="city" viewBox="0 0 1920 520" aria-hidden="true"></svg></div>
- <div id="head"><div id="title">Le match va commencer</div><br><div id="count"><i></i><span><b>0</b> <span id="cl">supporter connecté</span></span></div></div>
+ <div id="bg"></div>
+ <div id="head"><div id="title">Le match va commencer</div><br><div id="count"><i></i><span><b>0</b> <span id="cl">supporter en tribune</span></span></div></div>
  <div id="rows"></div>
- <div id="rain"></div>
+ <div id="fx"></div>
  <div id="warn"></div>
 </div>
-<div id="hud">
+<div class="panel" id="pick" role="group" aria-label="Direction artistique"><strong>Style</strong></div>
+<div class="panel" id="hud">
  <button id="b1">+1 supporter</button>
  <button id="b10">+10</button>
- <button id="bl" class="ghost">+5 silencieux</button>
+ <button id="bl">+5 silencieux</button>
  <button id="bm">Faire parler</button>
- <button id="bd" class="ghost">Démo auto : ON</button>
- <button id="bx" class="ghost">Vider</button>
- <span class="st" id="st">Mode démo</span>
+ <button id="bd">Démo auto : ON</button>
+ <button id="bx">Vider</button>
+ <span id="st" style="padding:0 6px">Mode démo</span>
 </div>
 <script>
 {
-/* ---------- paramètres : ?channel=xxx (le jeton Twitch va après #token=...) ---------- */
 const P=new URLSearchParams(location.search+'&'+location.hash.replace(/^#/,''));
+if(P.get('bg')==='0')document.body.classList.add('clear');
 const channel=(P.get('channel')||'').toLowerCase().replace(/[^a-z0-9_]/g,'');
 const token=(P.get('token')||'').replace(/[^a-z0-9]/gi,'');
 const CLIENT_ID=(P.get('client_id')||'').replace(/[^a-z0-9]/gi,'');
@@ -112,144 +157,170 @@ const demo=P.has('demo')?P.get('demo')!=='0':!channel;
 const showMsg=P.get('messages')!=='0';
 const ignore=new Set((P.get('ignore')||'nightbot,streamelements,streamlabs,moobot,fossabot,wizebot,soundalerts,sery_bot,commanderroot').toLowerCase().split(','));
 if(channel)ignore.add(channel);
-if(P.get('bg')==='0')document.body.classList.add('clear');
-if(P.get('rain')==='0')document.body.classList.add('norain');
 if(P.get('hud')==='0'||(channel&&!P.has('hud')))document.body.classList.add('nohud');
 if(P.has('title')){const t=P.get('title');if(t==='0')document.body.classList.add('notitle');else document.getElementById('title').textContent=t}
-
 const stage=document.getElementById('stage');
 const fit=()=>{const s=Math.min(innerWidth/1920,innerHeight/1080);stage.style.transform=`translate(${(innerWidth-1920*s)/2}px,${(innerHeight-1080*s)/2}px) scale(${s})`};
 addEventListener('resize',fit);fit();
-
 const hash=s=>{let h=2166136261;for(const c of s)h=Math.imul(h^c.charCodeAt(0),16777619);return h>>>0};
 const rng=seed=>()=>{seed=Math.imul(seed^seed>>>15,seed|1);seed^=seed+Math.imul(seed^seed>>>7,seed|61);return((seed^seed>>>14)>>>0)/4294967296};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-/* ---------- skyline sous la pluie ---------- */
-{const R=rng(42),NEON=['#00f0ff','#ff2bd6','#8a5cff','#e8ff3a','#ff9a3c'];let s='',x=-20;
- for(let layer=0;layer<2;layer++){x=-20;while(x<1940){const w=50+R()*110,h=(layer?110:180)+R()*(layer?190:230),y=520-h,f=layer?'#120a26':'#0c0719';
-  s+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${f}"/>`;
-  if(layer){for(let wy=y+12;wy<500;wy+=16)for(let wx=x+8;wx<x+w-10;wx+=13)if(R()<.18)s+=`<rect x="${wx}" y="${wy}" width="6" height="8" fill="${NEON[Math.floor(R()*NEON.length)]}" opacity="${(.35+R()*.5).toFixed(2)}"/>`;
-   if(R()<.22){const c=NEON[Math.floor(R()*3)];s+=`<rect x="${x+8}" y="${y+20}" width="${w-16}" height="${18+R()*30}" fill="none" stroke="${c}" stroke-width="3" opacity=".9"/><rect x="${x+8}" y="${y+20}" width="${w-16}" height="10" fill="${c}" opacity=".25"/>`}
-   if(R()<.3)s+=`<line x1="${x+w/2}" y1="${y}" x2="${x+w/2}" y2="${y-30}" stroke="#2b1f4a" stroke-width="3"/><circle cx="${x+w/2}" cy="${y-32}" r="3" fill="#ff2b4a"/>`}
-  x+=w+(layer?6:-10)}}
- document.getElementById('city').innerHTML=s}
-
-/* ---------- gradins ---------- */
-const SEATC=['#00f0ff','#00f0ff','#00f0ff','#ff2bd6','#ff2bd6','#8a5cff','#8a5cff','#e8ff3a','#3a3354','#3a3354'];
-const chairSVG=(c,n)=>`<svg class="chair" viewBox="0 0 100 80" preserveAspectRatio="none">
-<path d="M9 8Q50-3 91 8L86 70Q50 79 14 70Z" fill="#17122b" stroke="#05030a" stroke-width="5" stroke-linejoin="round"/>
-<path d="M14 66Q50 74 86 66L86 70Q50 79 14 70Z" fill="#05030a" opacity=".6"/>
-<path d="M11 9Q50-1 89 9" fill="none" stroke="${c}" stroke-width="10" opacity=".25" stroke-linecap="round"/>
-<path d="M11 9Q50-1 89 9" fill="none" stroke="${c}" stroke-width="3.5" stroke-linecap="round"/>
-<path d="M20 18Q34 14 46 15L43 34Q30 34 22 38Z" fill="#fff" opacity=".06"/>
-<text x="50" y="30" font-size="11" text-anchor="middle" font-family="Orbitron,monospace" font-weight="700" fill="${c}" opacity=".85">${String(n).padStart(2,'0')}</text></svg>`;
-const ROWS=8,seats=[],rowsEl=document.getElementById('rows'),geo=[];
-for(let r=0;r<ROWS;r++){const s=.52+r*(.6/(ROWS-1));const w=122*s;geo.push({s,w,h:w*.8})}
-let y=0;geo.forEach((g,r)=>{y+=r?g.w*1.02:0;g.b=y});
-const shift=1072-geo[ROWS-1].b;
-geo.forEach((g,r)=>{
- g.b+=shift;
- const row=document.createElement('div');row.className='row';row.style.zIndex=10+r;row.style.top=(g.b-g.h)+'px';row.style.height=(g.h*2)+'px';
- const step=document.createElement('div');step.className='step';step.style.top=(g.h*.86)+'px';step.style.height=(g.h*1.2)+'px';
- step.style.setProperty('--c',['#00f0ff','#ff2bd6','#8a5cff'][r%3]);
- const gap=g.w*.06,pitch=g.w+gap,n=Math.floor((1920+pitch*.5)/pitch)+1;
- const off=(1920-(n*pitch-gap))/2+(r%2?pitch/2:0)-pitch/4;
- const R=rng(r*7919+13);let html='';
- for(let i=0;i<n;i++){const x=off+i*pitch;if(x<-g.w*.6||x>1920-g.w*.4)continue;
-  const c=SEATC[Math.floor(R()*SEATC.length)];seats.push({row:r,x,g,el:null,user:null});
-  html+=`<div class="seat" data-i="${seats.length-1}" style="left:${x}px;top:0;width:${g.w}px;height:${g.h}px">${chairSVG(c,i+1)}</div>`}
- row.innerHTML=html;row.prepend(step);rowsEl.appendChild(row)});
-document.querySelectorAll('.seat').forEach(el=>seats[+el.dataset.i].el=el);
-
-/* ---------- apparence des supporters ----------
-   Un « look » est un objet simple. Aujourd'hui il est tiré du pseudo ; plus tard, le site
-   de personnalisation fournira les choix du viewer et ils remplaceront ces valeurs. */
+/* ---------- Look d'un supporter : des index neutres, chaque style les dessine à sa façon.
+   Le futur site de personnalisation enregistrera ces mêmes index (coiffure, yeux, bouche, accessoire, couleur). ---------- */
 const SKIN=['#ffd9b8','#f1bd8e','#d99a6c','#b07650','#82502f','#5a3620'];
-const NEON=['#00f0ff','#ff2bd6','#8a5cff','#e8ff3a','#ff9a3c','#3dff8f'];
-const JACKET=['#1b1530','#241a40','#0f1f2b','#2a0f24','#14141c'];
-const HAIRC=['#0e0b14','#3b2416','#e9e4ff','#ff2bd6','#00f0ff','#8a5cff','#e8ff3a'];
-const OPTIONS={hair:['crete','undercut','carre','rase','capuche','casquette'],eyes:['normaux','visiere','implant'],mouth:['sourire','grand','neutre','masque'],extra:['aucun','casque','aucun','tatouage']};
-const customLooks={}; // login -> {hair:'crete', neon:'#ff2bd6', ...} (rempli par le futur site)
-function defaultLook(login){const R=rng(hash(login)),pick=a=>a[Math.floor(R()*a.length)];
- return{skin:pick(SKIN),neon:pick(NEON),jacket:pick(JACKET),hairColor:pick(HAIRC),hair:pick(OPTIONS.hair),eyes:pick(OPTIONS.eyes),mouth:pick(OPTIONS.mouth),extra:pick(OPTIONS.extra),num:1+Math.floor(R()*98)}}
-const getLook=login=>Object.assign(defaultLook(login),customLooks[login]||{});
-function fanSVG(L,name){
- const O='stroke="#05030a" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"',n=L.neon,hc=L.hairColor;
- const hair={
-  crete:`<path d="M40 22L44 2L50 16L56 0L60 22Q50 18 40 22Z" fill="${n}" ${O}/><path d="M26 44Q24 24 40 20Q50 18 60 20Q76 24 74 44Q70 32 50 30Q30 32 26 44Z" fill="#2a2338" ${O}/>`,
-  undercut:`<path d="M24 46Q18 14 52 12Q82 14 78 38Q66 22 44 30Q30 34 24 46Z" fill="${hc}" ${O}/><path d="M60 18L80 34" stroke="${n}" stroke-width="3"/>`,
-  carre:`<path d="M22 58Q14 12 50 12Q86 12 78 58L70 58Q72 30 50 28Q28 30 30 58Z" fill="${hc}" ${O}/><path d="M24 50Q22 40 26 32" stroke="${n}" stroke-width="2.5" fill="none"/>`,
-  rase:`<path d="M25 40Q26 18 50 17Q74 18 75 40Q64 28 50 28Q36 28 25 40Z" fill="${hc}" opacity=".85" ${O}/>`,
-  capuche:`<path d="M14 80Q8 10 50 8Q92 10 86 80L74 78Q80 30 50 28Q20 30 26 78Z" fill="${L.jacket}" ${O}/><path d="M22 74Q18 22 50 16Q82 22 78 74" fill="none" stroke="${n}" stroke-width="3"/>`,
-  casquette:`<path d="M24 38Q24 14 50 14Q76 14 76 38Z" fill="#14101e" ${O}/><path d="M48 36L94 40Q92 46 76 44Z" fill="#14101e" ${O}/><path d="M28 36H74" stroke="${n}" stroke-width="3"/><circle cx="50" cy="24" r="3.5" fill="${n}"/>`}[L.hair];
- const eyes={
-  normaux:`<ellipse cx="39" cy="46" rx="5" ry="6" fill="#fff" ${O} stroke-width="2.5"/><ellipse cx="61" cy="46" rx="5" ry="6" fill="#fff" ${O} stroke-width="2.5"/><circle cx="40" cy="47" r="2.6" fill="${n}"/><circle cx="62" cy="47" r="2.6" fill="${n}"/><circle cx="40" cy="47" r="1.1" fill="#05030a"/><circle cx="62" cy="47" r="1.1" fill="#05030a"/>`,
-  visiere:`<path d="M22 40Q50 34 78 40L76 54Q50 50 24 54Z" fill="${n}" opacity=".9" ${O}/><path d="M28 43Q50 39 72 43" stroke="#fff" stroke-width="2" opacity=".8" fill="none"/>`,
-  implant:`<ellipse cx="39" cy="46" rx="5" ry="6" fill="#fff" ${O} stroke-width="2.5"/><circle cx="40" cy="47" r="2.4" fill="#05030a"/><circle cx="61" cy="46" r="8" fill="#14101e" ${O} stroke-width="2.5"/><circle cx="61" cy="46" r="4.5" fill="none" stroke="${n}" stroke-width="2.5"/><circle cx="61" cy="46" r="1.6" fill="#fff"/><path d="M69 46H76M61 54V62" stroke="${n}" stroke-width="2"/>`}[L.eyes];
- const mouth={sourire:`<path d="M41 61Q50 68 59 61" fill="none" ${O} stroke-width="3"/>`,
-  grand:`<path d="M39 59Q50 72 61 59Z" fill="#2a0618" ${O} stroke-width="3"/><path d="M42 60H58" stroke="#fff" stroke-width="2.5"/>`,
-  neutre:`<path d="M43 63H57" ${O} stroke-width="3"/>`,
-  masque:`<path d="M28 56Q50 52 72 56L68 72Q50 80 32 72Z" fill="#14101e" ${O}/><path d="M36 62H64M38 67H62" stroke="${n}" stroke-width="2.5" stroke-dasharray="3 3"/>`}[L.mouth];
- const extra={aucun:'',
-  casque:`<path d="M20 50Q18 16 50 14Q82 16 80 50" fill="none" stroke="#14101e" stroke-width="5"/><rect x="15" y="42" width="10" height="18" rx="4" fill="#14101e" ${O} stroke-width="2.5"/><rect x="75" y="42" width="10" height="18" rx="4" fill="#14101e" ${O} stroke-width="2.5"/><path d="M18 46V56M82 46V56" stroke="${n}" stroke-width="2.5"/>`,
-  tatouage:`<path d="M30 52L34 58L30 64M70 52L66 58L70 64" fill="none" stroke="${n}" stroke-width="2"/>`}[L.extra];
- return `<svg viewBox="0 0 100 118" aria-label="${esc(name)}">
-<path d="M8 118Q8 80 50 78Q92 80 92 118Z" fill="${L.jacket}" ${O}/>
-<path d="M50 80L50 118M30 84Q40 100 38 118M70 84Q60 100 62 118" stroke="${n}" stroke-width="2.5" fill="none" opacity=".9"/>
-<path d="M30 82Q50 94 70 82L66 78Q50 86 34 78Z" fill="#05030a"/>
-<text x="76" y="110" font-size="11" text-anchor="middle" fill="${n}" font-family="Orbitron,monospace" font-weight="900">${L.num}</text>
-<path d="M41 70V82Q50 87 59 82V70Z" fill="${L.skin}" ${O}/>
-<ellipse cx="50" cy="47" rx="26" ry="28" fill="${L.skin}" ${O}/>
-<path d="M66 24Q78 40 72 62" stroke="${n}" stroke-width="2.5" fill="none" opacity=".75"/>
-${hair}${eyes}${L.hair!=='capuche'&&L.eyes!=='visiere'?`<path d="M32 37L44 35M56 35L68 37" ${O} stroke-width="2.5"/>`:''}${mouth}${extra}</svg>`;
+const customLooks={};
+function getLook(login){const R=rng(hash(login)),i=n=>Math.floor(R()*n);
+ return Object.assign({skin:i(6),color:i(6),hairColor:i(7),hair:i(6),eyes:i(3),mouth:i(4),extra:i(4),num:1+i(98)},customLooks[login]||{})}
+
+/* ---------- les 5 styles ---------- */
+const T={};
+/* 1. POP ART */
+{const J=[['#1a56c8','#fff'],['#2ea3e8','#fff'],['#f4f6f9','#1a56c8'],['#ffc21a','#1a56c8'],['#e8333a','#fff'],['#1a56c8','#ffc21a']];
+ const HC=['#1b1b1b','#5a3418','#a0522d','#f2c230','#e8333a','#f08ab0','#2ea3e8'];
+ T.pop={name:'Pop art BD',seats:['#1a56c8','#1a56c8','#1a56c8','#2ea3e8','#2ea3e8','#2ea3e8','#f4f6f9','#f4f6f9','#ffc21a','#b9c1cc'],steps:['#000'],tag:L=>J[L.color][0]==='#f4f6f9'?'#1a56c8':J[L.color][0],
+ bg:()=>'',
+ chair:(c,n)=>`<svg class="chair" viewBox="0 0 100 80" preserveAspectRatio="none"><path d="M9 8Q50-3 91 8L86 70Q50 79 14 70Z" fill="${c}" stroke="#0b0b12" stroke-width="5" stroke-linejoin="round"/><path d="M9 8Q50-3 91 8L86 70Q50 79 14 70Z" fill="url(#dots)" opacity=".22"/><path d="M20 14Q36 9 48 10L44 30Q30 30 22 34Z" fill="#fff" opacity=".45"/><rect x="41" y="18" width="18" height="9" rx="2" fill="#dfe4ea" stroke="#0b0b12" stroke-width="2"/><text x="50" y="25.5" font-size="7" text-anchor="middle" font-family="Arial" font-weight="700">${n}</text></svg>`,
+ fan:L=>{const sk=SKIN[L.skin],hc=HC[L.hairColor],[jc,jt]=J[L.color],O='stroke="#0b0b12" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"';
+  const hair=[`<path d="M24 46Q20 14 50 13Q80 14 76 46Q70 28 50 27Q32 28 24 46Z" fill="${hc}" ${O}/>`,
+   `<path d="M22 50Q14 10 50 10Q86 10 78 50Q74 60 70 48Q66 26 50 26Q34 26 30 48Q26 60 22 50Z" fill="${hc}" ${O}/>`,
+   `<path d="M26 40L30 18L38 30L44 12L52 28L60 12L64 30L72 18L74 40Q62 28 50 29Q38 28 26 40Z" fill="${hc}" ${O}/>`,
+   `<circle cx="50" cy="22" r="17" fill="${hc}" ${O}/><circle cx="30" cy="32" r="11" fill="${hc}" ${O}/><circle cx="70" cy="32" r="11" fill="${hc}" ${O}/>`,
+   `<path d="M24 42Q24 14 50 14Q76 14 76 42L84 44Q84 50 76 48Z" fill="${jc}" ${O}/><path d="M38 20Q50 16 62 20" fill="none" stroke="${jt}" stroke-width="4"/>`,
+   `<path d="M24 44Q22 16 50 15Q76 16 76 44Q60 30 40 34Q30 36 24 44Z" fill="${hc}" ${O}/><path d="M70 22Q88 34 80 66Q74 52 74 40Z" fill="${hc}" ${O}/>`][L.hair];
+  const eyes=L.eyes===1?`<rect x="28" y="38" width="20" height="13" rx="5" fill="#0b0b12"/><rect x="52" y="38" width="20" height="13" rx="5" fill="#0b0b12"/><path d="M46 42H54" ${O}/><path d="M31 41l5 0" stroke="#fff" stroke-width="2.5"/>`
+   :`<ellipse cx="39" cy="45" rx="6" ry="7" fill="#fff" ${O} stroke-width="3"/><ellipse cx="61" cy="45" rx="6" ry="7" fill="#fff" ${O} stroke-width="3"/><circle cx="40" cy="46" r="3" fill="#0b0b12"/><circle cx="62" cy="46" r="3" fill="#0b0b12"/><path d="M32 36L44 34M56 34L68 36" ${O} stroke-width="3"/>`;
+  const m=[`<path d="M40 60Q50 70 60 60" fill="none" ${O}/>`,`<path d="M38 58Q50 74 62 58Z" fill="#7a1220" ${O}/><path d="M42 59H58" stroke="#fff" stroke-width="3"/>`,`<ellipse cx="50" cy="62" rx="6" ry="7" fill="#7a1220" ${O}/>`,`<path d="M40 60Q50 70 60 60" fill="none" ${O}/>`][L.mouth];
+  return `<svg viewBox="0 0 100 118"><path d="M10 118Q10 80 50 78Q90 80 90 118Z" fill="${jc}" ${O}/>${L.extra===2?`<path d="M36 81V118M64 81V118" stroke="${jt}" stroke-width="7"/><path d="M10 118Q10 80 50 78Q90 80 90 118Z" fill="none" ${O}/>`:''}<path d="M10 118Q10 80 50 78Q90 80 90 118Z" fill="url(#dots)" opacity=".18"/><text x="50" y="112" font-size="20" text-anchor="middle" fill="${jt}" font-family="Bangers,Impact" stroke="#0b0b12" stroke-width="1">${L.num}</text><path d="M40 70V82Q50 88 60 82V70Z" fill="${sk}" ${O}/><ellipse cx="50" cy="46" rx="27" ry="29" fill="${sk}" ${O}/><path d="M50 17A27 29 0 0 1 77 46A27 29 0 0 1 60 73Q74 50 50 17Z" fill="url(#dots)" opacity=".28"/>${L.extra===1||L.extra===3?`<path d="M28 78Q50 92 72 78L74 86Q50 100 26 86Z" fill="${['#ffc21a','#e8333a','#2ea3e8'][L.color%3]}" ${O}/>`:''}${hair}${eyes}<circle cx="30" cy="56" r="5" fill="#e8333a" opacity=".35"/><circle cx="70" cy="56" r="5" fill="#e8333a" opacity=".35"/>${m}</svg>`}}}
+
+/* 2. NÉON */
+{const N=['#00f0ff','#ff2bd6','#8a5cff','#e8ff3a','#ff9a3c','#3dff8f'],JK=['#1b1530','#241a40','#0f1f2b','#2a0f24','#14141c','#1b1530'],HC=['#0e0b14','#3b2416','#e9e4ff','#ff2bd6','#00f0ff','#8a5cff','#e8ff3a'];
+ T.neon={name:'Néon cyberpunk',seats:['#00f0ff','#00f0ff','#00f0ff','#ff2bd6','#ff2bd6','#8a5cff','#8a5cff','#e8ff3a','#3a3354','#3a3354'],steps:['#00f0ff','#ff2bd6','#8a5cff'],tag:L=>N[L.color],beam:true,
+ bg:()=>{const R=rng(42);let s='',x;for(let layer=0;layer<2;layer++){x=-20;while(x<1940){const w=50+R()*110,h=(layer?110:180)+R()*(layer?190:230),y=520-h;s+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${layer?'#120a26':'#0c0719'}"/>`;
+   if(layer){for(let wy=y+12;wy<500;wy+=16)for(let wx=x+8;wx<x+w-10;wx+=13)if(R()<.18)s+=`<rect x="${wx}" y="${wy}" width="6" height="8" fill="${N[Math.floor(R()*5)]}" opacity="${(.35+R()*.5).toFixed(2)}"/>`;
+    if(R()<.22){const c=N[Math.floor(R()*3)];s+=`<rect x="${x+8}" y="${y+20}" width="${w-16}" height="${18+R()*30}" fill="none" stroke="${c}" stroke-width="3"/>`}}
+   x+=w+(layer?6:-10)}}return `<svg class="layer" viewBox="0 0 1920 1080">${s}</svg>`},
+ chair:(c,n)=>`<svg class="chair" viewBox="0 0 100 80" preserveAspectRatio="none"><path d="M9 8Q50-3 91 8L86 70Q50 79 14 70Z" fill="#17122b" stroke="#05030a" stroke-width="5" stroke-linejoin="round"/><path d="M11 9Q50-1 89 9" fill="none" stroke="${c}" stroke-width="10" opacity=".25" stroke-linecap="round"/><path d="M11 9Q50-1 89 9" fill="none" stroke="${c}" stroke-width="3.5" stroke-linecap="round"/><text x="50" y="30" font-size="11" text-anchor="middle" font-family="Orbitron,monospace" font-weight="700" fill="${c}" opacity=".85">${String(n).padStart(2,'0')}</text></svg>`,
+ fan:L=>{const O='stroke="#05030a" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"',n=N[L.color],hc=HC[L.hairColor],sk=SKIN[L.skin],jk=JK[L.color];
+  const hair=[`<path d="M40 22L44 2L50 16L56 0L60 22Q50 18 40 22Z" fill="${n}" ${O}/><path d="M26 44Q24 24 40 20Q50 18 60 20Q76 24 74 44Q70 32 50 30Q30 32 26 44Z" fill="#2a2338" ${O}/>`,
+   `<path d="M24 46Q18 14 52 12Q82 14 78 38Q66 22 44 30Q30 34 24 46Z" fill="${hc}" ${O}/><path d="M60 18L80 34" stroke="${n}" stroke-width="3"/>`,
+   `<path d="M22 58Q14 12 50 12Q86 12 78 58L70 58Q72 30 50 28Q28 30 30 58Z" fill="${hc}" ${O}/>`,
+   `<path d="M25 40Q26 18 50 17Q74 18 75 40Q64 28 50 28Q36 28 25 40Z" fill="${hc}" ${O}/>`,
+   `<path d="M14 80Q8 10 50 8Q92 10 86 80L74 78Q80 30 50 28Q20 30 26 78Z" fill="${jk}" ${O}/><path d="M22 74Q18 22 50 16Q82 22 78 74" fill="none" stroke="${n}" stroke-width="3"/>`,
+   `<path d="M24 38Q24 14 50 14Q76 14 76 38Z" fill="#14101e" ${O}/><path d="M48 36L94 40Q92 46 76 44Z" fill="#14101e" ${O}/><path d="M28 36H74" stroke="${n}" stroke-width="3"/>`][L.hair];
+  const eyes=[`<ellipse cx="39" cy="46" rx="5" ry="6" fill="#fff" ${O} stroke-width="2.5"/><ellipse cx="61" cy="46" rx="5" ry="6" fill="#fff" ${O} stroke-width="2.5"/><circle cx="40" cy="47" r="2.6" fill="${n}"/><circle cx="62" cy="47" r="2.6" fill="${n}"/>`,
+   `<path d="M22 40Q50 34 78 40L76 54Q50 50 24 54Z" fill="${n}" opacity=".9" ${O}/><path d="M28 43Q50 39 72 43" stroke="#fff" stroke-width="2" opacity=".8" fill="none"/>`,
+   `<ellipse cx="39" cy="46" rx="5" ry="6" fill="#fff" ${O} stroke-width="2.5"/><circle cx="40" cy="47" r="2.4" fill="#05030a"/><circle cx="61" cy="46" r="8" fill="#14101e" ${O} stroke-width="2.5"/><circle cx="61" cy="46" r="4.5" fill="none" stroke="${n}" stroke-width="2.5"/><path d="M69 46H76" stroke="${n}" stroke-width="2"/>`][L.eyes];
+  const mouth=[`<path d="M41 61Q50 68 59 61" fill="none" ${O} stroke-width="3"/>`,`<path d="M39 59Q50 72 61 59Z" fill="#2a0618" ${O} stroke-width="3"/>`,`<path d="M43 63H57" ${O} stroke-width="3"/>`,`<path d="M28 56Q50 52 72 56L68 72Q50 80 32 72Z" fill="#14101e" ${O}/><path d="M36 62H64M38 67H62" stroke="${n}" stroke-width="2.5" stroke-dasharray="3 3"/>`][L.mouth];
+  const extra=L.extra===1?`<path d="M20 50Q18 16 50 14Q82 16 80 50" fill="none" stroke="#14101e" stroke-width="5"/><rect x="15" y="42" width="10" height="18" rx="4" fill="#14101e" ${O} stroke-width="2.5"/><rect x="75" y="42" width="10" height="18" rx="4" fill="#14101e" ${O} stroke-width="2.5"/><path d="M18 46V56M82 46V56" stroke="${n}" stroke-width="2.5"/>`:L.extra===3?`<path d="M30 52L34 58L30 64M70 52L66 58L70 64" fill="none" stroke="${n}" stroke-width="2"/>`:'';
+  return `<svg viewBox="0 0 100 118"><path d="M8 118Q8 80 50 78Q92 80 92 118Z" fill="${jk}" ${O}/><path d="M50 80L50 118M30 84Q40 100 38 118M70 84Q60 100 62 118" stroke="${n}" stroke-width="2.5" fill="none"/><path d="M41 70V82Q50 87 59 82V70Z" fill="${sk}" ${O}/><ellipse cx="50" cy="47" rx="26" ry="28" fill="${sk}" ${O}/><path d="M66 24Q78 40 72 62" stroke="${n}" stroke-width="2.5" fill="none" opacity=".75"/>${hair}${eyes}${mouth}${extra}</svg>`}}}
+
+/* 3. ARCADE 8-BIT */
+{const A=['#2a5bd7','#e83b3b','#3ecf6a','#ffcd3a','#b25ce8','#41a6f6'],HC=['#1a1a1a','#6b3a1e','#c9712e','#ffcd3a','#e83b3b','#f4f4f4','#41a6f6'];
+ const px=(x,y,w,h,c)=>`<rect x="${x*5}" y="${y*5}" width="${w*5}" height="${h*5}" fill="${c}"/>`;
+ T.arcade={name:'Arcade 8-bit',seats:['#2a5bd7','#2a5bd7','#2a5bd7','#41a6f6','#41a6f6','#f4f4f4','#ffcd3a','#e83b3b'],steps:['#000'],tag:L=>A[L.color],
+ bg:()=>{const R=rng(7);let s='';for(let i=0;i<160;i++){const x=Math.floor(R()*384)*5,y=Math.floor(R()*70)*5,c=R()<.8?'#ffffff':'#ffcd3a';s+=`<rect x="${x}" y="${y}" width="5" height="5" fill="${c}" opacity="${R()<.5?.5:1}"/>`}
+  for(const lx of [120,1680]){s+=`<rect x="${lx}" y="140" width="20" height="200" fill="#3c3c5c"/>`;for(let i=0;i<3;i++)for(let j=0;j<4;j++)s+=`<rect x="${lx-40+j*25}" y="${60+i*25}" width="20" height="20" fill="#fff8c0"/>`}
+  return `<svg class="layer" viewBox="0 0 1920 1080" shape-rendering="crispEdges">${s}</svg>`},
+ chair:c=>`<svg class="chair" viewBox="0 0 20 16" preserveAspectRatio="none" shape-rendering="crispEdges"><rect x="1" y="0" width="18" height="16" fill="#000"/><rect x="2" y="1" width="16" height="13" fill="${c}"/><rect x="3" y="2" width="4" height="2" fill="#fff" opacity=".6"/><rect x="2" y="11" width="16" height="3" fill="#000" opacity=".3"/></svg>`,
+ fan:L=>{const a=A[L.color],hc=HC[L.hairColor],sk=SKIN[L.skin];let s=px(1,15,18,9,'#000')+px(2,16,16,8,a)+(L.extra===2?px(9,16,2,8,'#fff'):'')+px(7,13,6,3,'#000')+px(8,13,4,3,sk)+px(4,3,12,12,'#000')+px(5,4,10,10,sk);
+  s+=[px(4,2,12,3,'#000')+px(5,3,10,2,hc)+px(5,5,2,1,hc)+px(13,5,2,1,hc),
+   px(4,2,12,3,'#000')+px(5,3,10,2,hc)+[0,1,2,3,4].map(i=>px(5+i*2,1,1,2,hc)).join(''),
+   px(4,2,12,3,'#000')+px(5,3,10,2,hc)+px(4,5,2,9,hc)+px(14,5,2,9,hc),
+   px(3,0,14,8,'#000')+px(4,1,12,6,hc),
+   px(4,2,12,4,'#000')+px(5,3,10,2,a)+px(13,5,6,1,'#000')+px(14,4,4,1,a),
+   px(5,4,10,1,hc)+px(5,6,10,1,a)][L.hair];
+  s+=[px(7,8,2,2,'#fff')+px(11,8,2,2,'#fff')+px(8,9,1,1,'#000')+px(12,9,1,1,'#000'),px(6,8,8,2,'#000')+px(7,8,1,1,'#fff'),px(5,8,10,2,a)+px(6,8,2,1,'#fff')][L.eyes];
+  s+=[px(8,12,4,1,'#000'),px(9,11,2,2,'#000'),px(8,11,1,1,'#000')+px(9,12,2,1,'#000')+px(11,11,1,1,'#000'),px(6,11,8,3,'#333')+px(7,12,6,1,a)][L.mouth];
+  if(L.extra===1)s+=px(3,7,2,4,'#000')+px(15,7,2,4,'#000');if(L.extra===3)s+=px(6,11,1,1,'#ff7a9a')+px(13,11,1,1,'#ff7a9a');
+  return `<svg viewBox="0 0 100 120" shape-rendering="crispEdges">${s}</svg>`}}}
+
+/* 4. BROADCAST */
+{const C=['#d7263d','#14224a','#1e6fd9','#f2f4f8','#f5b700','#2e9e5b'],HC=['#1d1a17','#4a2c1a','#8a5a33','#d9b46a','#2b2b2b','#a33','#ccc'];
+ T.tv={name:'Broadcast TV',seats:['#14224a','#14224a','#14224a','#1e3570','#e9edf3','#e9edf3','#d7263d','#9aa4b5'],steps:['#000'],tag:L=>C[L.color]==='#f2f4f8'?'#9aa4b5':C[L.color],
+ bg:()=>{let s='';const R=rng(3);for(let i=0;i<14;i++)s+=`<circle cx="${R()*1920}" cy="${R()*300}" r="${20+R()*60}" fill="#fff" opacity="${(.03+R()*.05).toFixed(2)}"/>`;return `<svg class="layer" viewBox="0 0 1920 1080">${s}</svg>`},
+ chair:(c,n)=>`<svg class="chair" viewBox="0 0 100 80" preserveAspectRatio="none"><rect x="8" y="4" width="84" height="70" rx="16" fill="${c}"/><rect x="8" y="54" width="84" height="20" rx="10" fill="#000" opacity=".2"/><rect x="14" y="8" width="72" height="8" rx="4" fill="#fff" opacity=".15"/><text x="50" y="40" font-size="12" text-anchor="middle" font-family="Barlow Condensed,Arial" font-weight="600" fill="#000" opacity=".25">${n}</text></svg>`,
+ fan:L=>{const c=C[L.color],hc=HC[L.hairColor],sk=SKIN[L.skin],dk='#1a1a1a';
+  const hair=[`<path d="M26 44Q26 20 50 20Q74 20 74 44Q66 30 50 32Q34 30 26 44Z" fill="${hc}"/>`,`<path d="M25 46Q22 18 52 18Q78 20 75 42Q60 26 36 34Z" fill="${hc}"/>`,`<path d="M24 72Q18 20 50 20Q82 20 76 72L70 72Q72 34 50 32Q28 34 30 72Z" fill="${hc}"/>`,`<circle cx="50" cy="18" r="9" fill="${hc}"/><path d="M26 44Q26 20 50 20Q74 20 74 44Q66 30 50 32Q34 30 26 44Z" fill="${hc}"/>`,`<path d="M26 40Q26 18 50 18Q74 18 74 40Z" fill="${c}"/><path d="M50 38H86Q84 44 72 44H50Z" fill="${c}"/><path d="M26 40Q26 18 50 18Q74 18 74 40Z" fill="#000" opacity=".12"/>`,''][L.hair];
+  const eyes=[`<circle cx="41" cy="49" r="2.8" fill="${dk}"/><circle cx="59" cy="49" r="2.8" fill="${dk}"/>`,`<circle cx="41" cy="49" r="6.5" fill="none" stroke="${dk}" stroke-width="2"/><circle cx="59" cy="49" r="6.5" fill="none" stroke="${dk}" stroke-width="2"/><path d="M47.5 49H52.5" stroke="${dk}" stroke-width="2"/><circle cx="41" cy="49" r="2.2" fill="${dk}"/><circle cx="59" cy="49" r="2.2" fill="${dk}"/>`,`<path d="M37 50Q41 46 45 50M55 50Q59 46 63 50" fill="none" stroke="${dk}" stroke-width="2.5" stroke-linecap="round"/>`][L.eyes];
+  const mouth=[`<path d="M43 60Q50 65 57 60" fill="none" stroke="${dk}" stroke-width="2.5" stroke-linecap="round"/>`,`<path d="M42 59H58Q57 68 50 68Q43 68 42 59Z" fill="#5a1a24"/>`,`<path d="M45 62H55" stroke="${dk}" stroke-width="2.5" stroke-linecap="round"/>`,`<path d="M41 59H59Q58 67 50 67Q42 67 41 59Z" fill="#fff" stroke="${dk}" stroke-width="1.5"/>`][L.mouth];
+  const extra=L.extra===1?`<path d="M30 54L38 52V56L30 58Z" fill="${c}"/><path d="M30 58L38 56V60L30 62Z" fill="#fff"/>`:L.extra===3?`<path d="M30 80Q50 90 70 80L72 88Q50 98 28 88Z" fill="${c}"/><path d="M30 84Q50 94 70 84" stroke="#fff" stroke-width="2" fill="none"/>`:'';
+  return `<svg viewBox="0 0 100 118"><path d="M10 118Q12 84 50 82Q88 84 90 118Z" fill="${c}"/><path d="M10 118Q12 84 50 82L50 118Z" fill="#fff" opacity=".08"/><path d="M38 84L50 96L62 84" fill="none" stroke="${c==='#f2f4f8'?'#14224a':'#fff'}" stroke-width="4"/><rect x="43" y="68" width="14" height="18" fill="${sk}"/><rect x="43" y="68" width="14" height="8" fill="#000" opacity=".12"/><circle cx="26" cy="50" r="5" fill="${sk}"/><circle cx="74" cy="50" r="5" fill="${sk}"/><circle cx="50" cy="47" r="24" fill="${sk}"/><path d="M50 23A24 24 0 0 1 50 71Z" fill="#000" opacity=".06"/>${hair}${eyes}${mouth}${extra}</svg>`}}}
+
+/* 5. ARÈNE FUTURISTE */
+{const C=['#ff7a1a','#19e3c4','#6b3fd6','#ff3b3b','#e8edf2','#ffd23a'],HC=['#14181d','#4a2c1a','#a0602f','#e8edf2','#19e3c4','#ff7a1a','#6b3fd6'];
+ T.arena={name:'Arène futuriste',seats:['#ff7a1a','#19e3c4','#19e3c4','#6b3fd6','#ff7a1a','#e8edf2','#19e3c4','#ff3b3b'],steps:['#000'],tag:L=>C[L.color],
+ bg:()=>{let s=`<defs><pattern id="hex" width="56" height="97" patternUnits="userSpaceOnUse"><path d="M28 0L56 16V48L28 64L0 48V16Z M28 64V97" fill="none" stroke="#19e3c4" stroke-width="1.2" opacity=".14"/></pattern></defs><rect width="1920" height="1080" fill="url(#hex)"/>`;
+  s+=`<g fill="none" stroke-width="3"><circle cx="960" cy="140" r="330" stroke="#ff7a1a" opacity=".25" stroke-dasharray="180 40 20 40"/><circle cx="960" cy="140" r="380" stroke="#19e3c4" opacity=".18" stroke-dasharray="6 14"/><path d="M380 290H700M1220 290H1540" stroke="#ff7a1a" opacity=".5"/></g>`;
+  s+=`<g fill="#ff7a1a" opacity=".55"><rect x="60" y="60" width="140" height="6"/><rect x="60" y="74" width="80" height="6"/><rect x="1720" y="60" width="140" height="6"/><rect x="1780" y="74" width="80" height="6"/></g>`;
+  return `<svg class="layer" viewBox="0 0 1920 1080">${s}</svg>`},
+ chair:(c,n)=>`<svg class="chair" viewBox="0 0 100 80" preserveAspectRatio="none"><path d="M14 4H86L94 18L88 72H12L6 18Z" fill="#1a2129" stroke="#05080b" stroke-width="4" stroke-linejoin="round"/><path d="M18 11H82" stroke="${c}" stroke-width="3"/><path d="M12 60H88" stroke="#000" stroke-width="10" opacity=".35"/><rect x="38" y="20" width="24" height="12" fill="#05080b"/><text x="50" y="30" font-size="10" text-anchor="middle" font-family="Saira Condensed,Arial" font-weight="800" fill="${c}">${String(n).padStart(2,'0')}</text></svg>`,
+ fan:L=>{const c=C[L.color],hc=HC[L.hairColor],sk=SKIN[L.skin],O='stroke="#05080b" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"',W='#e8edf2';
+  const helmet=`<path d="M22 56Q18 14 50 12Q82 14 78 56L70 58Q72 30 50 28Q28 30 30 58Z" fill="${W}" ${O}/><path d="M50 12V28" stroke="${c}" stroke-width="5"/>`;
+  const hair=[helmet,helmet+`<path d="M44 14L50 -2L56 14Z" fill="${c}" ${O}/>`,helmet+`<path d="M24 32L14 8M76 32L86 8" stroke="${W}" stroke-width="4"/><circle cx="14" cy="8" r="4" fill="${c}"/><circle cx="86" cy="8" r="4" fill="${c}"/>`,
+   `<path d="M24 46Q18 14 52 12Q82 14 78 38Q66 22 44 30Q30 34 24 46Z" fill="${hc}" ${O}/>`,
+   `<path d="M25 42Q24 16 50 15Q76 16 75 42Q64 28 50 28Q36 28 25 42Z" fill="${hc}" ${O}/><path d="M22 48Q20 14 50 12Q80 14 78 48" fill="none" stroke="#2a323c" stroke-width="5"/><rect x="16" y="42" width="10" height="16" fill="#2a323c" ${O} stroke-width="2.5"/><path d="M21 58Q26 70 40 66" fill="none" stroke="#2a323c" stroke-width="3"/><circle cx="41" cy="66" r="3" fill="${c}"/>`,
+   `<path d="M25 42Q24 16 50 15Q76 16 75 42Q64 28 50 28Q36 28 25 42Z" fill="${hc}" ${O}/><path d="M24 32H76" stroke="#2a323c" stroke-width="5"/><rect x="32" y="24" width="14" height="10" rx="3" fill="${c}" ${O} stroke-width="2.5"/><rect x="54" y="24" width="14" height="10" rx="3" fill="${c}" ${O} stroke-width="2.5"/>`][L.hair];
+  const eyes=[`<path d="M35 44L44 46M56 46L65 44" ${O} stroke-width="3"/><circle cx="40" cy="50" r="2.6" fill="#05080b"/><circle cx="60" cy="50" r="2.6" fill="#05080b"/>`,`<path d="M24 40H76L72 55H28Z" fill="${c}" opacity=".85" ${O}/><path d="M30 44H60" stroke="#fff" stroke-width="2" opacity=".8"/>`,`<path d="M26 44H74L72 52H28Z" fill="#05080b" ${O}/><path d="M32 48H68" stroke="${c}" stroke-width="3"/>`][L.eyes];
+  const mouth=[`<path d="M44 64H56" ${O} stroke-width="3"/>`,`<path d="M42 62Q50 68 58 62" fill="none" ${O} stroke-width="3"/>`,`<path d="M43 61H57L54 68H46Z" fill="#3a0d10" ${O} stroke-width="2.5"/>`,`<path d="M30 58H70L64 74H36Z" fill="${W}" ${O}/><path d="M42 64V70M50 64V70M58 64V70" stroke="#05080b" stroke-width="2"/>`][L.mouth];
+  const extra=L.extra===1?`<path d="M30 56L36 54L36 60L30 62Z" fill="${c}"/>`:L.extra===3?`<text x="80" y="100" font-size="12" text-anchor="middle" font-family="Saira Condensed" font-weight="800" fill="#05080b">${L.num}</text>`:'';
+  return `<svg viewBox="0 0 100 118"><path d="M8 118Q8 82 50 80Q92 82 92 118Z" fill="#1f2731" ${O}/><path d="M8 100L14 84L34 80L30 96Z M92 100L86 84L66 80L70 96Z" fill="${c}" ${O}/><path d="M50 84V118M40 100H60" stroke="${c}" stroke-width="2.5"/>${L.extra===3?`<rect x="72" y="90" width="16" height="13" fill="${W}" ${O} stroke-width="2"/>`:''}<path d="M42 70V83Q50 87 58 83V70Z" fill="${sk}" ${O}/><ellipse cx="50" cy="48" rx="25" ry="27" fill="${sk}" ${O}/>${hair}${eyes}${mouth}${extra}</svg>`}}}
+
+/* ---------- géométrie commune de la tribune ---------- */
+const ROWS=8,geo=[];
+for(let r=0;r<ROWS;r++){const s=.52+r*(.6/(ROWS-1));const w=122*s;geo.push({w,h:w*.8})}
+{let y=0;geo.forEach((g,r)=>{y+=r?g.w*1.02:0;g.b=y});const sh=1072-geo[ROWS-1].b;geo.forEach(g=>g.b+=sh)}
+const seats=[];
+geo.forEach((g,r)=>{const gap=g.w*.06,pitch=g.w+gap,n=Math.floor((1920+pitch*.5)/pitch)+1,off=(1920-(n*pitch-gap))/2+(r%2?pitch/2:0)-pitch/4;
+ for(let i=0;i<n;i++){const x=off+i*pitch;if(x<-g.w*.6||x>1920-g.w*.4)continue;seats.push({row:r,x,g,num:i+1,el:null,user:null})}});
+
+/* ---------- rendu d'un style ---------- */
+let th=null;const crowd=new Map();
+const rowsEl=document.getElementById('rows'),bgEl=document.getElementById('bg');
+function render(key){
+ th=T[key];document.body.className=document.body.className.replace(/\bt-\w+/g,'').trim()+' t-'+key;
+ bgEl.innerHTML=th.bg();
+ const R=rng(99);rowsEl.innerHTML='';
+ geo.forEach((g,r)=>{const row=document.createElement('div');row.className='row';row.style.zIndex=10+r;row.style.top=(g.b-g.h)+'px';row.style.height=(g.h*2)+'px';
+  row.innerHTML=`<div class="step" style="top:${g.h*.86}px;height:${g.h*1.2}px;--c:${th.steps[r%th.steps.length]}"></div>`+
+   seats.map((s,i)=>s.row!==r?'':`<div class="seat" data-i="${i}" style="left:${s.x}px;top:0;width:${g.w}px;height:${g.h}px">${th.chair(th.seats[Math.floor(R()*th.seats.length)],s.num)}</div>`).join('');
+  rowsEl.appendChild(row)});
+ rowsEl.querySelectorAll('.seat').forEach(el=>seats[+el.dataset.i].el=el);
+ for(const [login,f] of crowd)place(login,f,true);
+ document.querySelectorAll('#pick button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===key));
 }
+function place(login,f,quiet){const seat=f.seat,fan=document.createElement('div');
+ fan.className='fan'+(quiet?'':' in')+(f.lurk?' lurk':'');fan.innerHTML=th.fan(f.look);
+ const tag=document.createElement('div');tag.className='tag';tag.textContent=f.name;tag.style.fontSize=Math.max(12,seat.g.w*.17)+'px';tag.style.setProperty('--c',th.tag(f.look));
+ fan.appendChild(tag);seat.el.appendChild(fan);seat.el.style.zIndex=2;
+ if(!quiet)setTimeout(()=>fan.classList.remove('in'),1100)}
 
 /* ---------- arrivée / départ ---------- */
-const crowd=new Map(); // login -> {seat,last,lurk,name}
 const countB=document.querySelector('#count b'),countL=document.getElementById('cl');
-const updateCount=()=>{countB.textContent=crowd.size;countL.textContent=crowd.size>1?'supporters connectés':'supporter connecté'};
-function bubble(seat,text,hi){seat.el.querySelector('.burst')?.remove();
- const b=document.createElement('div');b.className='burst'+(hi?' hi':'');b.textContent=text;b.style.setProperty('--fs',Math.max(17,seat.g.w*.2)+'px');
- seat.el.appendChild(b);setTimeout(()=>b.remove(),4300)}
+const updateCount=()=>{countB.textContent=crowd.size;countL.textContent=crowd.size>1?'supporters en tribune':'supporter en tribune'};
+function bubble(seat,text,hi){seat.el.querySelector('.burst')?.remove();const b=document.createElement('div');b.className='burst'+(hi?' hi':'');b.textContent=text;b.style.setProperty('--fs',Math.max(17,seat.g.w*.2)+'px');seat.el.appendChild(b);setTimeout(()=>b.remove(),4300)}
+function beam(seat,c){if(!th.beam)return;const b=document.createElement('div');b.className='beam';b.style.setProperty('--c',c);seat.el.appendChild(b);setTimeout(()=>b.remove(),1200)}
 function freeSeat(lurk){const empty=seats.filter(s=>!s.user);
- if(empty.length){const score=s=>s.row*2.2-Math.abs(s.x+s.g.w/2-960)/260+Math.random()*3+(lurk?-s.row*3:0); // les silencieux remplissent plutôt l'arrière
-  return empty.sort((a,b)=>score(b)-score(a))[0]}
+ if(empty.length){const score=s=>s.row*2.2-Math.abs(s.x+s.g.w/2-960)/260+Math.random()*3+(lurk?-s.row*3:0);return empty.sort((a,b)=>score(b)-score(a))[0]}
  let old=null;for(const [k,v] of crowd)if(!old||(v.lurk&&!old[1].lurk)||(v.lurk===old[1].lurk&&v.last<old[1].last))old=[k,v];
- if(lurk&&!old[1].lurk)return null; // un silencieux ne prend jamais la place de quelqu'un qui parle
- leave(old[0]);return old[1].seat}
-function leave(login){const f=crowd.get(login);if(!f)return;crowd.delete(login);
- const el=f.seat.el.querySelector('.fan');f.seat.user=null;f.seat.el.style.zIndex='';
- if(el){el.className='fan out';setTimeout(()=>el.remove(),600)}updateCount();save()}
-function arrive(login,display,o={}){
- login=login.toLowerCase();if(!login||ignore.has(login))return;
- const f=crowd.get(login),lurk=!!o.lurk;
- if(f){if(lurk){f.seen=Date.now();return}
-  f.last=f.seen=Date.now();const el=f.seat.el.querySelector('.fan');
-  if(f.lurk){f.lurk=false;el.classList.remove('lurk');beam(f.seat,f.look.neon);bubble(f.seat,f.name,true)} // l'hologramme devient solide
-  el.classList.remove('in','hop');void el.offsetWidth;el.classList.add('hop');
-  if(o.color)el.querySelector('.tag').style.setProperty('--c',o.color);
-  if(showMsg&&o.msg)bubble(f.seat,o.msg.length>48?o.msg.slice(0,46)+'…':o.msg);save();return}
+ if(lurk&&!old[1].lurk)return null;leave(old[0]);return old[1].seat}
+function leave(login){const f=crowd.get(login);if(!f)return;crowd.delete(login);const el=f.seat.el.querySelector('.fan');f.seat.user=null;f.seat.el.style.zIndex='';if(el){el.className='fan out';setTimeout(()=>el.remove(),500)}updateCount();save()}
+const cut=m=>m.length>48?m.slice(0,46)+'…':m;
+function arrive(login,display,o={}){login=login.toLowerCase();if(!login||ignore.has(login))return;const f=crowd.get(login),lurk=!!o.lurk;
+ if(f){f.seen=Date.now();if(lurk)return;f.last=Date.now();const el=f.seat.el.querySelector('.fan');
+  if(f.lurk){f.lurk=false;el.classList.remove('lurk');beam(f.seat,th.tag(f.look));bubble(f.seat,f.name,true)}
+  el.classList.remove('in','hop');void el.offsetWidth;el.classList.add('hop');if(showMsg&&o.msg)bubble(f.seat,cut(o.msg));save();return}
  const seat=freeSeat(lurk);if(!seat)return;seat.user=login;
- const look=getLook(login),name=display||login;
- const fan=document.createElement('div');fan.className='fan in'+(lurk?' lurk':'');fan.innerHTML=fanSVG(look,name);
- const tag=document.createElement('div');tag.className='tag';tag.textContent=name;tag.style.fontSize=Math.max(12,seat.g.w*.17)+'px';
- tag.style.setProperty('--c',o.color||look.neon);fan.appendChild(tag);seat.el.appendChild(fan);seat.el.style.zIndex=2;
- setTimeout(()=>fan.classList.remove('in'),1100);
- if(!o.quiet)beam(seat,look.neon);
- crowd.set(login,{seat,last:lurk?0:Date.now(),seen:Date.now(),lurk,name,look});updateCount();
- if(!lurk&&!o.quiet)setTimeout(()=>bubble(seat,name,true),500);
- if(!lurk&&showMsg&&o.msg)setTimeout(()=>bubble(seat,o.msg.length>48?o.msg.slice(0,46)+'…':o.msg),2600);
- save()}
-function beam(seat,c){const b=document.createElement('div');b.className='beam';b.style.setProperty('--c',c);seat.el.appendChild(b);setTimeout(()=>b.remove(),1200)}
+ const nf={seat,last:lurk?0:Date.now(),seen:Date.now(),lurk,name:display||login,look:getLook(login)};crowd.set(login,nf);place(login,nf,!!o.quiet);
+ if(!o.quiet)beam(seat,th.tag(nf.look));updateCount();
+ if(!lurk&&!o.quiet)setTimeout(()=>bubble(seat,nf.name,true),500);
+ if(!lurk&&showMsg&&o.msg)setTimeout(()=>bubble(seat,cut(o.msg)),2600);save()}
 
 /* ---------- mémoire entre Starting et Ending (6 h) ---------- */
-const KEY='tribune2:'+(channel||'demo');let saveT=0;
+const KEY='tribune3:'+(channel||'demo');let saveT=0;
 function save(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify({t:Date.now(),u:[...crowd].map(([k,v])=>[k,v.name,v.lurk])}))}catch(e){}},500)}
-try{if(P.get('reset')==='1')localStorage.removeItem(KEY);const d=JSON.parse(localStorage.getItem(KEY)||'null');
- if(d&&Date.now()-d.t<6*3600e3&&!demo)d.u.forEach(([l,n,lk],i)=>setTimeout(()=>arrive(l,n,{lurk:lk,quiet:true}),i*40))}catch(e){}
 
-/* ---------- chat Twitch anonyme (IRC WebSocket) ---------- */
+/* ---------- chat Twitch anonyme (IRC WebSocket, sans compte) ---------- */
 const st=document.getElementById('st'),warn=document.getElementById('warn');
 function connect(delay=1000){let ws;try{ws=new WebSocket('wss://irc-ws.chat.twitch.tv:443')}catch(e){st.textContent='Connexion impossible ici';return}
  ws.onopen=()=>{ws.send('CAP REQ :twitch.tv/tags twitch.tv/commands'+(P.get('lurkers')==='irc'?' twitch.tv/membership':''));
@@ -257,11 +328,10 @@ function connect(delay=1000){let ws;try{ws=new WebSocket('wss://irc-ws.chat.twit
  ws.onmessage=e=>e.data.split('\r\n').forEach(line=>{if(!line)return;if(line.startsWith('PING')){ws.send('PONG :tmi.twitch.tv');return}
   let tags={},rest=line;if(rest[0]==='@'){const sp=rest.indexOf(' ');rest.slice(1,sp).split(';').forEach(kv=>{const i=kv.indexOf('=');tags[kv.slice(0,i)]=kv.slice(i+1)});rest=rest.slice(sp+1)}
   const m=rest.match(/^:([^!]+)!\S+ (PRIVMSG|JOIN|PART) #\S+(?: :(.*))?$/);if(!m)return;
-  if(m[2]==='PRIVMSG')arrive(m[1],tags['display-name']||m[1],{color:tags.color,msg:m[3]});
+  if(m[2]==='PRIVMSG')arrive(m[1],tags['display-name']||m[1],{msg:m[3]});
   else if(m[2]==='JOIN')arrive(m[1],m[1],{lurk:true});
-  else {const f=crowd.get(m[1]);if(f&&f.lurk)leave(m[1])}});
+  else{const f=crowd.get(m[1]);if(f&&f.lurk)leave(m[1])}});
  ws.onclose=()=>{st.textContent='Reconnexion…';setTimeout(()=>connect(Math.min(delay*2,30000)),delay)}}
-if(channel)connect();
 
 /* ---------- viewers silencieux : API Twitch « Get Chatters » (jeton du streamer) ---------- */
 async function helix(path){const r=await fetch('https://api.twitch.tv/helix/'+path,{headers:{Authorization:'Bearer '+token,'Client-Id':CLIENT_ID}});
@@ -272,29 +342,37 @@ async function pollChatters(){
    all=all.concat(j.data);cursor=j.pagination&&j.pagination.cursor||''}while(cursor&&all.length<3000);
   const now=Date.now(),here=new Set(all.map(c=>c.user_login));
   all.forEach((c,i)=>setTimeout(()=>arrive(c.user_login,c.user_name,{lurk:true}),Math.min(i*120,20000)));
-  for(const [k,v] of crowd)if(v.lurk&&!here.has(k)&&now-v.seen>150e3)leave(k); // parti depuis plus de 2 min 30
+  for(const [k,v] of crowd)if(v.lurk&&!here.has(k)&&now-v.seen>150e3)leave(k);
   warn.style.display='none';setTimeout(pollChatters,60e3)}
  catch(e){warn.style.display='block';warn.textContent=e.message==='expired'?'Jeton Twitch expiré : reconnecte-toi sur la page connect':'API Twitch indisponible, nouvel essai dans 2 min';
   if(e.message!=='expired')setTimeout(pollChatters,120e3)}}
-if(channel&&token&&CLIENT_ID)pollChatters();
 
-/* ---------- mode démo ---------- */
+/* ---------- démo ---------- */
 const A=['Kylo','Mimi','Zizou','Nala','Tchoupi','Neo','Loulou','Kenji','Sasha','Pixel','Gaby','Yasmine','Ronan','Lola','Max','Nina','Tito','Ines','Jojo','Malik','Rosa','Hugo','Lina','Sam','Volt','Byte'];
 const B=['_TV','92','_FC','Gaming','_off','2077','_le_vrai','Ultra','13','_bzh','Live','_exe','','','',''];
 let n=0;const fake=()=>{n++;return A[Math.floor(Math.random()*A.length)]+B[Math.floor(Math.random()*B.length)]+(n>40?n:'')};
-const TALK=['GOOOAL','allez !!','on est chauds','qui a ramené les chips ?','ça commence quand ?','ALLEZZZ','première fois ici','gg','le son est nickel','PogChamp','je sortais du lurk'];
+const TALK=['GOOOAL','allez !!','on est chauds','qui a ramené les chips ?','ça commence quand ?','ALLEZZZ','première fois ici','gg','le son est nickel','je sortais du lurk'];
 const talk=()=>{const k=[...crowd.keys()];if(k.length)arrive(k[Math.floor(Math.random()*k.length)],'',{msg:TALK[Math.floor(Math.random()*TALK.length)]})};
 const add=lurk=>{const f=fake();arrive(f,f,{lurk})};
-let auto=null;
-const setAuto=on=>{clearInterval(auto);auto=on?setInterval(()=>{const r=Math.random();crowd.size<8||r<.4?add(false):r<.7?add(true):talk()},1100):null;
- document.getElementById('bd').textContent='Démo auto : '+(on?'ON':'OFF')};
+let auto=null;const bd=document.getElementById('bd');
+const setAuto=on=>{clearInterval(auto);auto=on?setInterval(()=>{const r=Math.random();crowd.size<8||r<.45?add(false):r<.7?add(true):talk()},1000):null;bd.textContent='Démo auto : '+(on?'ON':'OFF')};
 document.getElementById('b1').onclick=()=>add(false);
 document.getElementById('b10').onclick=()=>{for(let i=0;i<10;i++)setTimeout(()=>add(false),i*120)};
 document.getElementById('bl').onclick=()=>{for(let i=0;i<5;i++)setTimeout(()=>add(true),i*150)};
-document.getElementById('bm').onclick=talk;
-document.getElementById('bd').onclick=()=>setAuto(!auto);
+document.getElementById('bm').onclick=talk;bd.onclick=()=>setAuto(!auto);
 document.getElementById('bx').onclick=()=>{[...crowd.keys()].forEach(leave);try{localStorage.removeItem(KEY)}catch(e){}};
-if(demo){setAuto(true);st.textContent=channel?'Démo + #'+channel:'Mode démo'}else setAuto(false);
+
+/* ---------- sélecteur de style ---------- */
+const pick=document.getElementById('pick'),keys=Object.keys(T);
+keys.forEach((k,i)=>{const b=document.createElement('button');b.dataset.k=k;b.textContent=(i+1)+'. '+T[k].name;b.onclick=()=>{render(k);try{history.replaceState(null,'','#'+k)}catch(e){}};pick.appendChild(b)});
+addEventListener('keydown',e=>{const i=+e.key-1;if(keys[i])render(keys[i])});
+const start=P.get('theme')||location.hash.replace(/^#/,'');
+render(T[start]?start:'tv');
+try{if(P.get('reset')==='1')localStorage.removeItem(KEY);const d=JSON.parse(localStorage.getItem(KEY)||'null');
+ if(d&&Date.now()-d.t<6*3600e3&&!demo)d.u.forEach(([l,nm,lk],i)=>setTimeout(()=>arrive(l,nm,{lurk:lk,quiet:true}),i*40))}catch(e){}
+if(channel)connect();
+if(channel&&token&&CLIENT_ID)pollChatters();
+if(demo){for(let i=0;i<22;i++)add(i%4===3);setAuto(true);st.textContent=channel?'Démo + #'+channel:'Mode démo'}else setAuto(false);
 }
 </script>
 </body>

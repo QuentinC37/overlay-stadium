@@ -20,6 +20,8 @@ https://quentinc37.github.io/overlay-stadium/?channel=TACHAINE
 | `demo=1` | Simule des supporters (sans `channel`, la démo est active par défaut) |
 | `hud=1` | Affiche les boutons de test |
 | `messages=0` | Ne pas afficher les messages du chat dans des bulles |
-| `lurkers=1` | Fait aussi entrer les viewers silencieux (arrivent avec du retard, côté Twitch) |
+| `lurkers=irc` | Viewers silencieux sans connexion (moins fiable, arrivent avec du retard) |
 | `ignore=bot1,bot2` | Pseudos à ignorer (par défaut : les bots courants) |
 | `reset=1` | Vide la tribune mémorisée (le public est gardé 6 h entre les scènes) |
+| `theme=tv` | Style : `tv` (Broadcast, par défaut), `pop`, `neon`, `arcade`, `arena` |
+| `client_id=…` + `#token=…` | Affiche les viewers silencieux via l'API Twitch (URL générée par `connect.html`) |
