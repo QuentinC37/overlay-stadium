@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tribune des supporters</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
+<style>
+/*
+VOICE: un match de foot en BD pop-art, joyeux, bruyant, lisible de loin dans OBS.
+IDEA: une case de comic géante : la tribune d'un stade dont les sièges se remplissent.
+PICTURE: gradins en perspective, sièges bleu / bleu clair / blanc / jaune, supporters dessinés à gros traits.
+COLOUR and TYPE: bleu stade dominant, blanc en soutien, jaune vif en accent ; Bangers pour tout le lettrage.
+LAYOUT: scène fixe 1920x1080 mise à l'échelle ; titre et compteur en haut, tribune sur les trois quarts du bas.
+*/
+:root{--ink:#0b0b12;--blue:#1a56c8;--sky:#2ea3e8;--white:#f4f6f9;--yellow:#ffc21a;--red:#e8333a}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0;height:100%;overflow:hidden;background:#0d2a6b}
+body.clear{background:transparent}
+body{font-family:Bangers,"Comic Sans MS",Impact,sans-serif;color:var(--ink)}
+#stage{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;overflow:hidden}
+/* ciel / fond pop-art */
+#bg{position:absolute;inset:0;background:
+ radial-gradient(circle at 50% 22%,rgba(255,255,255,.18) 0 2px,transparent 2.5px) 0 0/14px 14px,
+ repeating-conic-gradient(from 0deg at 50% 18%,#1d4fb8 0 7.5deg,#2a67d6 7.5deg 15deg);}
+body.clear #bg{display:none}
+#head{position:absolute;left:0;right:0;top:34px;text-align:center;z-index:200;pointer-events:none}
+#title{display:inline-block;font-size:118px;line-height:1;letter-spacing:2px;color:var(--yellow);
+ -webkit-text-stroke:5px var(--ink);paint-order:stroke fill;text-shadow:8px 8px 0 var(--ink);transform:rotate(-2deg)}
+#count{display:inline-block;margin-top:14px;padding:6px 26px 4px;font-size:44px;background:var(--white);
+ border:5px solid var(--ink);border-radius:14px;box-shadow:7px 7px 0 var(--ink);transform:rotate(1.5deg)}
+#count b{color:var(--red);font-weight:400}
+body.notitle #head{display:none}
+/* gradins */
+.row{position:absolute;left:0;width:1920px}
+.step{position:absolute;left:0;right:0;background:
+ radial-gradient(circle,rgba(0,0,0,.16) 1.4px,transparent 1.8px) 0 0/9px 9px,linear-gradient(#d9dee6,#aeb7c4);
+ border-top:4px solid var(--ink)}
+.seat{position:absolute}
+.seat>svg.chair{position:absolute;left:0;bottom:0;width:100%;height:100%;overflow:visible}
+.fan{position:absolute;left:2.5%;width:95%;bottom:8%;transform-origin:50% 100%}
+.fan svg{display:block;width:100%;height:auto;overflow:visible}
+.fan.in{animation:drop .9s cubic-bezier(.3,1.4,.5,1) both}
+.fan.hop{animation:hop .55s ease-out}
+.fan.out{animation:leave .5s ease-in both}
+@keyframes drop{0%{transform:translateY(-520px) scale(.7,1.2);opacity:0}55%{transform:translateY(0) scale(1.15,.82);opacity:1}75%{transform:translateY(-8%) scale(.95,1.06)}100%{transform:none}}
+@keyframes hop{0%,100%{transform:none}40%{transform:translateY(-22%) rotate(-4deg)}70%{transform:translateY(0) scale(1.08,.92)}}
+@keyframes leave{to{transform:translateY(-140%) scale(.4);opacity:0}}
+.tag{position:absolute;left:50%;bottom:-2%;transform:translateX(-50%);max-width:118%;padding:.12em .4em 0;
+ background:var(--white);border:.14em solid var(--ink);border-radius:.35em;white-space:nowrap;overflow:hidden;
+ text-overflow:ellipsis;line-height:1.05;letter-spacing:.5px;box-shadow:.12em .12em 0 var(--ink)}
+.burst{position:absolute;left:50%;bottom:105%;transform:translateX(-50%);z-index:5;pointer-events:none;
+ padding:.3em .7em .15em;background:#fff;border:.13em solid var(--ink);border-radius:1em;white-space:nowrap;
+ box-shadow:.15em .15em 0 var(--ink);font-size:var(--fs);animation:pop 4.2s ease both;max-width:340px;
+ overflow:hidden;text-overflow:ellipsis}
+.burst.hi{background:var(--yellow)}
+.burst::after{content:"";position:absolute;left:44%;bottom:-.55em;width:.7em;height:.7em;background:inherit;
+ border-right:.13em solid var(--ink);border-bottom:.13em solid var(--ink);transform:rotate(45deg)}
+@keyframes pop{0%{transform:translateX(-50%) scale(0) rotate(-8deg)}8%{transform:translateX(-50%) scale(1.15) rotate(3deg)}14%,88%{transform:translateX(-50%) scale(1);opacity:1}100%{transform:translateX(-50%) translateY(-20px) scale(.9);opacity:0}}
+/* panneau de test, jamais affiché quand une chaîne est branchée */
+#hud{position:fixed;left:12px;bottom:12px;z-index:999;display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+ max-width:calc(100vw - 24px);padding:10px;background:#fff;border:3px solid var(--ink);border-radius:12px;
+ box-shadow:5px 5px 0 var(--ink);font:15px/1.3 system-ui,sans-serif}
+#hud button{min-height:40px;padding:0 14px;font:20px Bangers,sans-serif;letter-spacing:.5px;background:var(--yellow);
+ border:3px solid var(--ink);border-radius:9px;cursor:pointer}
+#hud button:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+#hud button.ghost{background:#fff}
+#hud .st{padding:0 6px}
+body.nohud #hud{display:none}
+@media (prefers-reduced-motion:reduce){.fan.in,.fan.hop,.burst{animation-duration:.01s}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+ <defs>
+  <pattern id="dots" width="6" height="6" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="1.3" fill="#000"/></pattern>
+  <pattern id="dotsW" width="6" height="6" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="1.4" fill="#fff"/></pattern>
+ </defs>
+</svg>
+<div id="stage">
+ <div id="bg"></div>
+ <div id="head"><div id="title">Le match va commencer</div><br><div id="count"><b>0</b> supporters en tribune</div></div>
+ <div id="rows"></div>
+</div>
+<div id="hud">
+ <button id="b1">+1 supporter</button>
+ <button id="b10">+10</button>
+ <button id="bm" class="ghost">Faire parler</button>
+ <button id="bd" class="ghost">Démo auto : ON</button>
+ <button id="bx" class="ghost">Vider</button>
+ <span class="st" id="st">Mode démo</span>
+</div>
+<script>
+{
+/* ---------- paramètres : ?channel=xxx ou #channel=xxx ---------- */
+const P=new URLSearchParams(location.search+'&'+location.hash.replace(/^#/,''));
+const channel=(P.get('channel')||'').toLowerCase().replace(/[^a-z0-9_]/g,'');
+const demo=P.has('demo')?P.get('demo')!=='0':!channel;
+const showMsg=P.get('messages')!=='0';
+const ignore=new Set((P.get('ignore')||'nightbot,streamelements,streamlabs,moobot,fossabot,wizebot,soundalerts').toLowerCase().split(','));
+if(P.get('bg')==='0')document.body.classList.add('clear');
+if(P.get('hud')==='0'||(channel&&!P.has('hud')))document.body.classList.add('nohud');
+if(P.has('title')){const t=P.get('title');if(t==='0')document.body.classList.add('notitle');else document.getElementById('title').textContent=t}
+
+/* ---------- mise à l'échelle 1920x1080 ---------- */
+const stage=document.getElementById('stage');
+const fit=()=>{const s=Math.min(innerWidth/1920,innerHeight/1080);stage.style.transform=`translate(${(innerWidth-1920*s)/2}px,${(innerHeight-1080*s)/2}px) scale(${s})`};
+addEventListener('resize',fit);fit();
+
+/* ---------- hasard déterministe ---------- */
+const hash=s=>{let h=2166136261;for(const c of s)h=Math.imul(h^c.charCodeAt(0),16777619);return h>>>0};
+const rng=seed=>()=>{seed=Math.imul(seed^seed>>>15,seed|1);seed^=seed+Math.imul(seed^seed>>>7,seed|61);return((seed^seed>>>14)>>>0)/4294967296};
+
+/* ---------- gradins ---------- */
+const SEATC=['#1a56c8','#1a56c8','#1a56c8','#2ea3e8','#2ea3e8','#2ea3e8','#f4f6f9','#f4f6f9','#ffc21a','#b9c1cc'];
+const chairSVG=(c,n)=>`<svg class="chair" viewBox="0 0 100 80" preserveAspectRatio="none">
+<path d="M9 8Q50-3 91 8L86 70Q50 79 14 70Z" fill="${c}" stroke="#0b0b12" stroke-width="5" stroke-linejoin="round"/>
+<path d="M9 8Q50-3 91 8L86 70Q50 79 14 70Z" fill="url(#dots)" opacity=".22"/>
+<path d="M20 14Q36 9 48 10L44 30Q30 30 22 34Z" fill="#fff" opacity=".45"/>
+<rect x="41" y="18" width="18" height="9" rx="2" fill="#dfe4ea" stroke="#0b0b12" stroke-width="2"/>
+<text x="50" y="25.5" font-size="7" text-anchor="middle" font-family="Arial" font-weight="700">${n}</text></svg>`;
+const ROWS=8,seats=[],rowsEl=document.getElementById('rows');
+let geo=[],bottom=0;
+for(let r=0;r<ROWS;r++){const s=.52+r*(.6/(ROWS-1));const w=122*s,h=w*.8;geo.push({s,w,h})}
+// on empile du fond (r=0) vers l'avant
+let y=0;geo.forEach((g,r)=>{y+=r?g.w*1.02:0;g.b=y});
+const shift=1072-geo[ROWS-1].b;
+geo.forEach((g,r)=>{
+ g.b+=shift;
+ const row=document.createElement('div');row.className='row';row.style.zIndex=10+r;
+ row.style.top=(g.b-g.h)+'px';row.style.height=(g.h*2)+'px';
+ const step=document.createElement('div');step.className='step';step.style.top=(g.h*.86)+'px';step.style.height=(g.h*1.2)+'px';
+ const gap=g.w*.06,pitch=g.w+gap,n=Math.floor((1920+pitch*.5)/pitch)+1;
+ const off=(1920-(n*pitch-gap))/2+(r%2?pitch/2:0)-pitch/4;
+ const R=rng(r*7919+13);let html='';
+ for(let i=0;i<n;i++){
+  const x=off+i*pitch;if(x<-g.w*.6||x>1920-g.w*.4)continue;
+  const c=SEATC[Math.floor(R()*SEATC.length)];
+  seats.push({row:r,x,g,el:null,user:null});
+  html+=`<div class="seat" data-i="${seats.length-1}" style="left:${x}px;top:0;width:${g.w}px;height:${g.h}px">${chairSVG(c,i+1)}</div>`;
+ }
+ row.innerHTML=html;row.prepend(step);rowsEl.appendChild(row);
+});
+document.querySelectorAll('.seat').forEach(el=>seats[+el.dataset.i].el=el);
+
+/* ---------- supporters (personnages originaux, générés depuis le pseudo) ---------- */
+const SKIN=['#ffd9b8','#f6c08f','#e0a070','#b97a4f','#8a5535','#5e3a22'];
+const HAIR=['#1b1b1b','#5a3418','#a0522d','#f2c230','#e8333a','#f08ab0','#2ea3e8','#ffffff'];
+const JERSEY=[['#1a56c8','#fff'],['#2ea3e8','#fff'],['#f4f6f9','#1a56c8'],['#ffc21a','#1a56c8'],['#e8333a','#fff'],['#1a56c8','#ffc21a']];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function fanSVG(name){
+ const R=rng(hash(name)),pick=a=>a[Math.floor(R()*a.length)];
+ const sk=pick(SKIN),hc=pick(HAIR),[jc,jt]=pick(JERSEY),hs=Math.floor(R()*6),mouth=Math.floor(R()*3),scarf=R()<.35,stripes=R()<.4,num=1+Math.floor(R()*23);
+ const O='stroke="#0b0b12" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"';
+ const hair=[
+  `<path d="M24 46Q20 14 50 13Q80 14 76 46Q70 28 50 27Q32 28 24 46Z" fill="${hc}" ${O}/>`,
+  `<path d="M22 50Q14 10 50 10Q86 10 78 50Q74 60 70 48Q66 26 50 26Q34 26 30 48Q26 60 22 50Z" fill="${hc}" ${O}/>`,
+  `<path d="M26 40L30 18L38 30L44 12L52 28L60 12L64 30L72 18L74 40Q62 28 50 29Q38 28 26 40Z" fill="${hc}" ${O}/>`,
+  `<circle cx="50" cy="22" r="17" fill="${hc}" ${O}/><circle cx="30" cy="32" r="11" fill="${hc}" ${O}/><circle cx="70" cy="32" r="11" fill="${hc}" ${O}/>`,
+  `<path d="M24 42Q24 14 50 14Q76 14 76 42L84 44Q84 50 76 48Z" fill="${jc}" ${O}/><path d="M38 20Q50 16 62 20" fill="none" stroke="${jt}" stroke-width="4"/>`,
+  `<path d="M24 44Q22 16 50 15Q76 16 76 44Q60 30 40 34Q30 36 24 44Z" fill="${hc}" ${O}/><path d="M70 22Q88 34 80 66Q74 52 74 40Z" fill="${hc}" ${O}/>`
+ ][hs];
+ const m=[`<path d="M40 60Q50 70 60 60" fill="none" ${O}/>`,
+  `<path d="M38 58Q50 74 62 58Z" fill="#7a1220" ${O}/><path d="M42 59H58" stroke="#fff" stroke-width="3"/>`,
+  `<ellipse cx="50" cy="62" rx="6" ry="7" fill="#7a1220" ${O}/>`][mouth];
+ return `<svg viewBox="0 0 100 118" aria-label="${esc(name)}">
+<path d="M10 118Q10 80 50 78Q90 80 90 118Z" fill="${jc}" ${O}/>
+${stripes?`<path d="M36 81V118M64 81V118" stroke="${jt}" stroke-width="7"/><path d="M10 118Q10 80 50 78Q90 80 90 118Z" fill="none" ${O}/>`:''}
+<path d="M10 118Q10 80 50 78Q90 80 90 118Z" fill="url(#dots)" opacity=".18"/>
+<text x="50" y="112" font-size="20" text-anchor="middle" fill="${jt}" font-family="Bangers,Impact" stroke="#0b0b12" stroke-width="1">${num}</text>
+<path d="M40 70V82Q50 88 60 82V70Z" fill="${sk}" ${O}/>
+<ellipse cx="50" cy="46" rx="27" ry="29" fill="${sk}" ${O}/>
+<path d="M50 17A27 29 0 0 1 77 46A27 29 0 0 1 60 73Q74 50 50 17Z" fill="url(#dots)" opacity=".28"/>
+${scarf?`<path d="M28 78Q50 92 72 78L74 86Q50 100 26 86Z" fill="${pick(['#ffc21a','#e8333a','#2ea3e8'])}" ${O}/><path d="M36 84L40 104L48 100Z" fill="#f4f6f9" ${O}/>`:''}
+${hair}
+<ellipse cx="39" cy="45" rx="6" ry="7" fill="#fff" ${O} stroke-width="3"/><ellipse cx="61" cy="45" rx="6" ry="7" fill="#fff" ${O} stroke-width="3"/>
+<circle cx="40" cy="46" r="3" fill="#0b0b12"/><circle cx="62" cy="46" r="3" fill="#0b0b12"/>
+<path d="M32 36L44 34M56 34L68 36" ${O} stroke-width="3"/>
+<circle cx="30" cy="56" r="5" fill="url(#dots)" opacity=".3"/><circle cx="70" cy="56" r="5" fill="url(#dots)" opacity=".3"/>
+<circle cx="30" cy="56" r="5" fill="#e8333a" opacity=".35"/><circle cx="70" cy="56" r="5" fill="#e8333a" opacity=".35"/>
+${m}</svg>`;
+}
+
+/* ---------- logique d'arrivée ---------- */
+const crowd=new Map(); // login -> {seat,last}
+const countEl=document.querySelector('#count b');
+const updateCount=()=>{countEl.textContent=crowd.size;document.querySelector('#count').lastChild.textContent=crowd.size>1?' supporters en tribune':' supporter en tribune'};
+const MSG_HI=['Allez !','Salut la tribune !','On est là !','Présent !','Ici !'];
+function bubble(seat,text,hi){
+ seat.el.querySelector('.burst')?.remove();
+ const b=document.createElement('div');b.className='burst'+(hi?' hi':'');b.textContent=text;
+ b.style.setProperty('--fs',Math.max(18,seat.g.w*.24)+'px');
+ seat.el.appendChild(b);setTimeout(()=>b.remove(),4300);
+}
+function freeSeat(){
+ const empty=seats.filter(s=>!s.user);
+ if(empty.length){ // on remplit plutôt l'avant et le centre en premier
+  const score=s=>s.row*2.2-Math.abs(s.x+s.g.w/2-960)/260+Math.random()*3;
+  return empty.sort((a,b)=>score(b)-score(a))[0];
+ }
+ let old=null;for(const [k,v] of crowd)if(!old||v.last<old[1].last)old=[k,v];
+ leave(old[0]);return old[1].seat;
+}
+function leave(login){
+ const f=crowd.get(login);if(!f)return;crowd.delete(login);
+ const el=f.seat.el.querySelector('.fan');f.seat.user=null;f.seat.el.style.zIndex='';
+ if(el){el.className='fan out';setTimeout(()=>el.remove(),500)}
+ f.seat.el.querySelector('.tag')?.remove();updateCount();
+}
+function arrive(login,display,color,msg){
+ login=login.toLowerCase();if(!login||ignore.has(login))return;
+ const f=crowd.get(login);
+ if(f){ // déjà là : il saute et parle
+  f.last=Date.now();const el=f.seat.el.querySelector('.fan');
+  el.classList.remove('in','hop');void el.offsetWidth;el.classList.add('hop');
+  if(showMsg&&msg)bubble(f.seat,msg.length>48?msg.slice(0,46)+'…':msg);
+  return;
+ }
+ const seat=freeSeat();seat.user=login;
+ const fan=document.createElement('div');fan.className='fan in';fan.innerHTML=fanSVG(login);
+ const tag=document.createElement('div');tag.className='tag';tag.textContent=display||login;
+ tag.style.fontSize=Math.max(12,seat.g.w*.19)+'px';if(color)tag.style.borderColor=color;
+ fan.appendChild(tag);seat.el.appendChild(fan);seat.el.style.zIndex=2;
+ crowd.set(login,{seat,last:Date.now()});updateCount();
+ setTimeout(()=>bubble(seat,display||login,true),450);
+ save();
+}
+
+/* ---------- mémoire entre Starting et Ending (6 h) ---------- */
+const KEY='tribune:'+(channel||'demo');
+function save(){try{localStorage.setItem(KEY,JSON.stringify({t:Date.now(),u:[...crowd.keys()].map(k=>[k,crowd.get(k).seat.el.querySelector('.tag').textContent])}))}catch(e){}}
+try{if(P.get('reset')==='1')localStorage.removeItem(KEY);const d=JSON.parse(localStorage.getItem(KEY)||'null');
+ if(d&&Date.now()-d.t<6*3600e3&&!demo)d.u.forEach(([l,n],i)=>setTimeout(()=>arrive(l,n),i*60))}catch(e){}
+
+/* ---------- chat Twitch anonyme (IRC WebSocket, sans compte) ---------- */
+const st=document.getElementById('st');
+function connect(delay=1000){
+ let ws;try{ws=new WebSocket('wss://irc-ws.chat.twitch.tv:443')}catch(e){st.textContent='Connexion impossible ici';return}
+ ws.onopen=()=>{ws.send('CAP REQ :twitch.tv/tags twitch.tv/commands'+(P.get('lurkers')==='1'?' twitch.tv/membership':''));
+  ws.send('PASS SCHMOOPIIE');ws.send('NICK justinfan'+Math.floor(1e4+Math.random()*8e4));ws.send('JOIN #'+channel);
+  st.textContent='Connecté à #'+channel;delay=1000};
+ ws.onmessage=e=>e.data.split('\r\n').forEach(line=>{
+  if(!line)return;if(line.startsWith('PING')){ws.send('PONG :tmi.twitch.tv');return}
+  let tags={},rest=line;
+  if(rest[0]==='@'){const sp=rest.indexOf(' ');rest.slice(1,sp).split(';').forEach(kv=>{const [k,v]=kv.split('=');tags[k]=v||''});rest=rest.slice(sp+1)}
+  const m=rest.match(/^:([^!]+)!\S+ (PRIVMSG|JOIN) #\S+(?: :(.*))?$/);if(!m)return;
+  if(m[2]==='PRIVMSG')arrive(m[1],tags['display-name']||m[1],tags.color,m[3]);
+  else arrive(m[1],m[1]);
+ });
+ ws.onclose=()=>{st.textContent='Reconnexion…';setTimeout(()=>connect(Math.min(delay*2,30000)),delay)};
+}
+if(channel)connect();
+
+/* ---------- mode démo ---------- */
+const A=['Kylo','Mimi','Zizou','Nala','Tchoupi','Bricoleur','Loulou','Kenji','Sasha','Pepito','Gaby','Yasmine','Ronan','Lola','Max','Nina','Tito','Ines','Jojo','Malik','Rosa','Hugo','Lina','Sam'];
+const B=['_TV','92','_FC','Gaming','_off','77','_le_vrai','Ultra','13','_bzh','Live','_ok','','','',''];
+let n=0;const fake=()=>{n++;return A[Math.floor(Math.random()*A.length)]+B[Math.floor(Math.random()*B.length)]+(n>40?n:'')};
+const TALK=['GOOOAL','allez les bleus !!','on est chauds','qui a ramené les chips ?','ça commence quand ?','ALLEZZZ','première fois ici','gg','le son est nickel','PogChamp'];
+const talk=()=>{const k=[...crowd.keys()];if(k.length)arrive(k[Math.floor(Math.random()*k.length)],'',null,TALK[Math.floor(Math.random()*TALK.length)])};
+let auto=null;
+const setAuto=on=>{clearInterval(auto);auto=on?setInterval(()=>{Math.random()<.65||crowd.size<6?(f=>arrive(f,f))(fake()):talk()},1100):null;
+ document.getElementById('bd').textContent='Démo auto : '+(on?'ON':'OFF')};
+document.getElementById('b1').onclick=()=>{const f=fake();arrive(f,f)};
+document.getElementById('b10').onclick=()=>{for(let i=0;i<10;i++)setTimeout(()=>{const f=fake();arrive(f,f)},i*120)};
+document.getElementById('bm').onclick=talk;
+document.getElementById('bd').onclick=()=>setAuto(!auto);
+document.getElementById('bx').onclick=()=>{[...crowd.keys()].forEach(leave);try{localStorage.removeItem(KEY)}catch(e){}};
+if(demo){setAuto(true);st.textContent=channel?'Démo + #'+channel:'Mode démo'}else setAuto(false);
+}
+</script>
+</body>
+</html>
