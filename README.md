@@ -26,3 +26,4 @@ https://quentinc37.github.io/overlay-stadium/?channel=TACHAINE
 | `theme=tv` | Style : `tv` (Broadcast, par défaut), `pop`, `neon`, `arcade`, `arena` |
 | `client_id=…` + `#token=…` | Affiche les viewers silencieux via l'API Twitch (URL générée par `connect.html`) |
 | `avatars=civils` | Avatars « civils » (sans armure) pour le style Broadcast |
+| `fx=0` | Coupe la bataille spatiale en fond (style Broadcast) |

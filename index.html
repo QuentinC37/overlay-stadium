@@ -88,16 +88,16 @@ body.notitle #head{display:none}
 .t-arcade .burst.hi{background:#ffcd3a}
 
 /* ===== 4. BROADCAST (plateau TV / esport) ===== */
-.t-tv #bg{background:linear-gradient(115deg,transparent 0 55%,rgba(255,255,255,.05) 55% 62%,transparent 62%),radial-gradient(ellipse at 50% -20%,#2d4f9e,#0a1430 60%,#060b1c)}
-.t-tv #title{font:italic 800 112px/1 "Barlow Condensed",sans-serif;text-transform:uppercase;color:#fff;letter-spacing:1px;padding:4px 40px 0 34px;border-left:16px solid #f26b1d;background:linear-gradient(90deg,rgba(6,11,28,.85),rgba(6,11,28,0))}
-.t-tv #count{font:800 36px/1 "Barlow Condensed",sans-serif;text-transform:uppercase;color:#14224a;background:#fff;padding:0 22px 0 0;gap:18px;letter-spacing:1px}
+.t-tv #bg{background:linear-gradient(115deg,transparent 0 55%,rgba(255,255,255,.05) 55% 62%,transparent 62%),radial-gradient(ellipse at 50% -20%,#1e1e22,#0a0a0b 60%,#000)}
+.t-tv #title{font:italic 800 112px/1 "Barlow Condensed",sans-serif;text-transform:uppercase;color:#fff;letter-spacing:1px;padding:4px 40px 0 34px;border-left:16px solid #f26b1d;background:linear-gradient(90deg,rgba(0,0,0,.9),rgba(0,0,0,0))}
+.t-tv #count{font:800 36px/1 "Barlow Condensed",sans-serif;text-transform:uppercase;color:#000;background:#fff;padding:0 22px 0 0;gap:18px;letter-spacing:1px}
 .t-tv #count b{background:#f26b1d;color:#fff;padding:10px 20px;font-weight:800}.t-tv #count i{display:none}
-.t-tv .step{background:linear-gradient(#26314b,#121a2e);border-top:2px solid rgba(255,255,255,.25)}
+.t-tv .step{background:linear-gradient(#1c1c1f,#080809);border-top:2px solid rgba(255,255,255,.25)}
 .t-tv .fan.in{animation:rise .7s cubic-bezier(.2,.8,.2,1) both}
 @keyframes rise{0%{transform:translateY(40%);opacity:0}100%{transform:none;opacity:1}}
 .t-tv .fan.lurk svg{opacity:.4}
-.t-tv .tag{font:600 1.05em "Barlow Condensed",sans-serif;text-transform:uppercase;letter-spacing:.5px;padding:.15em .55em .1em .45em;background:#14224a;color:#fff;border-left:.3em solid var(--c)}
-.t-tv .burst{font:600 var(--fs) "Barlow Condensed",sans-serif;padding:.3em .8em;background:#fff;color:#14224a;border-left:.3em solid #f26b1d}
+.t-tv .tag{font:600 1.05em "Barlow Condensed",sans-serif;text-transform:uppercase;letter-spacing:.5px;padding:.15em .55em .1em .45em;background:#000;color:#fff;border-left:.3em solid var(--c)}
+.t-tv .burst{font:600 var(--fs) "Barlow Condensed",sans-serif;padding:.3em .8em;background:#fff;color:#000;border-left:.3em solid #f26b1d}
 .t-tv .burst.hi{background:#f26b1d;color:#fff;border-left-color:#fff}
 
 .t-tv .sheen{position:absolute;inset:0 -40%;background:linear-gradient(115deg,transparent 42%,rgba(255,255,255,.07) 49%,rgba(242,107,29,.06) 52%,transparent 58%);animation:sheen 11s linear infinite}
@@ -107,6 +107,28 @@ body.notitle #head{display:none}
 .t-tv .spot{position:absolute;top:-80px;width:520px;height:1200px;mix-blend-mode:screen;transform-origin:50% 0;clip-path:polygon(46% 0,54% 0,100% 100%,0 100%);background:linear-gradient(rgba(255,255,255,.16),transparent 75%);animation:spot 9s ease-in-out infinite alternate}
 .t-tv .spot.l{left:60px;--a:-28deg;--b:12deg}.t-tv .spot.r{right:60px;--a:28deg;--b:-12deg;background:linear-gradient(rgba(242,107,29,.2),transparent 75%);animation-delay:-4.5s}
 @keyframes spot{from{transform:rotate(var(--a))}to{transform:rotate(var(--b))}}
+.t-tv .tw{animation:tw 3s ease-in-out infinite alternate}@keyframes tw{to{opacity:.1}}
+#space{position:absolute;inset:0;overflow:hidden}
+.ship{position:absolute;left:0;animation:fly var(--t) linear forwards;will-change:transform}
+@keyframes fly{from{transform:translate(var(--x0),0)}to{transform:translate(var(--x1),var(--dy))}}
+.ship .in{position:relative;transform-origin:0 50%}
+.ship svg{display:block}
+.ship .fl{transform-box:fill-box;transform-origin:right center;animation:flame .12s steps(2) infinite}@keyframes flame{50%{transform:scaleX(.6)}}
+.bolt{position:absolute;height:4px;border-radius:2px;background:linear-gradient(90deg,transparent,#fff 60%,#f26b1d);box-shadow:0 0 8px #f26b1d;animation:shoot .75s linear forwards}
+.bolt.w{background:linear-gradient(90deg,transparent,#fff 60%,#9fe8ff);box-shadow:0 0 8px #9fe8ff}
+@keyframes shoot{from{transform:translateX(0)}to{transform:translateX(1100px);opacity:.2}}
+.lone{position:absolute;left:0;width:90px;height:3px;border-radius:2px;background:linear-gradient(90deg,transparent,#fff,#f26b1d);box-shadow:0 0 8px #f26b1d;animation:lone var(--t) linear forwards}
+@keyframes lone{from{transform:translate(var(--x0),0) rotate(var(--r))}to{transform:translate(var(--x1),var(--dy)) rotate(var(--r))}}
+.boom{position:absolute;width:0;height:0}
+.boom .fla{position:absolute;left:-70px;top:-70px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,#fff 0 12%,#ffd08a 22%,#f26b1d 40%,rgba(242,107,29,0) 70%);animation:fla .9s ease-out forwards}
+@keyframes fla{0%{transform:scale(.1);opacity:1}30%{transform:scale(1)}100%{transform:scale(1.3);opacity:0}}
+.boom .ring{position:absolute;left:-60px;top:-60px;width:120px;height:120px;border-radius:50%;border:3px solid #fff;animation:ring .8s ease-out forwards}
+@keyframes ring{from{transform:scale(.1);opacity:.9}to{transform:scale(1.8);opacity:0}}
+.boom .deb{position:absolute;left:-3px;top:-3px;width:6px;height:6px;border-radius:50%;background:#ffb27a;animation:deb 1s ease-out forwards}
+@keyframes deb{from{transform:rotate(var(--a)) translateX(0)}to{transform:rotate(var(--a)) translateX(var(--d));opacity:0}}
+.gren{position:absolute;width:10px;height:10px;border-radius:50%;background:#2a2a2e;border:2px solid #f26b1d;animation:gren .7s cubic-bezier(.3,0,.7,1) forwards}
+@keyframes gren{from{transform:translate(var(--sx),var(--sy)) rotate(0)}to{transform:translate(0,0) rotate(540deg)}}
+body.calm #space{display:none}
 /* ===== 5. ARÈNE FUTURISTE ===== */
 .t-arena #bg{background:radial-gradient(ellipse 60% 40% at 50% 12%,rgba(255,122,26,.25),transparent 70%),#0b0f14}
 .t-arena #title{font:800 112px/1 "Saira Condensed",sans-serif;text-transform:uppercase;letter-spacing:6px;color:#ff7a1a;text-shadow:0 0 30px rgba(255,122,26,.5);padding:0 40px;border-left:6px solid #19e3c4;border-right:6px solid #19e3c4}
@@ -244,10 +266,11 @@ const T={};
 
 /* 4. BROADCAST */
 {const C=['#f26b1d','#14224a','#1e6fd9','#f2f4f8','#f5b700','#2e9e5b'],HC=['#1d1a17','#4a2c1a','#8a5a33','#d9b46a','#2b2b2b','#a33','#ccc'];
- T.tv={name:'Broadcast TV',seats:['#14224a','#14224a','#14224a','#1e3570','#e9edf3','#e9edf3','#f26b1d','#9aa4b5'],steps:['#000'],tag:L=>C[L.color]==='#f2f4f8'?'#9aa4b5':C[L.color],
+ T.tv={name:'Broadcast TV',seats:['#111113','#111113','#111113','#26262a','#f2f2f2','#f2f2f2','#f26b1d','#9a9a9e'],steps:['#000'],tag:L=>C[L.color]==='#f2f4f8'?'#9aa4b5':C[L.color],
  bg:()=>{let s='';const R=rng(3);for(let i=0;i<22;i++){const o=(.04+R()*.07).toFixed(2),c=R()<.3?'#f26b1d':'#fff';s+=`<circle class="bk" cx="${R()*1920}" cy="${R()*520}" r="${18+R()*70}" fill="${c}" opacity="${o}" style="--x:${(R()*160-80).toFixed(0)}px;--y:${(R()*60-30).toFixed(0)}px;--d:${(8+R()*10).toFixed(1)}s;animation-delay:-${(R()*10).toFixed(1)}s"/>`}
-  return `<div class="spot l"></div><div class="spot r"></div><div class="sheen"></div><svg class="layer" viewBox="0 0 1920 1080">${s}</svg>`},
- chair:(c,n)=>`<svg class="chair" viewBox="0 0 100 80" preserveAspectRatio="none"><rect x="8" y="4" width="84" height="70" rx="16" fill="${c}"/><rect x="8" y="54" width="84" height="20" rx="10" fill="#000" opacity=".2"/><rect x="14" y="8" width="72" height="8" rx="4" fill="#fff" opacity=".15"/><text x="50" y="40" font-size="12" text-anchor="middle" font-family="Barlow Condensed,Arial" font-weight="600" fill="#000" opacity=".25">${n}</text></svg>`,
+  for(let i=0;i<170;i++){const r=R();s+=`<circle class="${r<.25?'tw':''}" cx="${(R()*1920).toFixed(0)}" cy="${(R()*560).toFixed(0)}" r="${(.6+R()*1.6).toFixed(1)}" fill="#fff" opacity="${(.25+R()*.7).toFixed(2)}" style="animation-delay:-${(R()*4).toFixed(1)}s"/>`}
+  return `<svg class="layer" viewBox="0 0 1920 1080">${s}</svg><div class="spot l"></div><div class="spot r"></div><div class="sheen"></div><div id="space"></div>`},
+ chair:(c,n)=>`<svg class="chair" viewBox="0 0 100 80" preserveAspectRatio="none"><rect x="8" y="4" width="84" height="70" rx="16" fill="${c}" stroke="#3a3a3f" stroke-width="2"/><rect x="8" y="54" width="84" height="20" rx="10" fill="#000" opacity=".2"/><rect x="14" y="8" width="72" height="8" rx="4" fill="#fff" opacity=".15"/><text x="50" y="40" font-size="12" text-anchor="middle" font-family="Barlow Condensed,Arial" font-weight="600" fill="#000" opacity=".25">${n}</text></svg>`,
  fan:L=>{const c=C[L.color],hc=HC[L.hairColor],sk=SKIN[L.skin],dk='#1a1a1a';
   const hair=[`<path d="M26 44Q26 20 50 20Q74 20 74 44Q66 30 50 32Q34 30 26 44Z" fill="${hc}"/>`,`<path d="M25 46Q22 18 52 18Q78 20 75 42Q60 26 36 34Z" fill="${hc}"/>`,`<path d="M24 72Q18 20 50 20Q82 20 76 72L70 72Q72 34 50 32Q28 34 30 72Z" fill="${hc}"/>`,`<circle cx="50" cy="18" r="9" fill="${hc}"/><path d="M26 44Q26 20 50 20Q74 20 74 44Q66 30 50 32Q34 30 26 44Z" fill="${hc}"/>`,`<path d="M26 40Q26 18 50 18Q74 18 74 40Z" fill="${c}"/><path d="M50 38H86Q84 44 72 44H50Z" fill="${c}"/><path d="M26 40Q26 18 50 18Q74 18 74 40Z" fill="#000" opacity=".12"/>`,''][L.hair];
   const eyes=[`<circle cx="41" cy="49" r="2.8" fill="${dk}"/><circle cx="59" cy="49" r="2.8" fill="${dk}"/>`,`<circle cx="41" cy="49" r="6.5" fill="none" stroke="${dk}" stroke-width="2"/><circle cx="59" cy="49" r="6.5" fill="none" stroke="${dk}" stroke-width="2"/><path d="M47.5 49H52.5" stroke="${dk}" stroke-width="2"/><circle cx="41" cy="49" r="2.2" fill="${dk}"/><circle cx="59" cy="49" r="2.2" fill="${dk}"/>`,`<path d="M37 50Q41 46 45 50M55 50Q59 46 63 50" fill="none" stroke="${dk}" stroke-width="2.5" stroke-linecap="round"/>`][L.eyes];
@@ -316,6 +339,37 @@ function armorFan(L){
 ${head[L.hair]}</svg>`}
 T.tv.civil=T.tv.fan;
 if(P.get('avatars')!=='civils'){T.tv.fan=armorFan;T.tv.tag=L=>skinOf(L).g}
+
+
+/* ---------- bataille spatiale en fond (style Broadcast) ---------- */
+const SHIPS=[
+ {w:120,h:40,svg:`<svg width="120" height="40" viewBox="0 0 120 40"><ellipse class="fl" cx="6" cy="20" rx="12" ry="5" fill="#f26b1d"/><path d="M8 20L40 8H86L116 20L86 32H40Z" fill="#e4e4e6"/><path d="M40 8L58 0H72L64 8ZM40 32L58 40H72L64 32Z" fill="#8d8d93"/><path d="M70 14H96L104 20L96 26H70Z" fill="#111"/><path d="M76 17H94" stroke="#fff" stroke-width="1.5" opacity=".5"/><path d="M14 20H60" stroke="#f26b1d" stroke-width="2"/></svg>`},
+ {w:90,h:34,svg:`<svg width="90" height="34" viewBox="0 0 90 34"><ellipse class="fl" cx="6" cy="17" rx="10" ry="4" fill="#fff"/><path d="M6 17L30 4L88 17L30 30Z" fill="#1d1d20" stroke="#fff" stroke-width="1.5"/><path d="M34 12L60 17L34 22Z" fill="#f26b1d"/></svg>`},
+ {w:260,h:70,svg:`<svg width="260" height="70" viewBox="0 0 260 70"><ellipse class="fl" cx="8" cy="26" rx="14" ry="6" fill="#f26b1d"/><ellipse class="fl" cx="8" cy="44" rx="14" ry="6" fill="#f26b1d"/><path d="M10 22L44 10H200L256 35L200 60H44L10 48Z" fill="#26262a" stroke="#4a4a50" stroke-width="2"/><path d="M60 10L80 0H150L160 10Z" fill="#3a3a40"/><path d="M60 35H200" stroke="#000" stroke-width="3"/>${[70,88,106,124,142,160,178].map(x=>`<rect x="${x}" y="24" width="8" height="4" fill="#ffd08a" opacity=".8"/>`).join('')}</svg>`}];
+const space=()=>document.getElementById('space');
+const tvOn=()=>th===T.tv&&!matchMedia('(prefers-reduced-motion: reduce)').matches;
+function ship(){const sp=space();if(!sp)return;const k=Math.random()<.18?2:Math.floor(Math.random()*2),S=SHIPS[k],rtl=Math.random()<.5;
+ const y=30+Math.random()*(k===2?220:420),t=k===2?16+Math.random()*6:5+Math.random()*4;
+ const el=document.createElement('div');el.className='ship'+(rtl?' rtl':'');el.style.top=y+'px';
+ el.style.setProperty('--x0',(rtl?2000:-S.w-40)+'px');el.style.setProperty('--x1',(rtl?-S.w-40:2000)+'px');el.style.setProperty('--dy',(Math.random()*120-60).toFixed(0)+'px');el.style.setProperty('--t',t+'s');
+ const sc=k===2?1:+(.6+Math.random()*.5).toFixed(2);
+ el.innerHTML=`<div class="in" style="transform:scale(${rtl?-sc:sc},${sc})">${S.svg}</div>`;sp.appendChild(el);
+ const inner=el.firstChild,fire=()=>{if(!el.isConnected)return;for(let i=0;i<3;i++)setTimeout(()=>{if(!el.isConnected)return;const b=document.createElement('div');b.className='bolt'+(k===1?' w':'');b.style.left=(S.w-10)+'px';b.style.top=(S.h/2-2+(k===2?(i%2?-14:14):0))+'px';b.style.width='70px';inner.appendChild(b);setTimeout(()=>b.remove(),800)},i*140)};
+ const iv=setInterval(()=>{if(!el.isConnected){clearInterval(iv);return}if(Math.random()<.7)fire()},900);setTimeout(fire,600);
+ setTimeout(()=>{clearInterval(iv);el.remove()},t*1000+200)}
+function lone(){const sp=space();if(!sp)return;const rtl=Math.random()<.5,el=document.createElement('div');el.className='lone';el.style.top=(20+Math.random()*460)+'px';
+ const r=(Math.random()*16-8).toFixed(1);el.style.setProperty('--r',(rtl?180+ +r:+r)+'deg');el.style.setProperty('--x0',(rtl?2000:-100)+'px');el.style.setProperty('--x1',(rtl?-100:2000)+'px');el.style.setProperty('--dy',(Math.random()*160-80).toFixed(0)+'px');el.style.setProperty('--t',(1+Math.random()*.6).toFixed(2)+'s');
+ sp.appendChild(el);setTimeout(()=>el.remove(),1800)}
+function boom(x,y,big){const sp=space();if(!sp)return;const b=document.createElement('div');b.className='boom';b.style.left=x+'px';b.style.top=y+'px';
+ let h='<div class="fla"></div><div class="ring"></div>';for(let i=0;i<12;i++)h+=`<div class="deb" style="--a:${i*30+Math.random()*20}deg;--d:${(50+Math.random()*70)*(big?1.4:1)}px"></div>`;
+ b.innerHTML=h;if(big)b.style.transform='scale(1.5)';sp.appendChild(b);setTimeout(()=>b.remove(),1100)}
+function grenade(){const sp=space();if(!sp)return;const x=80+Math.random()*1760,y=60+Math.random()*420,g=document.createElement('div');g.className='gren';g.style.left=x+'px';g.style.top=y+'px';
+ g.style.setProperty('--sx',(Math.random()*400-200).toFixed(0)+'px');g.style.setProperty('--sy','-'+(120+Math.random()*120).toFixed(0)+'px');sp.appendChild(g);
+ setTimeout(()=>{g.remove();boom(x+5,y+5,Math.random()<.4)},700)}
+if(P.get('fx')==='0')document.body.classList.add('calm');
+setInterval(()=>{if(tvOn()&&P.get('fx')!=='0')ship()},2600);
+setInterval(()=>{if(tvOn()&&P.get('fx')!=='0'&&Math.random()<.8){lone();setTimeout(lone,130);setTimeout(lone,260)}},1700);
+setInterval(()=>{if(tvOn()&&P.get('fx')!=='0'&&Math.random()<.75)grenade()},3200);
 
 /* ---------- géométrie commune de la tribune ---------- */
 const ROWS=8,geo=[];
