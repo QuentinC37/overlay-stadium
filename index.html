@@ -246,6 +246,8 @@ body.clear.t-frag #fx{background:none}
 @keyframes tshine{0%,60%{background-position:120% 0}100%{background-position:-60% 0}}
 .t-frag #count{box-shadow:inset 0 3px 0 var(--acc)}
 
+.t-frag .seat:not(.occ) .chair .ln{stroke:#5f6573!important}.t-frag .seat:not(.occ) .chair .lg{stroke:#5f6573!important;opacity:.1}
+.t-frag .seat.occ .chair .lg{opacity:.35}
 /* ===== bulles de chat, badges, événements (communs) ===== */
 #front{position:absolute;inset:0;z-index:180;pointer-events:none;overflow:hidden}
 .chat{position:absolute;left:50%;bottom:104%;transform:translateX(-50%);z-index:6;display:flex;flex-direction:column;align-items:flex-start;width:max-content;max-width:calc(460px * var(--inv));font:600 var(--fs)/1.15 "Barlow Condensed",sans-serif;pointer-events:none;animation:chatIn .3s ease-out both}
@@ -517,6 +519,56 @@ function armorFan(L){
 ${head[L.hair]}</svg>`}
 T.tv.civil=T.tv.fan;
 if(P.get('avatars')!=='civils'){T.tv.fan=armorFan;T.tv.tag=L=>skinOf(L).g}
+/* ---------- pistes d'avatars alternatives (avatars=ultra|carte|neon|robot), même cadre 100×118 que le pilote ---------- */
+const JERSEY=[['#3dff8f','#0b0f18'],['#f26b1d','#ffffff'],['#3aa0ff','#ffffff'],['#9b6bff','#f5c242'],['#ff4fa3','#1b1d23'],['#f5c242','#1b1d23'],['#e9edf2','#1b2a5a'],['#19e3e3','#0b0f18']];
+function ultraFan(L){ // supporter ultra : bonnet ou casquette, écharpe rayée, maillot numéroté, bras levés pour certains
+ const [c1,c2]=JERSEY[(L.color*3+L.hairColor)%JERSEY.length],sk=SKIN[L.skin],up=L.extra===0;
+ const hats=[`<path d="M27 40Q27 14 50 14Q73 14 73 40Z" fill="${c1}"/><path d="M27 34H73" stroke="${c2}" stroke-width="5"/><circle cx="50" cy="12" r="6" fill="${c2}"/>`,
+  `<path d="M28 38Q28 16 50 16Q72 16 72 38Z" fill="${c1}"/><path d="M50 38H86Q84 32 72 32" fill="${c1}"/><path d="M48 16V38" stroke="${c2}" stroke-width="2" opacity=".5"/>`,
+  `<path d="M26 34Q30 18 50 18Q70 18 74 34L72 38H28Z" fill="#2a2d35"/><path d="M27 33H73" stroke="${c1}" stroke-width="6"/>`,
+  `<path d="M28 40Q26 18 50 16Q74 18 72 40Q70 28 50 26Q30 28 28 40Z" fill="${['#2a1a10','#5a3620','#c9a46a','#111'][L.hairColor%4]}"/>`];
+ const eyes=[`<circle cx="42" cy="47" r="3" fill="#111"/><circle cx="58" cy="47" r="3" fill="#111"/>`,`<path d="M38 47Q42 43 46 47M54 47Q58 43 62 47" stroke="#111" stroke-width="2.6" fill="none" stroke-linecap="round"/>`,`<path d="M38 45L46 48M62 45L54 48" stroke="#111" stroke-width="2.6" stroke-linecap="round"/>`];
+ const mouths=[`<ellipse cx="50" cy="60" rx="6" ry="7" fill="#3a0f0f"/><ellipse cx="50" cy="63" rx="4" ry="2.5" fill="#e0606a"/>`,`<path d="M42 57Q50 66 58 57Z" fill="#3a0f0f"/>`,`<path d="M43 59Q50 63 57 59" stroke="#111" stroke-width="2.6" fill="none" stroke-linecap="round"/>`,`<ellipse cx="50" cy="60" rx="8" ry="5" fill="#3a0f0f"/>`];
+ const paint=L.extra===2?`<path d="M33 52L38 52M33 55L38 55" stroke="${c1}" stroke-width="2.2"/><path d="M62 52L67 52M62 55L67 55" stroke="${c1}" stroke-width="2.2"/>`:'';
+ const stripes=[0,1,2,3,4].map(i=>`<rect x="${26+i*10}" y="74" width="5" height="10" fill="${c2}"/>`).join('');
+ const arms=up?`<path d="M18 104Q8 70 14 40" stroke="${c1}" stroke-width="13" stroke-linecap="round" fill="none"/><path d="M82 104Q92 70 86 40" stroke="${c1}" stroke-width="13" stroke-linecap="round" fill="none"/><circle cx="14" cy="36" r="6" fill="${sk}"/><circle cx="86" cy="36" r="6" fill="${sk}"/><path d="M14 32Q50 18 86 32L86 42Q50 28 14 42Z" fill="${c1}"/>${[0,1,2,3,4,5].map(i=>`<path d="M${24+i*11} ${30-Math.sin(i/5*3.14)*6}V${40-Math.sin(i/5*3.14)*6}" stroke="${c2}" stroke-width="4"/>`).join('')}`
+  :`<path d="M10 118Q12 92 24 86" stroke="${c1}" stroke-width="12" fill="none"/><path d="M90 118Q88 92 76 86" stroke="${c1}" stroke-width="12" fill="none"/>`;
+ return `<svg viewBox="0 0 100 118"><path d="M12 118Q14 84 50 82Q86 84 88 118Z" fill="${c1}"/><path d="M50 82Q86 84 88 118H50Z" fill="#000" opacity=".1"/>
+<text x="50" y="112" font-size="20" text-anchor="middle" font-family="Barlow Condensed,Arial" font-weight="800" fill="${c2}">${L.num}</text>
+${arms}<rect x="43" y="68" width="14" height="12" fill="${sk}"/><ellipse cx="50" cy="50" rx="22" ry="24" fill="${sk}"/><path d="M50 26A22 24 0 0 1 50 74Z" fill="#000" opacity=".08"/>
+${eyes[L.eyes]}${mouths[L.mouth]}${paint}${hats[L.hair%4]}<path d="M24 74Q50 86 76 74L76 84Q50 96 24 84Z" fill="${c1}"/>${stripes}<path d="M62 82L66 100L58 98Z" fill="${c1}"/></svg>`}
+
+function carteFan(L){ // carte à collectionner : le pilote dans un cadre à coins coupés, liseré de rareté, numéro
+ const R=['#8a90a0','#3dff8f','#3aa0ff','#9b6bff','#f5c242'],r=(L.color+L.extra+L.num)%9,c=r<4?R[0]:r<6?R[1]:r<7?R[2]:r<8?R[3]:R[4],holo=L.num%17===0;
+ const inner=armorFan(L).replace('<svg viewBox="0 0 100 118">','').replace(/<\/svg>$/,'');
+ return `<svg viewBox="0 0 100 118"><defs><clipPath id="cc${L.num}${L.hair}${L.color}"><path d="M10 6H82L92 16V116H10Z"/></clipPath><linearGradient id="hg${L.num}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff5fd2"/><stop offset=".33" stop-color="#fff36b"/><stop offset=".66" stop-color="#3dff8f"/><stop offset="1" stop-color="#3aa0ff"/></linearGradient></defs>
+<path d="M10 6H82L92 16V116H10Z" fill="#121318"/><g clip-path="url(#cc${L.num}${L.hair}${L.color})"><path d="M10 6H92V60H10Z" fill="${c}" opacity=".18"/><g transform="translate(14 22) scale(.74)">${inner}</g><path d="M10 96H92V116H10Z" fill="#0b0c0f"/></g>
+<text x="16" y="110" font-size="13" font-family="Barlow Condensed,Arial" font-weight="800" fill="#fff">#${String(L.num).padStart(2,'0')}</text><path d="M60 104H86" stroke="${c}" stroke-width="5"/>
+<path d="M10 6H82L92 16V116H10Z" fill="none" stroke="${holo?`url(#hg${L.num})`:c}" stroke-width="${holo?5:3.5}"/></svg>`}
+
+function neonFan(L){ // néon minimal : silhouette sombre au trait lumineux, visière fendue
+ const s=skinOf(L),G=s.g,v=L.hair%3;
+ const head=v===0?`<path d="M28 50Q28 20 50 20Q72 20 72 50Q72 72 50 74Q28 72 28 50Z"/>`:v===1?`<path d="M30 26H70L74 38V60L64 72H36L26 60V38Z"/>`:`<path d="M50 18L74 32V60L50 74L26 60V32Z"/>`;
+ const visor=[`M34 46H66`,`M36 44L50 50L64 44`,`M34 42H46M54 42H66`][L.eyes];
+ const st=(w,o)=>`fill="none" stroke="${G}" stroke-width="${w}" stroke-linejoin="round" stroke-linecap="round" opacity="${o}"`;
+ const body=`<path d="M12 118Q14 86 50 82Q86 86 88 118"/>`;
+ return `<svg viewBox="0 0 100 118"><g fill="#0b0c10">${body}${head}</g><g ${st(9,.18)}>${body}${head}</g><g ${st(3,1)}>${body}${head}</g>
+<path d="${visor}" ${st(10,.3)}/><path d="${visor}" ${st(4.5,1)}/><path d="M42 98H58" ${st(3,.6)}/>${L.extra===1?`<path d="M50 20V8" ${st(3,1)}/><circle cx="50" cy="6" r="3" fill="${G}"/>`:''}</svg>`}
+
+function robotFan(L){ // mascotte robot : tête-écran, expressions en pixels, antenne
+ const s=skinOf(L),A=s.a,G=s.g,TR=s.t;
+ const px=(pts)=>pts.map(([x,y])=>`<rect x="${x}" y="${y}" width="4" height="4" fill="${G}"/>`).join('');
+ const faces=[ // yeux ^ ^ et sourire, ronds, > <, coeurs, lunettes
+  px([[36,44],[40,40],[44,44],[56,44],[60,40],[64,44],[42,56],[46,58],[50,58],[54,58],[58,56]]),
+  px([[38,42],[42,42],[38,46],[42,46],[58,42],[62,42],[58,46],[62,46],[46,56],[50,56],[54,56]]),
+  px([[36,40],[40,44],[36,48],[64,40],[60,44],[64,48],[46,58],[50,56],[54,58]]),
+  px([[36,42],[44,42],[36,46],[40,46],[44,46],[40,50],[56,42],[64,42],[56,46],[60,46],[64,46],[60,50],[44,58],[48,60],[52,60],[56,58]]),
+  `<rect x="34" y="42" width="32" height="7" fill="${G}"/>`+px([[46,57],[50,57],[54,57]])];
+ const f=faces[(L.eyes*3+L.mouth)%faces.length];
+ return `<svg viewBox="0 0 100 118"><path d="M22 118Q22 90 50 88Q78 90 78 118Z" fill="${A}"/><path d="M50 88Q78 90 78 118H50Z" fill="#000" opacity=".12"/><rect x="40" y="96" width="20" height="10" rx="3" fill="#0b0c10"/><rect x="43" y="99" width="${4+L.num%12}" height="4" fill="${G}"/>
+<rect x="44" y="80" width="12" height="10" fill="${TR}"/><path d="M50 22V12" stroke="${TR}" stroke-width="3"/><circle cx="50" cy="10" r="4.5" fill="${G}" class="tw"/>
+<rect x="18" y="22" width="64" height="60" rx="14" fill="${A}"/><path d="M50 22H68Q82 22 82 36V68Q82 82 68 82H50Z" fill="#000" opacity=".12"/><rect x="14" y="42" width="6" height="18" rx="2" fill="${TR}"/><rect x="80" y="42" width="6" height="18" rx="2" fill="${TR}"/>
+<rect x="26" y="30" width="48" height="40" rx="8" fill="#0b0c10"/><rect x="26" y="30" width="48" height="40" rx="8" fill="${G}" opacity=".06"/>${f}</svg>`}
 /* projecteurs du stade (style Frag) : deux rampes dans les coins hauts de l'écran, faisceaux qui balaient doucement, poussière dans la lumière.
    Calque à l'échelle de l'écran (pas du stade) : identique à tous les niveaux de zoom. */
 function fragLights(){const W=VW,H=1080,R=rng(17);
@@ -881,6 +933,9 @@ const pick=document.getElementById('pick'),keys=Object.keys(T);
 keys.forEach((k,i)=>{const b=document.createElement('button');b.dataset.k=k;b.textContent=(i+1)+'. '+T[k].name;b.onclick=()=>{render(k);try{history.replaceState(null,'','#'+k)}catch(e){}};pick.appendChild(b)});
 addEventListener('keydown',e=>{if(e.target.closest&&e.target.closest('input'))return;const i=+e.key-1;if(keys[i])render(keys[i])});
 const start=P.get('theme')||location.hash.replace(/^#/,'');
+{const A={ultra:ultraFan,carte:carteFan,neon:neonFan,robot:robotFan}[P.get('avatars')];if(A){T.frag.fan=A;T.tv.fan=A}}
+// siège occupé = liseré RGB (ou couleur choisie) ; siège vide = néon gris
+new MutationObserver(ms=>{const S=new Set();for(const m of ms){const e=m.target.closest&&m.target.closest('.seat');if(e)S.add(e)}S.forEach(e=>e.classList.toggle('occ',!!e.querySelector('.fan:not(.leaving)')))}).observe(rowsEl,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
 render(T[start]?start:'frag');
 let restored=0;
 try{if(P.get('reset')==='1')localStorage.removeItem(KEY);const d=JSON.parse(localStorage.getItem(KEY)||'null');
