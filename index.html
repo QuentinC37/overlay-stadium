@@ -260,7 +260,10 @@ body.clear.t-frag #fx{background:none}
 .t-frag #title .hl{text-shadow:0 0 18px var(--accA),0 0 2px rgba(255,255,255,.3)}
 
 /* dispositions du compteur et du fil (disposition=coins|cote|bas) */
-.dispo-coins #head{left:40px;right:40px;text-align:left}
+/* marges de sécurité : Twitch affiche ses barres au survol (titre et réglages en haut, lecture/volume/plein écran en bas), sur PC comme sur téléphone */
+.dispo-coins #head{top:96px;left:64px;right:64px;text-align:left}
+#safe{display:none;position:absolute;inset:0;z-index:999;pointer-events:none}body.zones #safe{display:block}
+#safe i{position:absolute;left:0;right:0;background:repeating-linear-gradient(45deg,rgba(255,60,60,.28) 0 14px,rgba(255,60,60,.12) 14px 28px);border:2px dashed #ff4b4b;font:700 22px/1 sans-serif;color:#fff;padding:10px 16px;font-style:normal}
 .dispo-coins #hrow{position:absolute;right:0;top:0;margin:0;flex-direction:column;align-items:flex-end;gap:12px}
 .dispo-coins #feed{--fw:620px!important;width:620px;align-items:flex-end;height:150px}
 .dispo-cote #hrow{position:absolute;left:40px;top:170px;margin:0;flex-direction:column;gap:14px}
@@ -332,7 +335,7 @@ body.nohud .panel{display:none}
  <div id="front"></div>
 </div>
 <div id="spots"></div>
- <div id="sfx"></div>
+ <div id="safe"><i style="top:0;height:86px">Barre Twitch au survol (haut)</i><i style="bottom:0;height:110px;display:flex;align-items:flex-end">Barre Twitch au survol (bas)</i></div><div id="sfx"></div>
 </div>
  <div id="head"><div id="title">Le live va commencer</div><br><div id="hrow"><div id="count"><i></i><span><b>0</b> <span id="cl">supporter en tribune</span></span></div><div id="feed"></div></div><div id="evt"></div><div id="mvp"></div></div>
  <div id="camcol"><div id="camframe"><i>Live</i><em>Ta caméra ici</em></div></div>
@@ -390,8 +393,8 @@ if(CAMP){document.body.classList.add('cam');if(PORTRAIT)document.body.classList.
 const feedEl=document.getElementById('feed');
 if(FEED){document.body.classList.add('feed');if(COLFEED)document.getElementById('camcol').appendChild(feedEl);else feedEl.style.setProperty('--fw',(CAMP?760:1000)+'px');
  feedEl.innerHTML='<div class="line hint"><span>Écris dans le chat pour monter en tribune</span></div>'}
-const DISPO=['coins','cote','bas'].includes(P.get('disposition'))&&!CAMP?P.get('disposition'):'centre';document.body.classList.add('dispo-'+DISPO); // où placer compteur + fil d'alertes
-const RES=DISPO==='centre'?(FEED&&!COLFEED?480:360):DISPO==='coins'?400:300; // hauteur réservée en haut (titre + fil + couloir des banderoles)
+const DISPO=CAMP?'centre':['centre','cote','bas'].includes(P.get('disposition'))?P.get('disposition'):'coins';document.body.classList.add('dispo-'+DISPO);if(P.get('zones')==='1')document.body.classList.add('zones'); // où placer compteur + fil d'alertes
+const RES=DISPO==='centre'?(FEED&&!COLFEED?480:360):DISPO==='coins'?450:300; // hauteur réservée en haut (titre + fil + couloir des banderoles)
 const hash=s=>{let h=2166136261;for(const c of s)h=Math.imul(h^c.charCodeAt(0),16777619);return h>>>0};
 const rng=seed=>()=>{seed=Math.imul(seed^seed>>>15,seed|1);seed^=seed+Math.imul(seed^seed>>>7,seed|61);return((seed^seed>>>14)>>>0)/4294967296};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

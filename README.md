@@ -49,3 +49,5 @@ https://quentinc37.github.io/overlay-stadium/?channel=TACHAINE
 | `rangees=1.32` | Écart vertical entre les rangées (1 = serré, 1.8 = très aéré) |
 | `remplissage=75` | % de places occupées avant de dézoomer au palier suivant |
 | `paliers=10,20,30,40,50,75` | Paliers de places visibles avant le plafond `max` (100) |
+| `disposition=coins` | Placement du titre, du compteur et du fil : `coins` (titre en haut à gauche, compteur et fil en haut à droite, par défaut), `centre`, `cote`, `bas`. Le haut et le bas restent libres pour les barres Twitch qui apparaissent au survol |
+| `zones=1` | Affiche en rouge les zones couvertes par les barres Twitch au survol (pour vérifier une mise en page) |
