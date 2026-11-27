@@ -220,6 +220,32 @@ body.rgb{--acc:hsl(var(--hue) 92% 60%);--accA:hsla(var(--hue),92%,60%,.18)}
 .t-frag #camframe{outline-color:var(--acc)}.t-frag #camframe i{background:var(--acc);color:#000;font-style:normal}
 .t-frag #mvp span{background:#121318;border:1px solid #2a2d35}
 
+/* Frag : finitions (projecteurs, sièges, marches LED, vignette) */
+#spots{position:absolute;inset:0;z-index:1;pointer-events:none}#spots .beams,#spots .bloom,#spots .dust{mix-blend-mode:screen}#spots svg{display:block}
+body.clear #spots{display:none}
+.t-frag #spots .beamg{animation:sway 14s ease-in-out infinite alternate}
+@keyframes sway{from{transform:rotate(-2.2deg)}to{transform:rotate(2.2deg)}}
+.t-frag #spots .bloom{animation:bloom 5s ease-in-out infinite alternate}
+@keyframes bloom{to{opacity:.7}}
+.t-frag #spots .dust circle{animation:dust 14s linear infinite}
+@keyframes dust{0%{transform:translate(0,0);opacity:0}15%{opacity:1}100%{transform:translate(60px,-160px);opacity:0}}
+.t-frag .step{background:linear-gradient(#1c1e24,#0d0e11 35%,#060708);border-top:none}
+.t-frag .step::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--acc);opacity:.32;box-shadow:0 0 14px var(--acc)}
+.t-frag .step::after{content:"";position:absolute;left:0;right:0;top:3px;height:40%;background:linear-gradient(var(--accA),transparent);opacity:.5}
+.seat.owned .chair .lg{stroke:var(--sc)!important}
+.seat:has(.fan) .chair text{opacity:0}
+.t-frag .fan.lurk svg{opacity:1;filter:grayscale(.85) brightness(.5)}
+.t-frag .fan svg{filter:drop-shadow(0 6px 6px rgba(0,0,0,.45))}
+.seat.lit .chair{animation:lit 1.6s ease-out}
+@keyframes lit{0%{filter:brightness(2.6)}100%{filter:none}}
+.t-frag #fx{background:radial-gradient(ellipse 80% 75% at 50% 42%,transparent 58%,rgba(0,0,0,.6))}
+body.clear.t-frag #fx{background:none}
+.t-frag #title{position:relative;box-shadow:0 18px 40px rgba(0,0,0,.45)}
+.t-frag #title .hl{text-shadow:0 0 34px var(--accA)}
+.t-frag #title::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.09) 48%,transparent 56%);background-size:250% 100%;animation:tshine 9s ease-in-out infinite;pointer-events:none}
+@keyframes tshine{0%,60%{background-position:120% 0}100%{background-position:-60% 0}}
+.t-frag #count{box-shadow:inset 0 3px 0 var(--acc)}
+
 /* ===== bulles de chat, badges, événements (communs) ===== */
 #front{position:absolute;inset:0;z-index:180;pointer-events:none;overflow:hidden}
 .chat{position:absolute;left:50%;bottom:104%;transform:translateX(-50%);z-index:6;display:flex;flex-direction:column;align-items:flex-start;width:max-content;max-width:calc(460px * var(--inv));font:600 var(--fs)/1.15 "Barlow Condensed",sans-serif;pointer-events:none;animation:chatIn .3s ease-out both}
@@ -282,6 +308,7 @@ body.nohud .panel{display:none}
  <div id="rows"></div>
  <div id="front"></div>
 </div>
+<div id="spots"></div>
  <div id="sfx"></div>
 </div>
  <div id="head"><div id="title">Le live va commencer</div><br><div id="hrow"><div id="count"><i></i><span><b>0</b> <span id="cl">supporter en tribune</span></span></div><div id="feed"></div></div><div id="evt"></div><div id="mvp"></div></div>
@@ -490,12 +517,25 @@ function armorFan(L){
 ${head[L.hair]}</svg>`}
 T.tv.civil=T.tv.fan;
 if(P.get('avatars')!=='civils'){T.tv.fan=armorFan;T.tv.tag=L=>skinOf(L).g}
+/* projecteurs du stade (style Frag) : deux rampes dans les coins hauts de l'écran, faisceaux qui balaient doucement, poussière dans la lumière.
+   Calque à l'échelle de l'écran (pas du stade) : identique à tous les niveaux de zoom. */
+function fragLights(){const W=VW,H=1080,R=rng(17);
+ const rig=(cx,cy,rot)=>{let l='';for(let r=0;r<3;r++)for(let c=0;c<6;c++){const x=cx-114+c*38,y=cy-40+r*28;l+=`<rect x="${x}" y="${y}" width="32" height="22" rx="3" fill="#dfffea"/><rect x="${x+5}" y="${y+4}" width="22" height="6" rx="2" fill="#fff"/>`}
+  return `<g transform="rotate(${rot} ${cx} ${cy})"><rect x="${cx-128}" y="${cy-54}" width="256" height="108" rx="6" fill="#0c0d10" stroke="#2b2e37" stroke-width="3"/>${l}<path d="M${cx-128} ${cy+54}H${cx+128}" stroke="var(--acc)" stroke-width="3" opacity=".6"/></g><ellipse class="bloom" cx="${cx}" cy="${cy}" rx="300" ry="190" fill="url(#lampG)"/>`};
+ const beam=(cx,cy,tx,sp,d)=>`<g class="beamg" style="transform-origin:${cx}px ${cy}px;animation-delay:${d}s"><path d="M${cx-50} ${cy}L${cx+50} ${cy}L${tx+sp} ${H+80}L${tx-sp} ${H+80}Z" fill="url(#beamG)"/></g>`;
+ const L=[[70,10,-24],[W-70,10,24]];
+ let beams='';L.forEach(([x,y],i)=>{const d=i?-1:1;beams+=beam(x,y,x+d*W*.30,190,-i*4)+beam(x,y,x+d*W*.62,230,-i*4-6)+beam(x,y,x+d*W*.10,150,-i*4-10)});
+ let dust='';for(let i=0;i<55;i++)dust+=`<circle cx="${(R()*W).toFixed(0)}" cy="${(160+R()*820).toFixed(0)}" r="${(.8+R()*1.6).toFixed(1)}" fill="#eafff2" opacity="${(.25+R()*.45).toFixed(2)}" style="animation-delay:${(-R()*16).toFixed(1)}s;animation-duration:${(12+R()*10).toFixed(1)}s"/>`;
+ return `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}"><defs>
+<linearGradient id="beamG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4fff8" stop-opacity=".22"/><stop offset=".5" stop-color="#e6fff0" stop-opacity=".07"/><stop offset="1" stop-color="#e6fff0" stop-opacity=".02"/></linearGradient>
+<radialGradient id="lampG"><stop offset="0" stop-color="#f4fff8" stop-opacity=".6"/><stop offset=".3" stop-color="#bfffd9" stop-opacity=".18"/><stop offset="1" stop-color="#bfffd9" stop-opacity="0"/></radialGradient></defs>
+<g class="beams">${beams}</g>${L.map(([x,y,r])=>rig(x,y,r)).join('')}<g class="dust">${dust}</g></svg>`}
 /* 6. FRAG — façon cartes à collectionner : panneaux anthracite, coins coupés, accent néon (vert par défaut, accent=orange…) */
 T.frag={name:'Frag cards',seats:[...Array(12).fill('#2b2e37'),'var(--acc)','var(--acc)','#9b6bff','#f5c242','#3aa0ff'],steps:['#000'],fan:T.tv.fan,tag:T.tv.tag,
  bg:()=>{let g='';const H=560,VX=960;for(let i=-24;i<=24;i++)g+=`<path d="M${VX+i*14} ${H-260}L${VX+i*190} ${H+520}"/>`;for(let k=0;k<12;k++){const y=H-260+Math.pow(k/11,1.9)*780;g+=`<path d="M0 ${y.toFixed(0)}H1920"/>`}
   let st='';const R=rng(5);for(let i=0;i<120;i++)st+=`<circle class="${R()<.25?'tw':''}" cx="${(R()*1920).toFixed(0)}" cy="${(R()*520).toFixed(0)}" r="${(.5+R()*1.3).toFixed(1)}" fill="#fff" opacity="${(.2+R()*.6).toFixed(2)}"/>`;
   return `${MAP?`<div class="map" style="background-image:url(maps/${MAP}.jpg)"></div>`:''}<div class="fragtint"></div><svg class="layer fraggrid" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke-width="1.4">${g}</g></svg><svg class="layer" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">${st}</svg><div class="fragglow"></div><div class="sheen"></div><div id="space"></div>`},
- chair:(c,n)=>`<svg class="chair" viewBox="0 0 100 80" preserveAspectRatio="none"><path d="M6 4H82L94 16V74H6Z" fill="#15171c" stroke="#2b2e37" stroke-width="2"/><path class="ln" d="M6 4H82L94 16" fill="none" style="stroke:${SEATRGB?`hsl(calc(var(--hue) + ${(n*9)%360}) 92% 60%)`:c}" stroke-width="5"/><path d="M6 58H94V74H6Z" fill="#000" opacity=".3"/><text x="50" y="42" font-size="14" text-anchor="middle" font-family="Barlow Condensed,Arial" font-weight="800" fill="#fff" opacity=".16">${String(n).padStart(2,'0')}</text></svg>`};
+ chair:(c,n)=>{const k=`stroke:${SEATRGB?`hsl(calc(var(--hue) + ${(n*9)%360}) 92% 60%)`:c}`;return `<svg class="chair" viewBox="0 0 100 80" preserveAspectRatio="none"><path d="M8 4H82L92 14V54H8Z" fill="#191b21" stroke="#2b2e37" stroke-width="1.5"/><path d="M15 11H79L85 17V48H15Z" fill="#1f2229"/><path d="M15 11H79L85 17V22H15Z" fill="#fff" opacity=".035"/><path d="M3 54H97L93 68H7Z" fill="#2a2d35"/><path d="M3 54H97" stroke="#3a3e48" stroke-width="1.5"/><path d="M7 68H93V75H7Z" fill="#0b0c0f"/><path class="lg" d="M8 4H82L92 14" fill="none" style="${k}" stroke-width="12" opacity=".22"/><path class="ln" d="M8 4H82L92 14" fill="none" style="${k}" stroke-width="4.5"/><text x="50" y="38" font-size="15" text-anchor="middle" font-family="Barlow Condensed,Arial" font-weight="800" fill="#fff" opacity=".14">${String(n).padStart(2,'0')}</text></svg>`}};
 
 
 /* ---------- bataille spatiale en fond (style Broadcast) ---------- */
@@ -568,6 +608,7 @@ const MAP=(m=>m==='random'?MAPS[Math.floor(Math.random()*MAPS.length)]:MAPS.incl
 function render(key){
  th=T[key];document.body.className=document.body.className.replace(/\bt-\w+/g,'').trim()+' t-'+key;
  bgEl.innerHTML=th.bg();
+ document.getElementById('spots').innerHTML=key==='frag'&&P.get('fx')!=='0'?fragLights():'';
  const R=rng(99);rowsEl.innerHTML='';
  geo.forEach((g,r)=>{const row=document.createElement('div');row.className='row';row.style.zIndex=10+r;row.style.top=(g.b-g.h)+'px';row.style.height=(g.h*2)+'px';
   row.innerHTML=`<div class="step" style="top:${g.h*.86}px;height:${g.h*1.2}px;--c:${th.steps[r%th.steps.length]}"></div>`+
@@ -610,8 +651,9 @@ function place(login,f,quiet){const seat=f.seat,fan=document.createElement('div'
  fan.appendChild(tag);seat.el.appendChild(fan);seat.el.style.zIndex=2;f.el=fan;deco(f);
  // couleur de siège choisie par le viewer (futur site : customLooks[login].seat) ; en démo, un supporter sur trois en a une
  const sc=f.look.seat||(demo&&hash(login)%3===0?SEATPAL[hash(login+'s')%SEATPAL.length]:'');seat.el.classList.toggle('owned',!!sc);if(sc)seat.el.style.setProperty('--sc',sc);
- if(w)return walk(fan,seat);
- if(!quiet)setTimeout(()=>fan.classList.remove('in'),1100);return 500}
+ if(w){const d=walk(fan,seat);litSeat(seat,d-200);return d}
+ if(!quiet){setTimeout(()=>fan.classList.remove('in'),1100);litSeat(seat,350)}return 500}
+function litSeat(seat,d){setTimeout(()=>{const e=seat.el;if(!e)return;e.classList.remove('lit');void e.offsetWidth;e.classList.add('lit');setTimeout(()=>e.classList.remove('lit'),1700)},d)} // le siège s'illumine quand le supporter s'assoit
 
 /* ---------- compteur ---------- */
 const countB=document.querySelector('#count b'),countL=document.getElementById('cl');
