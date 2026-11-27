@@ -246,9 +246,19 @@ body.clear.t-frag #fx{background:none}
 @keyframes tshine{0%,60%{background-position:120% 0}100%{background-position:-60% 0}}
 .t-frag #count{box-shadow:inset 0 3px 0 var(--acc)}
 
-.t-frag .seat:not(.occ) .chair .ln{stroke:#5f6573!important}.t-frag .seat:not(.occ) .chair .lg{stroke:#5f6573!important;opacity:.1}
+.t-frag .seat:not(.occ) .chair .ln{stroke:#7d8494!important}.t-frag .seat:not(.occ) .chair .lg{stroke:#7d8494!important;opacity:.14}
 .t-frag .seat.occ .chair .lg{opacity:.35}
 .av-joueur .fan{bottom:17%}.av-joueur .tag{bottom:-13%}
+/* rendu réaliste : béton des marches, panneaux en métal brossé */
+.t-frag .step{background:linear-gradient(#2a2d33,#1a1c20 10%,#121317 40%,#08090a),repeating-linear-gradient(90deg,rgba(255,255,255,.015) 0 2px,transparent 2px 7px)}
+.t-frag .step{background-blend-mode:normal,overlay;box-shadow:inset 0 6px 10px -6px rgba(255,255,255,.12),0 -10px 18px rgba(0,0,0,.45)}
+.t-frag #title,.t-frag #count,.t-frag #feed .line b{background-image:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,0) 45%,rgba(0,0,0,.25)),repeating-linear-gradient(90deg,rgba(255,255,255,.018) 0 1px,transparent 1px 3px)}
+.t-frag #title{background-color:#14161b}
+.t-frag #title{background-image:linear-gradient(90deg,var(--accA),transparent 55%),linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,0) 45%,rgba(0,0,0,.3)),repeating-linear-gradient(90deg,rgba(255,255,255,.018) 0 1px,transparent 1px 3px)}
+.t-frag #head{filter:drop-shadow(0 14px 22px rgba(0,0,0,.55))}
+.t-frag #count{box-shadow:inset 0 3px 0 var(--acc),inset 0 4px 0 rgba(255,255,255,.15),inset 0 -1px 0 rgba(0,0,0,.6)}
+.t-frag #title .hl{text-shadow:0 0 18px var(--accA),0 0 2px rgba(255,255,255,.3)}
+
 /* ===== bulles de chat, badges, événements (communs) ===== */
 #front{position:absolute;inset:0;z-index:180;pointer-events:none;overflow:hidden}
 .chat{position:absolute;left:50%;bottom:104%;transform:translateX(-50%);z-index:6;display:flex;flex-direction:column;align-items:flex-start;width:max-content;max-width:calc(460px * var(--inv));font:600 var(--fs)/1.15 "Barlow Condensed",sans-serif;pointer-events:none;animation:chatIn .3s ease-out both}
@@ -573,7 +583,7 @@ function robotFan(L){ // mascotte robot : tête-écran, expressions en pixels, a
 /* joueur en armure, rendu réaliste (avatars=joueur) : volumes dégradés, reflets métal, joints d'armure, visière vitrée, lignes néon diffuses */
 let _aid=0;
 function jDefs(){if(document.getElementById('jfx'))return;const d=document.createElement('div');d.style.cssText='position:absolute;width:0;height:0;overflow:hidden';
- d.innerHTML='<svg id="jfx" width="0" height="0"><filter id="jglow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="jsoft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2.2"/></filter></svg>';document.body.appendChild(d)}
+ d.innerHTML='<svg id="jfx" width="0" height="0"><filter id="jglow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter><linearGradient id="sBk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#30343e"/><stop offset=".55" stop-color="#1c1f26"/><stop offset="1" stop-color="#121419"/></linearGradient><linearGradient id="sPan" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#454a56"/><stop offset=".5" stop-color="#2a2e37"/><stop offset="1" stop-color="#17191f"/></linearGradient><linearGradient id="sSpec" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".3" stop-color="#fff" stop-opacity=".16"/><stop offset=".7" stop-color="#fff" stop-opacity=".05"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><filter id="jbeam" x="-20%" y="-5%" width="140%" height="110%"><feGaussianBlur stdDeviation="6"/></filter><filter id="jsoft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2.2"/></filter></svg>';document.body.appendChild(d)}
 function athleteFan(L){jDefs();
  const s=skinOf(L),G=s.g,id='j'+(++_aid);
  // métal : clair (blanc nacré), gris acier, noir carbone
@@ -628,7 +638,7 @@ ${neon('M32 45Q50 40 68 45',2.2)}${seam('M36 66L44 70M64 66L56 70',.5)}${neon('M
    Calque à l'échelle de l'écran (pas du stade) : identique à tous les niveaux de zoom. */
 function fragLights(){const W=VW,H=1080,R=rng(17);
  const rig=(cx,cy,rot)=>{let l='';for(let r=0;r<3;r++)for(let c=0;c<6;c++){const x=cx-114+c*38,y=cy-40+r*28;l+=`<rect x="${x}" y="${y}" width="32" height="22" rx="3" fill="#dfffea"/><rect x="${x+5}" y="${y+4}" width="22" height="6" rx="2" fill="#fff"/>`}
-  return `<g transform="rotate(${rot} ${cx} ${cy})"><rect x="${cx-128}" y="${cy-54}" width="256" height="108" rx="6" fill="#0c0d10" stroke="#2b2e37" stroke-width="3"/>${l}<path d="M${cx-128} ${cy+54}H${cx+128}" stroke="var(--acc)" stroke-width="3" opacity=".6"/></g><ellipse class="bloom" cx="${cx}" cy="${cy}" rx="300" ry="190" fill="url(#lampG)"/>`};
+  return `<g transform="rotate(${rot} ${cx} ${cy})"><rect x="${cx-128}" y="${cy-54}" width="256" height="108" rx="6" fill="#0c0d10" stroke="#2b2e37" stroke-width="3"/>${l}<path d="M${cx-128} ${cy+54}H${cx+128}" stroke="var(--acc)" stroke-width="3" opacity=".6"/></g><ellipse class="bloom" cx="${cx}" cy="${cy}" rx="300" ry="190" fill="url(#lampG)"/><g class="bloom" opacity=".55"><circle cx="${cx+(cx<W/2?150:-150)}" cy="${cy+90}" r="14" fill="none" stroke="#eafff2" stroke-width="2" opacity=".35"/><circle cx="${cx+(cx<W/2?230:-230)}" cy="${cy+140}" r="7" fill="#eafff2" opacity=".2"/></g>`};
  const beam=(cx,cy,tx,sp,d)=>`<g class="beamg" style="transform-origin:${cx}px ${cy}px;animation-delay:${d}s"><path d="M${cx-50} ${cy}L${cx+50} ${cy}L${tx+sp} ${H+80}L${tx-sp} ${H+80}Z" fill="url(#beamG)"/></g>`;
  const L=[[70,10,-24],[W-70,10,24]];
  let beams='';L.forEach(([x,y],i)=>{const d=i?-1:1;beams+=beam(x,y,x+d*W*.30,190,-i*4)+beam(x,y,x+d*W*.62,230,-i*4-6)+beam(x,y,x+d*W*.10,150,-i*4-10)});
@@ -636,13 +646,13 @@ function fragLights(){const W=VW,H=1080,R=rng(17);
  return `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}"><defs>
 <linearGradient id="beamG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4fff8" stop-opacity=".22"/><stop offset=".5" stop-color="#e6fff0" stop-opacity=".07"/><stop offset="1" stop-color="#e6fff0" stop-opacity=".02"/></linearGradient>
 <radialGradient id="lampG"><stop offset="0" stop-color="#f4fff8" stop-opacity=".6"/><stop offset=".3" stop-color="#bfffd9" stop-opacity=".18"/><stop offset="1" stop-color="#bfffd9" stop-opacity="0"/></radialGradient></defs>
-<g class="beams">${beams}</g>${L.map(([x,y,r])=>rig(x,y,r)).join('')}<g class="dust">${dust}</g></svg>`}
+<g class="beams" filter="url(#jbeam)">${beams}</g>${L.map(([x,y,r])=>rig(x,y,r)).join('')}<g class="dust">${dust}</g></svg>`}
 /* 6. FRAG — façon cartes à collectionner : panneaux anthracite, coins coupés, accent néon (vert par défaut, accent=orange…) */
 T.frag={name:'Frag cards',seats:[...Array(12).fill('#2b2e37'),'var(--acc)','var(--acc)','#9b6bff','#f5c242','#3aa0ff'],steps:['#000'],fan:T.tv.fan,tag:T.tv.tag,
  bg:()=>{let g='';const H=560,VX=960;for(let i=-24;i<=24;i++)g+=`<path d="M${VX+i*14} ${H-260}L${VX+i*190} ${H+520}"/>`;for(let k=0;k<12;k++){const y=H-260+Math.pow(k/11,1.9)*780;g+=`<path d="M0 ${y.toFixed(0)}H1920"/>`}
   let st='';const R=rng(5);for(let i=0;i<120;i++)st+=`<circle class="${R()<.25?'tw':''}" cx="${(R()*1920).toFixed(0)}" cy="${(R()*520).toFixed(0)}" r="${(.5+R()*1.3).toFixed(1)}" fill="#fff" opacity="${(.2+R()*.6).toFixed(2)}"/>`;
   return `${MAP?`<div class="map" style="background-image:url(maps/${MAP}.jpg)"></div>`:''}<div class="fragtint"></div><svg class="layer fraggrid" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice"><g fill="none" stroke-width="1.4">${g}</g></svg><svg class="layer" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">${st}</svg><div class="fragglow"></div><div class="sheen"></div><div id="space"></div>`},
- chair:(c,n)=>{const k=`stroke:${SEATRGB?`hsl(calc(var(--hue) + ${(n*9)%360}) 92% 60%)`:c}`;return `<svg class="chair" viewBox="0 0 100 80" preserveAspectRatio="none"><path d="M8 4H82L92 14V54H8Z" fill="#191b21" stroke="#2b2e37" stroke-width="1.5"/><path d="M15 11H79L85 17V48H15Z" fill="#1f2229"/><path d="M15 11H79L85 17V22H15Z" fill="#fff" opacity=".035"/><path d="M3 54H97L93 68H7Z" fill="#2a2d35"/><path d="M3 54H97" stroke="#3a3e48" stroke-width="1.5"/><path d="M7 68H93V75H7Z" fill="#0b0c0f"/><path class="lg" d="M8 4H82L92 14" fill="none" style="${k}" stroke-width="12" opacity=".22"/><path class="ln" d="M8 4H82L92 14" fill="none" style="${k}" stroke-width="4.5"/><text x="50" y="38" font-size="15" text-anchor="middle" font-family="Barlow Condensed,Arial" font-weight="800" fill="#fff" opacity=".14">${String(n).padStart(2,'0')}</text></svg>`}};
+ chair:(c,n)=>{const k=`stroke:${SEATRGB?`hsl(calc(var(--hue) + ${(n*9)%360}) 92% 60%)`:c}`;return `<svg class="chair" viewBox="0 0 100 80" preserveAspectRatio="none"><path d="M6 78H96L92 72H10Z" fill="#000" opacity=".45"/><path d="M14 6Q14 3 18 3H80L90 13V54H10V10Q10 6 14 6Z" fill="url(#sBk)"/><path d="M16 9H78L84 15V20H16Z" fill="url(#sSpec)"/><path d="M18 14H76L80 18V46Q50 50 18 46Z" fill="#000" opacity=".16"/><path d="M10 54V12" stroke="#fff" stroke-width="1" opacity=".08"/><path d="M90 13V54" stroke="#000" stroke-width="1.5" opacity=".4"/><path d="M4 55Q50 51 96 55L93 68Q50 71 7 68Z" fill="url(#sPan)"/><path d="M6 56Q50 52.5 94 56" stroke="#fff" stroke-width="1" opacity=".22" fill="none"/><path d="M7 68Q50 71 93 68V73Q50 76 7 73Z" fill="#0b0c0f"/><path class="lg" d="M14 3.5H80L89.5 13" fill="none" style="${k}" stroke-width="12" opacity=".22"/><path class="ln" d="M14 3.5H80L89.5 13" fill="none" style="${k}" stroke-width="4"/><text x="50" y="36" font-size="15" text-anchor="middle" font-family="Barlow Condensed,Arial" font-weight="800" fill="#fff" opacity=".12">${String(n).padStart(2,'0')}</text></svg>`}};
 
 
 /* ---------- bataille spatiale en fond (style Broadcast) ---------- */
@@ -988,7 +998,8 @@ const pick=document.getElementById('pick'),keys=Object.keys(T);
 keys.forEach((k,i)=>{const b=document.createElement('button');b.dataset.k=k;b.textContent=(i+1)+'. '+T[k].name;b.onclick=()=>{render(k);try{history.replaceState(null,'','#'+k)}catch(e){}};pick.appendChild(b)});
 addEventListener('keydown',e=>{if(e.target.closest&&e.target.closest('input'))return;const i=+e.key-1;if(keys[i])render(keys[i])});
 const start=P.get('theme')||location.hash.replace(/^#/,'');
-{const A={joueur:athleteFan,ultra:ultraFan,carte:carteFan,neon:neonFan,robot:robotFan}[P.get('avatars')];if(A){T.frag.fan=A;T.tv.fan=A;document.body.classList.add('av-'+P.get('avatars'))}}
+{const av=P.get('avatars')||'joueur',A={joueur:athleteFan,ultra:ultraFan,carte:carteFan,neon:neonFan,robot:robotFan}[av];if(A){T.frag.fan=A;document.body.classList.add('av-'+av);if(P.has('avatars'))T.tv.fan=A}}
+jDefs();
 // siège occupé = liseré RGB (ou couleur choisie) ; siège vide = néon gris
 new MutationObserver(ms=>{const S=new Set();for(const m of ms){const e=m.target.closest&&m.target.closest('.seat');if(e)S.add(e)}S.forEach(e=>e.classList.toggle('occ',!!e.querySelector('.fan:not(.leaving)')))}).observe(rowsEl,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
 render(T[start]?start:'frag');
