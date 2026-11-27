@@ -758,11 +758,20 @@ function endScene(){SCENE='end';document.body.classList.add('scene-end');
 
 /* ---------- chat Twitch anonyme (IRC WebSocket, sans compte) ---------- */
 const st=document.getElementById('st'),warn=document.getElementById('warn');
+let chatWs=null,chatSeen=0;
+// garde-fou : OBS peut garder une connexion morte sans jamais la fermer (veille, coupure réseau).
+// Twitch envoie un PING toutes les ~5 min ; on en envoie un aussi, et sans aucune nouvelle depuis 6 min on reconnecte.
+setInterval(()=>{if(!chatWs||chatWs.readyState!==1)return;if(Date.now()-chatSeen>6*60e3){chatWs.close();return}try{chatWs.send('PING :tribune')}catch(e){}},2*60e3);
 function connect(delay=1000){let ws;try{ws=new WebSocket('wss://irc-ws.chat.twitch.tv:443')}catch(e){st.textContent='Connexion impossible ici';return}
+ chatWs=ws;chatSeen=Date.now();
  ws.onopen=()=>{ws.send('CAP REQ :twitch.tv/tags twitch.tv/commands'+(P.get('lurkers')==='irc'?' twitch.tv/membership':''));
-  ws.send('PASS SCHMOOPIIE');ws.send('NICK justinfan'+Math.floor(1e4+Math.random()*8e4));ws.send('JOIN #'+channel);st.textContent='Connecté à #'+channel;delay=1000};
- ws.onmessage=e=>e.data.split('\r\n').forEach(line=>{if(!line)return;if(line.startsWith('PING')){ws.send('PONG :tmi.twitch.tv');return}
+  ws.send('PASS SCHMOOPIIE');ws.send('NICK justinfan'+Math.floor(1e4+Math.random()*8e4));ws.send('JOIN #'+channel);st.textContent='Connexion à #'+channel+'…';delay=1000};
+ ws.onmessage=e=>{chatSeen=Date.now();e.data.split('\r\n').forEach(line=>{if(!line)return;if(line.startsWith('PING')){ws.send('PONG :tmi.twitch.tv');return}
   let tags={},rest=line;if(rest[0]==='@'){const sp=rest.indexOf(' ');rest.slice(1,sp).split(';').forEach(kv=>{const i=kv.indexOf('=');tags[kv.slice(0,i)]=kv.slice(i+1).replace(/\\s/g,' ')});rest=rest.slice(sp+1)}
+  if(/^:tmi\.twitch\.tv ROOMSTATE #/.test(rest)){st.textContent='Connecté à #'+channel;return}
+  if(/^:tmi\.twitch\.tv RECONNECT/.test(rest)){ws.close();return}
+  const cl=rest.match(/^:tmi\.twitch\.tv CLEARCHAT #\S+ :(\S+)$/); // ban ou timeout : le viewer quitte la tribune
+  if(cl){leave(cl[1].toLowerCase());return}
   const u=rest.match(/^:tmi\.twitch\.tv USERNOTICE #\S+(?: :(.*))?$/);
   if(u){const id=tags['msg-id'],login=tags.login||'',name=tags['display-name']||login;
    if(id==='sub'||id==='resub')onSub(login,name,+tags['msg-param-cumulative-months']||1);
@@ -776,8 +785,8 @@ function connect(delay=1000){let ws;try{ws=new WebSocket('wss://irc-ws.chat.twit
    arrive(m[1],tags['display-name']||m[1],{msg,emotes:tags.emotes,color:tags.color,badges:parseBadges(tags.badges)});hype(m[1],msg);
    if(+tags.bits>0){const f=crowd.get(m[1]);if(f)setTimeout(()=>onBits(f,+tags.bits),300)}}
   else if(m[2]==='JOIN')arrive(m[1],m[1],{lurk:true});
-  else{const f=crowd.get(m[1]);if(f&&f.lurk)leave(m[1])}});
- ws.onclose=()=>{st.textContent='Reconnexion…';setTimeout(()=>connect(Math.min(delay*2,30000)),delay)}}
+  else{const f=crowd.get(m[1]);if(f&&f.lurk)leave(m[1])}})};
+ ws.onclose=()=>{if(chatWs!==ws)return;chatWs=null;st.textContent='Reconnexion…';setTimeout(()=>connect(Math.min(delay*2,30000)),delay)}}
 
 /* ---------- API Twitch (jeton du streamer) : viewers silencieux + follows ---------- */
 async function helix(path,opt={}){const r=await fetch('https://api.twitch.tv/helix/'+path,Object.assign({headers:{Authorization:'Bearer '+token,'Client-Id':CLIENT_ID,'Content-Type':'application/json'}},opt));
