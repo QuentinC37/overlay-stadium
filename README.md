@@ -51,3 +51,4 @@ https://quentinc37.github.io/overlay-stadium/?channel=TACHAINE
 | `paliers=10,20,30,40,50,75` | Paliers de places visibles avant le plafond `max` (100) |
 | `disposition=coins` | Placement du titre, du compteur et du fil : `coins` (titre en haut à gauche, compteur et fil en haut à droite, par défaut), `centre`, `cote`, `bas`. Le haut et le bas restent libres pour les barres Twitch qui apparaissent au survol |
 | `zones=1` | Affiche en rouge les zones couvertes par les barres Twitch au survol (pour vérifier une mise en page) |
+| `chat=fil` | Remet les messages du chat dans le fil en haut à droite (par défaut, la scène tribune n'y montre que les événements ; une petite bulle signale qui parle) |

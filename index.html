@@ -384,6 +384,7 @@ const fit=()=>{const s=Math.min(innerWidth/1920,innerHeight/1080);stage.style.tr
 addEventListener('resize',fit);fit();
 // mise en page : fil de chat sous le titre (chat=bulles pour l'ancien mode) et emplacement caméra (cam=droite|gauche, camformat=paysage|portrait)
 const FEED=showMsg&&P.get('chat')!=='bulles';
+const NOCHAT=P.get('chat')!=='fil'; // scène tribune : le fil ne montre que les événements (chat=fil pour y remettre les messages)
 const PORTRAIT=P.get('camformat')==='portrait'||P.get('cam')==='portrait',CAMP=P.get('cam')==='gauche'?'gauche':(P.get('cam')==='droite'||PORTRAIT||P.get('cam')==='paysage')?'droite':'';
 const BADGES=P.get('badges')==='1'; // badges Twitch (mod/vip/sub) masqués : la personnalisation passera par le site
 const VW=CAMP?1280:1920,OX=CAMP==='gauche'?640:0,COLFEED=FEED&&CAMP&&!PORTRAIT;
@@ -815,7 +816,7 @@ function ping(f){const fan=f.seat.el.querySelector('.fan:not(.leaving)');if(!fan
  fan._pt=setTimeout(()=>{p.classList.add('bye');setTimeout(()=>{p.remove();if(!fan.querySelector('.chat,.ping'))fan.classList.remove('speaking')},300)},3400)}
 const Q=[];let active=0;const MAXB=+(P.get('bulles')||3);
 function say(f,kind,toks){if(!showMsg&&kind==='msg')return;
- if(FEED){if(kind==='msg')ping(f);feedLine(f.name,toks,kind,f.color);return}
+ if(FEED){if(kind==='msg'){ping(f);if(NOCHAT&&!COLFEED)return}feedLine(f.name,toks,kind,f.color);return}
  const i=Q.findIndex(q=>q.f===f);if(i>=0)Q.splice(i,1);Q.push({f,kind,toks});pump()}
 function pump(){while(active<MAXB&&Q.length){const q=Q.shift();if(!crowd.has(q.f.login)||crowd.get(q.f.login)!==q.f)continue;show(q)}}
 function show({f,kind,toks}){const fan=f.seat.el.querySelector('.fan:not(.leaving)');if(!fan)return;
@@ -959,7 +960,7 @@ function connect(delay=1000){let ws;try{ws=new WebSocket('wss://irc-ws.chat.twit
    return}
   const m=rest.match(/^:([^!]+)!\S+ (PRIVMSG|JOIN|PART) #\S+(?: :(.*))?$/);if(!m)return;
   if(m[2]==='PRIVMSG'){let msg=m[3]||'';const act=msg.match(/^\u0001ACTION (.*)\u0001$/);if(act)msg=act[1];
-   if(m[1]===channel){if(FEED)feedLine(tags['display-name']||m[1],tokens(msg,tags.emotes),'host')}else // le streamer : dans le fil, sans siège
+   if(m[1]===channel){if(FEED&&(!NOCHAT||COLFEED))feedLine(tags['display-name']||m[1],tokens(msg,tags.emotes),'host')}else // le streamer : dans le fil, sans siège
    arrive(m[1],tags['display-name']||m[1],{msg,emotes:tags.emotes,color:tags.color,badges:parseBadges(tags.badges)});hype(m[1],msg);
    if(+tags.bits>0){const f=crowd.get(m[1]);if(f)setTimeout(()=>onBits(f,+tags.bits),300)}}
   else if(m[2]==='JOIN')arrive(m[1],m[1],{lurk:true});
