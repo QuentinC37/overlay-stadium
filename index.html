@@ -570,38 +570,60 @@ function robotFan(L){ // mascotte robot : tête-écran, expressions en pixels, a
 <rect x="44" y="80" width="12" height="10" fill="${TR}"/><path d="M50 22V12" stroke="${TR}" stroke-width="3"/><circle cx="50" cy="10" r="4.5" fill="${G}" class="tw"/>
 <rect x="18" y="22" width="64" height="60" rx="14" fill="${A}"/><path d="M50 22H68Q82 22 82 36V68Q82 82 68 82H50Z" fill="#000" opacity=".12"/><rect x="14" y="42" width="6" height="18" rx="2" fill="${TR}"/><rect x="80" y="42" width="6" height="18" rx="2" fill="${TR}"/>
 <rect x="26" y="30" width="48" height="40" rx="8" fill="#0b0c10"/><rect x="26" y="30" width="48" height="40" rx="8" fill="${G}" opacity=".06"/>${f}</svg>`}
-/* joueur en armure, style « logo mascotte esport » (avatars=joueur) : trait épais, casque à visière, épaulières, lignes lumineuses */
+/* joueur en armure, rendu réaliste (avatars=joueur) : volumes dégradés, reflets métal, joints d'armure, visière vitrée, lignes néon diffuses */
 let _aid=0;
-function athleteFan(L){
- const s=skinOf(L),G=s.g,id='j'+(++_aid),O='#0a0c11';
- const BASES=[['#eef1f5','#c4cad4','#9aa2b0'],['#4a505d','#353a45','#262a33'],['#24272f','#1a1d23','#121419'],['#eef1f5','#c4cad4','#9aa2b0']];
- const [B,B2,B3]=BASES[(L.color+L.extra)%4];
- const ln=(d,w=2.2)=>`<path d="${d}" fill="none" stroke="${G}" stroke-width="${w*3.2}" stroke-linecap="round" stroke-linejoin="round" opacity=".28"/><path d="${d}" fill="none" stroke="${G}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`;
- const sw=`stroke="${O}" stroke-width="2.6" stroke-linejoin="round"`;
- // buste : torse en V, épaulières, plastron avec emblème
- const body=`<path d="M12 118L15 98Q18 84 34 79H66Q82 84 85 98L88 118Z" fill="${B3}" ${sw}/>
-<ellipse cx="50" cy="79" rx="17" ry="6" fill="#151821" ${sw}/>
-<path d="M30 86H70L67 103L50 113L33 103Z" fill="${B}" ${sw}/><path d="M30 86H70L69 92H31Z" fill="#fff" opacity=".18"/><path d="M50 113L67 103L70 86H60L58 100L50 106Z" fill="#000" opacity=".12"/>
-<path d="M43 96H57L54 103H46Z" fill="${O}"/>${ln('M45.5 99H54.5',1.8)}
-<path d="M4 114Q2 88 22 79L35 85Q30 101 21 114Z" fill="${B}" ${sw}/><path d="M7 104Q8 88 22 82" fill="none" stroke="#fff" stroke-width="2" opacity=".45"/>${ln('M10 110Q11 96 23 88',1.8)}
-<path d="M96 114Q98 88 78 79L65 85Q70 101 79 114Z" fill="${B2}" ${sw}/>${ln('M90 110Q89 96 77 88',1.8)}`;
- const ears=`<rect x="19" y="36" width="8" height="20" rx="3" fill="${B2}" ${sw}/><rect x="73" y="36" width="8" height="20" rx="3" fill="${B2}" ${sw}/>${ln('M77 41V51',1.4)}`;
- const helmets=[
-  // A. casque rond, grande visière teintée avec reflet
-  `<path d="M22 46Q22 14 50 13Q78 14 78 46Q78 68 64 74H36Q22 68 22 46Z" fill="${B}" ${sw}/><path d="M50 13Q78 14 78 46Q78 68 64 74H54Q70 62 68 40Q66 20 50 13Z" fill="#000" opacity=".13"/>
-<path d="M28 38Q50 28 72 38L70 58Q50 68 30 58Z" fill="${O}" ${sw}/><path d="M28 38Q50 28 72 38L70 58Q50 68 30 58Z" fill="url(#${id}v)" opacity=".85"/><path d="M33 40Q46 34 60 35L58 40Q46 39 35 45Z" fill="#fff" opacity=".55"/><path d="M62 54Q67 52 68 47" stroke="#fff" stroke-width="2" opacity=".4" fill="none" stroke-linecap="round"/>
-<path d="M30 22Q40 15 52 15" stroke="#fff" stroke-width="2.4" opacity=".5" fill="none" stroke-linecap="round"/>`,
-  // B. casque anguleux sombre, fentes lumineuses
-  `<path d="M24 54L25 32L38 15H62L75 32L76 54L64 72H36Z" fill="${B3==='#262a33'||B3==='#121419'?B2:'#3a3f4b'}" ${sw}/><path d="M50 15H62L75 32L76 54L64 72H50Z" fill="#000" opacity=".18"/>
-<path d="M30 36L42 30H58L70 36L67 52L56 60H44L33 52Z" fill="${O}"/>${ln('M34 42L45 46M66 42L55 46',2.6)}${ln('M44 55H56',1.6)}
-<path d="M50 15V28" stroke="${G}" stroke-width="2" opacity=".8"/><path d="M38 15L30 26" stroke="#fff" stroke-width="1.8" opacity=".35"/>`,
-  // C. dôme, visière opaque fendue d'une ligne lumineuse
-  `<path d="M23 48Q22 14 50 13Q78 14 77 48L72 66Q62 74 50 74Q38 74 28 66Z" fill="${B}" ${sw}/><path d="M50 13Q78 14 77 48L72 66Q62 74 50 74Z" fill="#000" opacity=".13"/>
-<path d="M27 36Q50 27 73 36L71 54Q50 61 29 54Z" fill="${O}" ${sw}/>${ln('M32 45Q50 40 68 45',2.6)}<path d="M33 38Q44 34 54 34" stroke="#fff" stroke-width="1.6" opacity=".3" fill="none"/>
-${ln('M36 66L44 70M64 66L56 70',1.4)}<path d="M31 22Q40 15 52 15" stroke="#fff" stroke-width="2.4" opacity=".5" fill="none" stroke-linecap="round"/>`];
- const h=L.hair%3,ant=L.extra===1&&h!==1?`<path d="M74 34L80 12" stroke="${O}" stroke-width="3.2" stroke-linecap="round"/><circle cx="80.5" cy="10.5" r="3" fill="${G}"/>`:'';
- return `<svg viewBox="0 0 100 118"><defs><linearGradient id="${id}v" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${G}"/><stop offset=".55" stop-color="${G}" stop-opacity=".55"/><stop offset="1" stop-color="#0a0c11"/></linearGradient></defs>
-${body}${ant}${ears}${helmets[h]}</svg>`}
+function jDefs(){if(document.getElementById('jfx'))return;const d=document.createElement('div');d.style.cssText='position:absolute;width:0;height:0;overflow:hidden';
+ d.innerHTML='<svg id="jfx" width="0" height="0"><filter id="jglow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="jsoft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2.2"/></filter></svg>';document.body.appendChild(d)}
+function athleteFan(L){jDefs();
+ const s=skinOf(L),G=s.g,id='j'+(++_aid);
+ // métal : clair (blanc nacré), gris acier, noir carbone
+ const M=[['#ffffff','#d5dae2','#7d8595','#3a3f4a'],['#9aa1ae','#5d6472','#30353f','#14171c'],['#5a606c','#2c3038','#16191e','#08090b'],['#ffffff','#d5dae2','#7d8595','#3a3f4a']][(L.color+L.extra)%4];
+ const g=(k,x1,y1,x2,y2,st)=>`<linearGradient id="${id}${k}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}">${st.map(([o,c,a])=>`<stop offset="${o}" stop-color="${c}"${a!=null?` stop-opacity="${a}"`:''}/>`).join('')}</linearGradient>`;
+ const defs=`<defs>
+${g('m',0,0,1,1,[[0,M[0]],[.35,M[1]],[.8,M[2]],[1,M[3]]])}
+${g('s',0,0,0,1,[[0,M[1]],[.6,M[2]],[1,M[3]]])}
+${g('d',0,0,1,1,[[0,'#3b404b'],[.5,'#1b1e25'],[1,'#07080a']])}
+${g('v',0,0,0,1,[[0,'#2a3242'],[.45,'#0b0e14'],[.8,'#05060a'],[1,G,.55]])}
+${g('r',0,0,1,0,[[0,'#fff',0],[.5,'#fff',.55],[1,'#fff',0]])}
+<radialGradient id="${id}h" cx=".35" cy=".25" r=".85"><stop offset="0" stop-color="${M[0]}"/><stop offset=".45" stop-color="${M[1]}"/><stop offset=".85" stop-color="${M[2]}"/><stop offset="1" stop-color="${M[3]}"/></radialGradient></defs>`;
+ const neon=(d,w=1.6)=>`<path d="${d}" fill="none" stroke="${G}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" filter="url(#jglow)"/>`;
+ const seam=(d,o=.55)=>`<path d="${d}" fill="none" stroke="#000" stroke-width=".9" opacity="${o}"/>`;
+ const hi=(d,o=.5,w=1.2)=>`<path d="${d}" fill="none" stroke="#fff" stroke-width="${w}" opacity="${o}" stroke-linecap="round"/>`;
+ // ombre portée douce sous le buste
+ const shadow=`<ellipse cx="50" cy="116" rx="40" ry="6" fill="#000" opacity=".45" filter="url(#jsoft)"/>`;
+ // combinaison sombre (maille) + torse
+ const suit=`<path d="M13 118L16 99Q19 85 34 80H66Q81 85 84 99L87 118Z" fill="url(#${id}d)"/>
+<path d="M20 118L22 102M28 118L29 100M72 118L71 100M80 118L78 102" stroke="#000" stroke-width=".8" opacity=".5"/>`;
+ // col segmenté
+ const collar=`<path d="M34 76Q50 84 66 76L67 82Q50 90 33 82Z" fill="url(#${id}s)"/>${seam('M38 78.5L38 84M44 80L44 86M50 80.5V87M56 80L56 86M62 78.5L62 84',.6)}${hi('M36 77Q50 84 64 77',.35,.8)}`;
+ // plastron en deux couches
+ const chest=`<path d="M31 86H69L66 103L50 112L34 103Z" fill="url(#${id}m)"/>${seam('M50 87V111')}${seam('M33 95H67',.35)}
+<path d="M31 86H69L68.5 89H31.5Z" fill="#fff" opacity=".35"/><path d="M50 112L66 103L69 86H62L59 101L50 107Z" fill="#000" opacity=".22"/>
+<path d="M44 98H56L53.5 104H46.5Z" fill="#06070a"/>${neon('M46 100.5H54',1.4)}${neon('M36 90L44 92M64 90L56 92',1)}`;
+ // épaulières : plaque principale + lamelle
+ const pad=(m)=>{const t=m?'scale(-1 1) translate(-100 0)':'';return `<g transform="${t}"><path d="M3 114Q1 88 22 79L36 85Q31 101 21 114Z" fill="url(#${id}h)"/><path d="M8 116Q8 100 18 92L26 96Q20 106 18 116Z" fill="url(#${id}s)" opacity=".9"/>${seam('M8 116Q8 100 18 92L26 96')}${hi('M6 104Q8 88 22 81',.7,1.4)}<path d="M21 114Q31 101 36 85L33 84Q28 98 19 112Z" fill="#000" opacity=".3"/>${neon('M11 110Q12 99 21 93',1.3)}<circle cx="27" cy="86" r="1.3" fill="#1a1d23"/><circle cx="27" cy="86" r=".6" fill="#aab"/></g>`};
+ // casques
+ const helm=[
+  // A. casque intégral, grande visière vitrée bombée
+  `<path d="M22 46Q22 13 50 12Q78 13 78 46Q78 68 64 75H36Q22 68 22 46Z" fill="url(#${id}h)"/>
+<path d="M50 12Q78 13 78 46Q78 68 64 75H56Q71 62 69 40Q67 20 50 12Z" fill="#000" opacity=".22"/>${seam('M50 12V27')}${seam('M24 50Q30 64 40 70',.4)}${seam('M76 50Q70 64 60 70',.4)}
+<path d="M27 37Q50 27 73 37L71 58Q50 68 29 58Z" fill="url(#${id}v)"/><path d="M27 37Q50 27 73 37" fill="none" stroke="#000" stroke-width="1.6" opacity=".6"/>
+<path d="M31 39Q46 32 62 34Q50 36 33 46Z" fill="url(#${id}r)" opacity=".9"/><path d="M60 55Q66 53 68 47" stroke="#fff" stroke-width="1.2" opacity=".35" fill="none" stroke-linecap="round"/>
+${neon('M33 57Q50 64 67 57',1.1)}${hi('M31 20Q40 14 52 14',.75,2)}`,
+  // B. casque anguleux, masque sombre, fentes lumineuses
+  `<path d="M24 54L25 31L38 14H62L75 31L76 54L64 73H36Z" fill="url(#${id}h)"/>
+<path d="M50 14H62L75 31L76 54L64 73H50Z" fill="#000" opacity=".24"/>${seam('M38 14L44 30H56L62 14')}${seam('M25 31L33 36M75 31L67 36')}
+<path d="M31 36L43 30H57L69 36L66 52L56 60H44L34 52Z" fill="url(#${id}d)"/><path d="M31 36L43 30H57L69 36" fill="none" stroke="#fff" stroke-width=".8" opacity=".25"/>
+${neon('M35 42L45 46M65 42L55 46',2)}${neon('M44 55H56',1.1)}${hi('M38 15L29 27',.6,1.6)}${neon('M50 16V27',1)}`,
+  // C. dôme, visière opaque traversée d'une ligne néon
+  `<path d="M23 48Q22 13 50 12Q78 13 77 48L72 66Q62 75 50 75Q38 75 28 66Z" fill="url(#${id}h)"/>
+<path d="M50 12Q78 13 77 48L72 66Q62 75 50 75Z" fill="#000" opacity=".22"/>${seam('M23 48Q36 44 50 44Q64 44 77 48',.3)}
+<path d="M27 35Q50 26 73 35L71 54Q50 61 29 54Z" fill="url(#${id}d)"/><path d="M30 37Q44 31 58 31Q44 34 32 42Z" fill="url(#${id}r)" opacity=".5"/>
+${neon('M32 45Q50 40 68 45',2.2)}${seam('M36 66L44 70M64 66L56 70',.5)}${neon('M38 67L44 70M62 67L56 70',.9)}${hi('M31 21Q40 14 52 14',.75,2)}`];
+ const h=L.hair%3;
+ const ears=`<path d="M18 37H26V56H18Q16 46.5 18 37Z" fill="url(#${id}s)"/><path d="M74 37H82Q84 46.5 82 56H74Z" fill="url(#${id}s)"/>${neon('M80 41V52',1.1)}${seam('M22 37V56',.4)}`;
+ const ant=L.extra===1&&h!==1?`<path d="M75 34L80 11" stroke="url(#${id}s)" stroke-width="2.4" stroke-linecap="round"/><circle cx="80.4" cy="10" r="2.2" fill="${G}" filter="url(#jglow)"/>`:'';
+ return `<svg viewBox="0 0 100 118">${defs}${shadow}${suit}${collar}${chest}${pad(0)}${pad(1)}${ant}${ears}${helm[h]}</svg>`}
 /* projecteurs du stade (style Frag) : deux rampes dans les coins hauts de l'écran, faisceaux qui balaient doucement, poussière dans la lumière.
    Calque à l'échelle de l'écran (pas du stade) : identique à tous les niveaux de zoom. */
 function fragLights(){const W=VW,H=1080,R=rng(17);
