@@ -1,10 +1,18 @@
-// Réglages Cloudflare : le Worker « tribune » sert les pages du dépôt (overlay, vestiaire).
-// À l'étape 3, il gérera aussi l'enregistrement des looks des viewers.
+// Réglages Cloudflare : le Worker « tribune » sert les pages du dépôt (overlay, vestiaire)
+// et enregistre les looks des viewers (src/worker.js) dans un espace KV créé automatiquement au déploiement.
 {
   "name": "tribune",
+  "main": "src/worker.js",
   "compatibility_date": "2025-11-01",
+  "workers_dev": true,
+  // requis par la commande de prévisualisation des branches (npx wrangler preview)
+  "previews": {},
   "assets": {
     "directory": "./",
+    "binding": "ASSETS",
     "html_handling": "auto-trailing-slash"
-  }
+  },
+  "kv_namespaces": [
+    { "binding": "LOOKS" }
+  ]
 }
