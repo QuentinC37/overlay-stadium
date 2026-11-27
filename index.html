@@ -701,19 +701,22 @@ const world=document.getElementById('world'),sfx=document.getElementById('sfx');
 const FULL=Math.max(VW/WW,1080/WH),ZOOM=P.get('zoom')!=='0',FILL=+(P.get('remplissage')||75)/100;
 function camAt(S){const vw=VW/S,vh=1080/S,x0=Math.min(Math.max(WW/2-vw/2,0),WW-vw),y0=Math.max(Math.min(STAND_TOP-vh*.5,STAND_TOP-RES/S,WH-vh),-400);
  const vis=seats.filter(t=>t.x>=x0+2&&t.x+t.g.w<=x0+vw-2&&t.g.b-t.g.h>=y0+RES/S&&t.g.b+t.g.h*.2<=y0+vh);return{S,x0,y0,vw,vh,vis}}
-const LEVELS=[];
+const LEVELS=[],LVT=[]; // LVT : nombre exact de places ouvertes à chaque palier
+function camLv(i){const c=camAt(LEVELS[i]),t=LVT[i];if(t&&c.vis.length>t){const cx=c.x0+c.vw/2;c.vis=c.vis.slice().sort((a,b)=>(a.row-b.row)||Math.abs(a.x+a.g.w/2-cx)-Math.abs(b.x+b.g.w/2-cx)).slice(0,t)}return c}
 {const MAXS=Math.max(20,+P.get('max')||100); // plafond de places à l'écran (100 par défaut) ; au-delà, le moins actif cède sa place
- const lv=tg=>{let lo=FULL,hi=8;for(let k=0;k<30;k++){const m=(lo+hi)/2;camAt(m).vis.length>=tg?lo=m:hi=m}return lo};
- for(const tg of [20,40,70,140,280].filter(t=>t<MAXS*.8)){if(camAt(FULL).vis.length<tg*1.3)break;LEVELS.push(lv(tg))}
- if(camAt(FULL).vis.length>MAXS*1.1){LEVELS.push(lv(MAXS))}else
- LEVELS.push(FULL)}
+ const lv=tg=>{let lo=FULL,hi=20;for(let k=0;k<30;k++){const m=(lo+hi)/2;camAt(m).vis.length>=tg?lo=m:hi=m}return lo};
+ const PAL=(P.get('paliers')||'10,20,30,40,50,75').split(',').map(Number).filter(n=>n>=4).sort((a,b)=>a-b); // paliers de places visibles avant le plafond
+ for(const tg of PAL.filter(t=>t<MAXS*.9)){if(camAt(FULL).vis.length<tg*1.3)break;LEVELS.push(lv(tg));LVT.push(tg)}
+ if(camAt(FULL).vis.length>MAXS*1.1){LEVELS.push(lv(MAXS));LVT.push(MAXS)}else
+ {LEVELS.push(FULL);LVT.push(0)}
+ window.__levels=LEVELS.map((S,i)=>camLv(i).vis.length)}
 let lvl=0,cam=null;
-function setLevel(i,instant){lvl=Math.max(0,Math.min(i,LEVELS.length-1));if(!ZOOM)lvl=LEVELS.length-1;cam=camAt(LEVELS[lvl]);cam.set=new Set(cam.vis);
+function setLevel(i,instant){lvl=Math.max(0,Math.min(i,LEVELS.length-1));if(!ZOOM)lvl=LEVELS.length-1;cam=camLv(lvl);cam.set=new Set(cam.vis);
  if(instant)world.style.transition='none';world.style.transform=`scale(${cam.S}) translate(${-cam.x0}px,${-cam.y0}px)`;world.style.setProperty('--inv',(1/cam.S).toFixed(4));
  if(instant){void world.offsetWidth;world.style.transition=''}tiny()}
 function tiny(){const rs=document.getElementById('rows').children;geo.forEach((g,r)=>rs[r]&&rs[r].classList.toggle('tiny',g.w*cam.S<50))}
 function fillCheck(){if(lvl>=LEVELS.length-1)return void updateCount();const used=cam.vis.filter(t=>t.user).length;if(used>=Math.ceil(cam.vis.length*FILL))setLevel(lvl+1);updateCount()}
-function levelFor(n){let i=0;while(i<LEVELS.length-1&&n>=Math.ceil(camAt(LEVELS[i]).vis.length*FILL))i++;return i}
+function levelFor(n){let i=0;while(i<LEVELS.length-1&&n>=Math.ceil(camLv(i).vis.length*FILL))i++;return i}
 setLevel(0,true);
 
 /* ---------- rendu d'un style ---------- */

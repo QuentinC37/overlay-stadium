@@ -47,4 +47,5 @@ https://quentinc37.github.io/overlay-stadium/?channel=TACHAINE
 | `raidmax=24` | Nombre maximum de supporters ajoutés lors d'un raid |
 | `zoom=0` | Désactive le zoom progressif (stade entier visible dès le début) |
 | `rangees=1.32` | Écart vertical entre les rangées (1 = serré, 1.8 = très aéré) |
-| `remplissage=75` | % de sièges visibles occupés avant de dézoomer au palier suivant (20 → 40 → 80 → 160 → ~370 places) |
+| `remplissage=75` | % de places occupées avant de dézoomer au palier suivant |
+| `paliers=10,20,30,40,50,75` | Paliers de places visibles avant le plafond `max` (100) |
