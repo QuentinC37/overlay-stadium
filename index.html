@@ -570,39 +570,38 @@ function robotFan(L){ // mascotte robot : tête-écran, expressions en pixels, a
 <rect x="44" y="80" width="12" height="10" fill="${TR}"/><path d="M50 22V12" stroke="${TR}" stroke-width="3"/><circle cx="50" cy="10" r="4.5" fill="${G}" class="tw"/>
 <rect x="18" y="22" width="64" height="60" rx="14" fill="${A}"/><path d="M50 22H68Q82 22 82 36V68Q82 82 68 82H50Z" fill="#000" opacity=".12"/><rect x="14" y="42" width="6" height="18" rx="2" fill="${TR}"/><rect x="80" y="42" width="6" height="18" rx="2" fill="${TR}"/>
 <rect x="26" y="30" width="48" height="40" rx="8" fill="#0b0c10"/><rect x="26" y="30" width="48" height="40" rx="8" fill="${G}" opacity=".06"/>${f}</svg>`}
-/* joueur en armure détaillé (avatars=joueur) : buste, bras croisés, épaulières brillantes, anneau lumineux à l'épaule, casque à visière */
+/* joueur en armure, style « logo mascotte esport » (avatars=joueur) : trait épais, casque à visière, épaulières, lignes lumineuses */
 let _aid=0;
 function athleteFan(L){
- const s=skinOf(L),A=s.a,G=s.g,TR=s.t,id='j'+(++_aid);
- const glow=(d,w=3)=>`<path d="${d}" fill="none" stroke="${G}" stroke-width="${w*3}" stroke-linecap="round" stroke-linejoin="round" opacity=".25"/><path d="${d}" fill="none" stroke="${G}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`;
- const glyphs=[glow('M44 37L56 47M56 37L44 47',2.4),glow('M44 36H56L50 47Z',2.2),
-  `<circle cx="46" cy="40" r="2.6" fill="${G}"/><circle cx="54" cy="40" r="2.6" fill="${G}"/><circle cx="50" cy="46" r="2.6" fill="${G}"/>`,
-  glow('M41 41H59',3.2),glow('M42 36V46M45 36V46M48 36V46M51 36V46M54 36V46M57 36V46',1.4),glow('M40 38L47 42M60 38L53 42',2.6)];
- const glyph=glyphs[(L.eyes*4+L.mouth)%glyphs.length];
- const crest=[ // motifs du casque
-  `<path d="M50 9L46 22H54Z" fill="${G}" opacity=".9"/>`,
-  `<path d="M40 12L44 24M50 10V24M60 12L56 24" stroke="${A}" stroke-width="3.5"/>`,
-  `<path d="M32 22Q50 6 68 22" stroke="${A}" stroke-width="6" fill="none"/>`,
-  `<path d="M46 9H54V24H46Z" fill="${A}"/><path d="M50 10V23" stroke="${G}" stroke-width="1.6"/>`][L.hair%4];
- const stripe=L.extra%2?`<path d="M56 92L64 98M60 89L68 95" stroke="#fff" stroke-width="2.4" opacity=".55"/>`:`<path d="M38 99L46 99" stroke="${G}" stroke-width="2" opacity=".8"/>`;
- return `<svg viewBox="0 0 100 118"><defs>
-<linearGradient id="${id}a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".45"/><stop offset=".35" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".45"/></linearGradient>
-<linearGradient id="${id}h" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4a4f5c"/><stop offset=".5" stop-color="#22252d"/><stop offset="1" stop-color="#0e1014"/></linearGradient>
-<linearGradient id="${id}v" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#20242e"/><stop offset="1" stop-color="#05060a"/></linearGradient></defs>
-<path d="M10 118Q10 86 30 78H70Q90 86 90 118Z" fill="#171a21"/>
-<path d="M32 78H68L64 104H36Z" fill="${A}"/><path d="M32 78H68L64 104H36Z" fill="url(#${id}a)"/><path d="M50 80V102" stroke="#0b0c10" stroke-width="3"/>${glow('M50 84V96',1.6)}${stripe}
-<path d="M6 104Q2 80 26 74L36 82Q32 96 22 104Z" fill="${A}"/><path d="M6 104Q2 80 26 74L36 82Q32 96 22 104Z" fill="url(#${id}a)"/><path d="M9 92Q12 80 26 77" stroke="#fff" stroke-width="1.6" opacity=".5" fill="none"/>
-<path d="M94 104Q98 80 74 74L64 82Q68 96 78 104Z" fill="${A}"/><path d="M94 104Q98 80 74 74L64 82Q68 96 78 104Z" fill="url(#${id}a)"/>
-<circle cx="81" cy="89" r="7.5" fill="none" stroke="${G}" stroke-width="7" opacity=".22"/><circle cx="81" cy="89" r="7.5" fill="none" stroke="${G}" stroke-width="2.4"/><circle cx="81" cy="89" r="7.5" fill="none" stroke="#fff" stroke-width=".8" opacity=".7"/>
-<path d="M10 104H66L70 110L66 117H10Q6 110 10 104Z" fill="${TR}"/><path d="M10 104H66L70 110L66 117H10Q6 110 10 104Z" fill="url(#${id}a)"/><path d="M30 104V117M48 104V117" stroke="#000" stroke-width="1.4" opacity=".35"/><circle cx="72" cy="110" r="7.5" fill="#3a3f4b"/><path d="M67 106Q72 103 77 107" stroke="#c9ced6" stroke-width="1.4" fill="none"/>
-<path d="M34 97H88Q94 104 88 112H34L30 104Z" fill="${A}"/><path d="M34 97H88Q94 104 88 112H34L30 104Z" fill="url(#${id}a)"/><path d="M58 97V112M74 97V112" stroke="#000" stroke-width="1.4" opacity=".3"/><path d="M36 99H86" stroke="#fff" stroke-width="1.2" opacity=".4"/><circle cx="28" cy="104.5" r="7.5" fill="#3a3f4b"/><path d="M24 101Q28 99 32 102" stroke="#c9ced6" stroke-width="1.4" fill="none"/>${glow('M40 101V109',1.6)}
-<path d="M36 70H64L62 80H38Z" fill="#0b0c10"/>
-<path d="M24 40Q24 10 50 9Q76 10 76 40L74 60Q66 72 50 73Q34 72 26 60Z" fill="url(#${id}h)"/>
-<path d="M24 40Q24 18 38 12L36 30Q30 40 30 56L26 60Z" fill="${A}"/><path d="M76 40Q76 18 62 12L64 30Q70 40 70 56L74 60Z" fill="${A}"/><path d="M24 40Q24 18 38 12L36 30Q30 40 30 56L26 60Z" fill="url(#${id}a)"/>${crest}
-<path d="M30 31Q50 24 70 31L68 50Q50 56 32 50Z" fill="url(#${id}v)"/><path d="M33 32Q46 27 60 29" stroke="#fff" stroke-width="1.6" opacity=".35" fill="none"/>${glyph}
-<path d="M38 56H62L58 68H42Z" fill="#16181e"/><path d="M42 59H58M43 62H57M44 65H56" stroke="#3a3f4b" stroke-width="1.3"/>
-<rect x="74" y="36" width="6" height="16" rx="2" fill="${TR}"/>${glow('M77 40V48',1.4)}<rect x="20" y="36" width="6" height="16" rx="2" fill="${TR}"/>
-<path d="M30 16Q40 10 52 10" stroke="#fff" stroke-width="2" opacity=".35" fill="none" stroke-linecap="round"/></svg>`}
+ const s=skinOf(L),G=s.g,id='j'+(++_aid),O='#0a0c11';
+ const BASES=[['#eef1f5','#c4cad4','#9aa2b0'],['#4a505d','#353a45','#262a33'],['#24272f','#1a1d23','#121419'],['#eef1f5','#c4cad4','#9aa2b0']];
+ const [B,B2,B3]=BASES[(L.color+L.extra)%4];
+ const ln=(d,w=2.2)=>`<path d="${d}" fill="none" stroke="${G}" stroke-width="${w*3.2}" stroke-linecap="round" stroke-linejoin="round" opacity=".28"/><path d="${d}" fill="none" stroke="${G}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`;
+ const sw=`stroke="${O}" stroke-width="2.6" stroke-linejoin="round"`;
+ // buste : torse en V, épaulières, plastron avec emblème
+ const body=`<path d="M12 118L15 98Q18 84 34 79H66Q82 84 85 98L88 118Z" fill="${B3}" ${sw}/>
+<ellipse cx="50" cy="79" rx="17" ry="6" fill="#151821" ${sw}/>
+<path d="M30 86H70L67 103L50 113L33 103Z" fill="${B}" ${sw}/><path d="M30 86H70L69 92H31Z" fill="#fff" opacity=".18"/><path d="M50 113L67 103L70 86H60L58 100L50 106Z" fill="#000" opacity=".12"/>
+<path d="M43 96H57L54 103H46Z" fill="${O}"/>${ln('M45.5 99H54.5',1.8)}
+<path d="M4 114Q2 88 22 79L35 85Q30 101 21 114Z" fill="${B}" ${sw}/><path d="M7 104Q8 88 22 82" fill="none" stroke="#fff" stroke-width="2" opacity=".45"/>${ln('M10 110Q11 96 23 88',1.8)}
+<path d="M96 114Q98 88 78 79L65 85Q70 101 79 114Z" fill="${B2}" ${sw}/>${ln('M90 110Q89 96 77 88',1.8)}`;
+ const ears=`<rect x="19" y="36" width="8" height="20" rx="3" fill="${B2}" ${sw}/><rect x="73" y="36" width="8" height="20" rx="3" fill="${B2}" ${sw}/>${ln('M77 41V51',1.4)}`;
+ const helmets=[
+  // A. casque rond, grande visière teintée avec reflet
+  `<path d="M22 46Q22 14 50 13Q78 14 78 46Q78 68 64 74H36Q22 68 22 46Z" fill="${B}" ${sw}/><path d="M50 13Q78 14 78 46Q78 68 64 74H54Q70 62 68 40Q66 20 50 13Z" fill="#000" opacity=".13"/>
+<path d="M28 38Q50 28 72 38L70 58Q50 68 30 58Z" fill="${O}" ${sw}/><path d="M28 38Q50 28 72 38L70 58Q50 68 30 58Z" fill="url(#${id}v)" opacity=".85"/><path d="M33 40Q46 34 60 35L58 40Q46 39 35 45Z" fill="#fff" opacity=".55"/><path d="M62 54Q67 52 68 47" stroke="#fff" stroke-width="2" opacity=".4" fill="none" stroke-linecap="round"/>
+<path d="M30 22Q40 15 52 15" stroke="#fff" stroke-width="2.4" opacity=".5" fill="none" stroke-linecap="round"/>`,
+  // B. casque anguleux sombre, fentes lumineuses
+  `<path d="M24 54L25 32L38 15H62L75 32L76 54L64 72H36Z" fill="${B3==='#262a33'||B3==='#121419'?B2:'#3a3f4b'}" ${sw}/><path d="M50 15H62L75 32L76 54L64 72H50Z" fill="#000" opacity=".18"/>
+<path d="M30 36L42 30H58L70 36L67 52L56 60H44L33 52Z" fill="${O}"/>${ln('M34 42L45 46M66 42L55 46',2.6)}${ln('M44 55H56',1.6)}
+<path d="M50 15V28" stroke="${G}" stroke-width="2" opacity=".8"/><path d="M38 15L30 26" stroke="#fff" stroke-width="1.8" opacity=".35"/>`,
+  // C. dôme, visière opaque fendue d'une ligne lumineuse
+  `<path d="M23 48Q22 14 50 13Q78 14 77 48L72 66Q62 74 50 74Q38 74 28 66Z" fill="${B}" ${sw}/><path d="M50 13Q78 14 77 48L72 66Q62 74 50 74Z" fill="#000" opacity=".13"/>
+<path d="M27 36Q50 27 73 36L71 54Q50 61 29 54Z" fill="${O}" ${sw}/>${ln('M32 45Q50 40 68 45',2.6)}<path d="M33 38Q44 34 54 34" stroke="#fff" stroke-width="1.6" opacity=".3" fill="none"/>
+${ln('M36 66L44 70M64 66L56 70',1.4)}<path d="M31 22Q40 15 52 15" stroke="#fff" stroke-width="2.4" opacity=".5" fill="none" stroke-linecap="round"/>`];
+ const h=L.hair%3,ant=L.extra===1&&h!==1?`<path d="M74 34L80 12" stroke="${O}" stroke-width="3.2" stroke-linecap="round"/><circle cx="80.5" cy="10.5" r="3" fill="${G}"/>`:'';
+ return `<svg viewBox="0 0 100 118"><defs><linearGradient id="${id}v" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${G}"/><stop offset=".55" stop-color="${G}" stop-opacity=".55"/><stop offset="1" stop-color="#0a0c11"/></linearGradient></defs>
+${body}${ant}${ears}${helmets[h]}</svg>`}
 /* projecteurs du stade (style Frag) : deux rampes dans les coins hauts de l'écran, faisceaux qui balaient doucement, poussière dans la lumière.
    Calque à l'échelle de l'écran (pas du stade) : identique à tous les niveaux de zoom. */
 function fragLights(){const W=VW,H=1080,R=rng(17);
