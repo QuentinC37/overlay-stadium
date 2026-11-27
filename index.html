@@ -185,10 +185,10 @@ body.rgb{--acc:hsl(var(--hue) 92% 60%);--accA:hsla(var(--hue),92%,60%,.18)}
 .seat.owned .chair .ln{stroke:var(--sc)!important}
 .t-frag #bg{background:radial-gradient(ellipse 60% 55% at 18% 0%,rgba(61,255,143,.10),transparent 70%),linear-gradient(#0e0f13,#0a0b0d 60%,#060607)}
 .t-frag .map{filter:blur(5px) brightness(.32) saturate(.5)}
-.t-frag .fragtint{position:absolute;inset:0;background:linear-gradient(rgba(10,11,13,.55),rgba(10,11,13,.2) 40%,rgba(6,6,7,.9) 62%)}
+.t-frag .fragtint{position:absolute;inset:0;background:linear-gradient(rgba(10,11,13,.55),rgba(10,11,13,.2) calc(var(--st,680px) - 120px),rgba(6,6,7,.9) calc(var(--st,680px) + 380px))}
 .t-frag .fraggrid{stroke:var(--acc);opacity:.07;-webkit-mask-image:linear-gradient(transparent 20%,#000 50%,transparent 75%);mask-image:linear-gradient(transparent 30%,#000 52%,transparent 72%)}
 .t-frag .fraggrid g{stroke:inherit}
-.t-frag .fragglow{position:absolute;left:-10%;right:-10%;top:30%;height:240px;background:radial-gradient(ellipse 50% 50% at 50% 50%,var(--accA),transparent 70%);animation:fglow 6s ease-in-out infinite alternate}
+.t-frag .fragglow{position:absolute;left:-10%;right:-10%;top:calc(var(--st,630px) - 220px);height:240px;background:radial-gradient(ellipse 50% 50% at 50% 50%,var(--accA),transparent 70%);animation:fglow 6s ease-in-out infinite alternate}
 @keyframes fglow{to{opacity:.45;transform:scaleX(1.15)}}
 .t-frag .sheen{position:absolute;inset:0 -40%;background:linear-gradient(115deg,transparent 44%,rgba(255,255,255,.05) 50%,transparent 56%);animation:sheen 13s linear infinite}
 .t-frag .tw{animation:tw 3s ease-in-out infinite alternate}
@@ -689,7 +689,8 @@ setInterval(()=>{if(tvOn()&&P.get('fx')!=='0'&&Math.random()<.75)grenade()},3200
 const WW=2304,WH=1296;let STAND_TOP=300;
 const ROWS=16,geo=[];
 for(let r=0;r<ROWS;r++){const s=.3+r*(.75/(ROWS-1));const w=100*s;geo.push({w,h:w*.8})}
-{let y=0;geo.forEach((g,r)=>{y+=r?g.w*.98:0;g.b=y});const sh=WH-10-geo[ROWS-1].b;geo.forEach(g=>g.b+=sh)}
+const ROWGAP=Math.min(1.8,Math.max(.98,+(P.get('rangees')||1.32))); // écart vertical entre rangées (en largeur de siège) : plus grand = pseudos plus lisibles
+{let y=0;geo.forEach((g,r)=>{y+=r?g.w*ROWGAP:0;g.b=y});const sh=WH-10-geo[ROWS-1].b;geo.forEach(g=>g.b+=sh)}
 STAND_TOP=geo[0].b-geo[0].h;
 const seats=[];
 geo.forEach((g,r)=>{const gap=g.w*.06,pitch=g.w+gap,n=Math.floor((WW+pitch*.5)/pitch)+1,off=(WW-(n*pitch-gap))/2+(r%2?pitch/2:0)-pitch/4;
@@ -725,10 +726,11 @@ const MAP=(m=>m==='random'?MAPS[Math.floor(Math.random()*MAPS.length)]:MAPS.incl
 function render(key){
  th=T[key];document.body.className=document.body.className.replace(/\bt-\w+/g,'').trim()+' t-'+key;
  bgEl.innerHTML=th.bg();
+ bgEl.style.setProperty('--st',(STAND_TOP+400)+'px'); // haut de la tribune dans le fond : la lueur et le voile suivent l'écart des rangées
  document.getElementById('spots').innerHTML=key==='frag'&&P.get('fx')!=='0'?fragLights():'';
  const R=rng(99);rowsEl.innerHTML='';
  geo.forEach((g,r)=>{const row=document.createElement('div');row.className='row';row.style.zIndex=10+r;row.style.top=(g.b-g.h)+'px';row.style.height=(g.h*2)+'px';
-  row.innerHTML=`<div class="step" style="top:${g.h*.86}px;height:${g.h*1.2}px;--c:${th.steps[r%th.steps.length]}"></div>`+
+  row.innerHTML=`<div class="step" style="top:${g.h*.86}px;height:${g.w*ROWGAP+g.h*.25}px;--c:${th.steps[r%th.steps.length]}"></div>`+
    seats.map((s,i)=>s.row!==r?'':`<div class="seat" data-i="${i}" style="left:${s.x}px;top:0;width:${g.w}px;height:${g.h}px">${th.chair(th.seats[Math.floor(R()*th.seats.length)],s.num)}</div>`).join('');
   rowsEl.appendChild(row)});
  rowsEl.querySelectorAll('.seat').forEach(el=>seats[+el.dataset.i].el=el);
