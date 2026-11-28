@@ -355,7 +355,7 @@ body:not(.nohud) .frame em{display:grid}
 #predi .po span:first-child{background:linear-gradient(90deg,#2f8cff,#1b5fd0)}#predi .po span:last-child{background:linear-gradient(90deg,#d0309a,#ff3dbb)}
 #predi .po span.win{box-shadow:0 0 0 3px #fff,0 0 24px #fff}#predi .po span.lose{opacity:.35}
 .mode-cam #predi{left:328px;width:600px;top:120px}.mode-ecran #predi{left:752px;top:118px;width:760px}
-.predi .acard{--ay:480px}.mode-cam.predi .acard{--ay:380px}.mode-ecran.predi .acard{--ay:790px}.mode-pause .acard{--ay:560px}.mode-ecran.htrain .acard{--ay:900px}
+.predi .acard{--ay:480px}.mode-cam.predi .acard{--ay:380px}.mode-ecran.predi .acard{--ay:790px}.mode-pause .acard{--ay:560px}.mode-ecran.htrain .acard{--ay:900px}.scene-end #predi,.scene-end #ptint,.scene-end #htrain,.mode-pause #predi,.mode-pause #ptint{display:none!important}
 #ptint{position:absolute;inset:0;z-index:149;pointer-events:none;display:none}.predi #ptint{display:block}
 #ptint i{position:absolute;top:0;bottom:0;width:50%;mix-blend-mode:screen;animation:lineIn .6s both}
 #ptint i:first-child{left:0;background:linear-gradient(90deg,rgba(47,140,255,.32),rgba(47,140,255,.05))}#ptint i:last-child{right:0;background:linear-gradient(270deg,rgba(255,61,187,.32),rgba(255,61,187,.05))}
@@ -1085,15 +1085,15 @@ function endScene(){SCENE='end';document.body.classList.add('scene-end');
  top.forEach((f,i)=>{const target=order[i];if(!target||f.seat===target)return;const other=[...crowd.values()].find(o=>o.seat===target);
   if(other){const free=freeSeat(other.lurk)||f.seat;moveTo(other,free===target?f.seat:free)}moveTo(f,target)});
  top.forEach((f,i)=>{f.medal=i+1;deco(f)});
- mvpEl.innerHTML='';top.forEach((f,i)=>{const c=document.createElement('span');const r=document.createElement('b');r.textContent=i+1;const nm=document.createElement('em');nm.textContent=f.name;c.append(r,nm);mvpEl.appendChild(c)})}
+ mvpEl.innerHTML='';top.forEach((f,i)=>{const c=document.createElement('span');const r=document.createElement('b');r.textContent=i+1;const nm=document.createElement('em');nm.textContent=f.name;c.append(r,nm);mvpEl.appendChild(c)})
  const rc=document.getElementById('recap');rc.innerHTML='';const chip=(l,v)=>{if(!v)return;const c=document.createElement('span');c.append(l+' ');const e=document.createElement('em');e.textContent=v;c.append(e);rc.appendChild(c)};
- chip('Premier arrivé',ST.first&&ST.first.n);chip('Record',Math.max(ST.peak,crowd.size)?Math.max(ST.peak,crowd.size)+' supporters':'');chip('Follows',ST.follows.length?String(ST.follows.length):'');chip('Subs',ST.subs.length?String(ST.subs.length):'');chip('Raid',ST.raids.slice(-1)[0]||'');chip('Olas',ST.olas?String(ST.olas):'');
+ chip('Premier arrivé',ST.first&&ST.first.n);chip('Record',Math.max(ST.peak,crowd.size)?Math.max(ST.peak,crowd.size)+' supporters':'');chip('Follows',ST.follows.length?String(ST.follows.length):'');chip('Subs',ST.subs.length?String(ST.subs.length):'');chip('Raid',ST.raids.slice(-1)[0]||'');chip('Olas',ST.olas?String(ST.olas):'')}
 
 /* ---------- statistiques du live (pour le récap de fin), gardées 6 h et partagées entre les scènes ---------- */
 
 /* ---------- 1. objectifs de supporters : ola + célébration à chaque palier ---------- */
 const GOALS=(P.get('objectifs')||'10,20,30,40,50,75,100').split(',').map(Number).filter(n=>n>0);let goalT=0;
-function goalCheck(quiet){const n=crowd.size;if(n>ST.peak){ST.peak=n;stSave()}clearTimeout(goalT);goalT=setTimeout(()=>{
+function goalCheck(quiet){if(SCENE==='end')return;const n=crowd.size;if(n>ST.peak){ST.peak=n;stSave()}clearTimeout(goalT);goalT=setTimeout(()=>{
  for(const g of GOALS){if(n>=g&&!ST.goals.includes(g)){ST.goals.push(g);stSave();if(!quiet&&SCENE!=='end')alertShip('Objectif',`${g} supporters`,'goal',()=>{wave('');standSmoke2()},{kind:'Objectif atteint',name:g+' supporters',sub:['La tribune ',['fête ça'],' !']})}}},quiet?0:1500)}
 function standSmoke2(){if(!MODE)standSmoke();else cam.vis.filter(t=>t.user).slice(0,6).forEach(t=>smoke(t,6))}
 
