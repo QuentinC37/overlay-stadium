@@ -272,6 +272,22 @@ body.clear.t-frag #fx{background:none}
 .dispo-bas #hrow{position:absolute;left:0;right:0;top:860px;margin:0;padding:18px 40px;align-items:flex-end;justify-content:flex-start;gap:22px;background:linear-gradient(transparent,rgba(6,7,9,.85) 40%)}
 .dispo-bas #feed{flex:1;height:146px}
 
+
+/* ===== scènes caméra (scene=cam | scene=ecran) : fond transparent, la caméra et l'écran OBS passent dessous ===== */
+body.mode-cam,body.mode-ecran{background:transparent}
+.mode-cam #fx,.mode-ecran #fx{display:none}
+.mode-cam #view{-webkit-mask-image:linear-gradient(transparent,#000 22%);mask-image:linear-gradient(transparent,#000 22%)}
+.mode-cam #title,.mode-ecran #title{display:none}
+.mode-ecran #head{left:1320px!important;right:40px!important;top:440px}
+.mode-ecran #hrow{position:static;flex-direction:column;align-items:stretch;gap:14px;width:100%}
+.mode-ecran #count{width:100%;box-sizing:border-box}
+.mode-ecran #feed{--fw:560px!important;width:560px;height:230px;align-items:flex-end}
+.mode-ecran #view{-webkit-mask-image:linear-gradient(transparent,#000 26%);mask-image:linear-gradient(transparent,#000 26%)}
+.frame{display:none;position:absolute;z-index:205;pointer-events:none;box-sizing:border-box;border:3px solid var(--acc,#3dff8f);box-shadow:0 0 0 1px rgba(0,0,0,.6),0 0 24px rgba(61,255,143,.25),0 18px 40px rgba(0,0,0,.5)}
+.frame b{position:absolute;left:-3px;top:-3px;transform:translateY(-100%);font:800 22px/1 "Barlow Condensed",sans-serif;letter-spacing:1.5px;text-transform:uppercase;background:var(--acc,#3dff8f);color:#000;padding:7px 14px 5px;clip-path:polygon(0 0,100% 0,calc(100% - 10px) 100%,0 100%)}
+.frame em{position:absolute;inset:0;display:none;place-items:center;font:italic 800 34px "Barlow Condensed",sans-serif;text-transform:uppercase;color:rgba(255,255,255,.3);background:repeating-linear-gradient(45deg,rgba(255,255,255,.03) 0 18px,transparent 18px 36px)}
+body:not(.nohud) .frame em{display:grid}
+.mode-ecran .frame{display:block}
 /* ===== bulles de chat, badges, événements (communs) ===== */
 #front{position:absolute;inset:0;z-index:180;pointer-events:none;overflow:hidden}
 .chat{position:absolute;left:50%;bottom:104%;transform:translateX(-50%);z-index:6;display:flex;flex-direction:column;align-items:flex-start;width:max-content;max-width:calc(460px * var(--inv));font:600 var(--fs)/1.15 "Barlow Condensed",sans-serif;pointer-events:none;animation:chatIn .3s ease-out both}
@@ -287,14 +303,14 @@ body.clear.t-frag #fx{background:none}
 .crown{position:absolute;left:29%;width:42%;top:-11%;transform-origin:50% 100%;animation:crown 1.8s ease-in-out infinite alternate}
 .crown svg{display:block;width:100%;filter:drop-shadow(0 0 8px rgba(255,194,26,.8))}
 @keyframes crown{from{transform:rotate(-5deg)}to{transform:translateY(-8%) rotate(5deg)}}
-.medal{position:absolute;left:-4%;top:12%;width:28%;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;font:800 calc(24px * var(--inv))/1 "Barlow Condensed",sans-serif;color:#000;background:#ffc21a;border:3px solid #000;box-shadow:0 0 14px rgba(255,194,26,.7)}
-.medal.m2{background:#e4e6ea;box-shadow:none}.medal.m3{background:#e08a4b;box-shadow:none}.medal.m4,.medal.m5{background:#fff;box-shadow:none}
+.medal{position:absolute;left:-6%;top:4%;width:30%;z-index:7;filter:drop-shadow(0 3px 4px rgba(0,0,0,.7))}.medal svg{display:block;width:100%}
+.medal.m1{filter:drop-shadow(0 0 10px rgba(255,194,26,.75)) drop-shadow(0 3px 4px rgba(0,0,0,.7))}
 #evt{position:absolute;left:50%;top:142px;transform:translateX(-50%);display:none;font:800 40px/1 "Barlow Condensed",sans-serif;text-transform:uppercase;letter-spacing:1px;white-space:nowrap}
 #evt.on,#evt.off{display:inline-flex}#evt.on{animation:evIn .4s cubic-bezier(.2,.8,.2,1) both}#evt.off{animation:evOut .4s ease-in both}
 #evt b{background:#f26b1d;color:#fff;padding:12px 20px 9px}#evt span{background:#fff;color:#000;padding:12px 24px 9px}
 #evt.raid b{background:#000;color:#f26b1d;outline:3px solid #f26b1d;outline-offset:-3px}#evt.ola b,#evt.bits b{background:#ffc21a;color:#000}
 @keyframes evIn{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0)}}@keyframes evOut{to{opacity:0;transform:translateX(-50%) translateY(-10px)}}
-#mvp{display:none;justify-content:center;gap:12px;margin-top:16px}.scene-end #mvp{display:flex}
+#mvp{display:none;justify-content:center;gap:12px;margin-top:16px}.dispo-coins #mvp{justify-content:flex-start;align-items:center}.dispo-coins #mvp::before{content:'MVP du live';font:800 26px/1 "Barlow Condensed",sans-serif;text-transform:uppercase;letter-spacing:2px;color:var(--acc,#3dff8f);margin-right:6px}.scene-end #mvp{display:flex}
 #mvp span{display:inline-flex;align-items:center;gap:10px;background:#000;border:2px solid #fff;padding:6px 14px 4px;font:700 28px/1 "Barlow Condensed",sans-serif;color:#fff;text-transform:uppercase}
 #mvp b{background:#ffc21a;color:#000;padding:2px 8px}#mvp em{font-style:normal}#mvp small{color:#f26b1d;font-size:.75em}
 .puff{position:absolute;width:60px;height:60px;margin:-30px 0 0 -30px;border-radius:50%;background:radial-gradient(circle,rgba(255,140,60,.75),rgba(242,107,29,.35) 45%,rgba(242,107,29,0) 70%);animation:puff 3.8s ease-out both}
@@ -335,8 +351,9 @@ body.nohud .panel{display:none}
  <div id="front"></div>
 </div>
 <div id="spots"></div>
- <div id="safe"><i style="top:0;height:86px">Barre Twitch au survol (haut)</i><i style="bottom:0;height:110px;display:flex;align-items:flex-end">Barre Twitch au survol (bas)</i></div><div id="sfx"></div>
+<div id="sfx"></div>
 </div>
+ <div class="frame" id="fscreen"><b>Écran</b><em>Partage d'écran</em></div><div class="frame" id="fcam"><b>Cam</b><em>Ta caméra</em></div><div id="safe"><i style="top:0;height:86px">Barre Twitch au survol (haut)</i><i style="bottom:0;height:110px;display:flex;align-items:flex-end">Barre Twitch au survol (bas)</i></div>
  <div id="head"><div id="title">Le live va commencer</div><br><div id="hrow"><div id="count"><i></i><span><b>0</b> <span id="cl">supporter en tribune</span></span></div><div id="feed"></div></div><div id="evt"></div><div id="mvp"></div></div>
  <div id="camcol"><div id="camframe"><i>Live</i><em>Ta caméra ici</em></div></div>
  <div id="fx"></div>
@@ -387,15 +404,22 @@ const FEED=showMsg&&P.get('chat')!=='bulles';
 const NOCHAT=P.get('chat')!=='fil'; // scène tribune : le fil ne montre que les événements (chat=fil pour y remettre les messages)
 const PORTRAIT=P.get('camformat')==='portrait'||P.get('cam')==='portrait',CAMP=P.get('cam')==='gauche'?'gauche':(P.get('cam')==='droite'||PORTRAIT||P.get('cam')==='paysage')?'droite':'';
 const BADGES=P.get('badges')==='1'; // badges Twitch (mod/vip/sub) masqués : la personnalisation passera par le site
-const VW=CAMP?1280:1920,OX=CAMP==='gauche'?640:0,COLFEED=FEED&&CAMP&&!PORTRAIT;
+// scènes avec caméra : scene=cam (plein écran caméra, tribune en bandeau bas) ; scene=ecran (partage d'écran + caméra + tribune en colonne)
+const MODE=['cam','ecran'].includes(P.get('scene'))?P.get('scene'):'';
+const LAY=MODE==='cam'?{x:0,y:720,w:1920,h:360}:MODE==='ecran'?{x:0,y:800,w:1920,h:280}:null;
+// emplacements OBS (px sur 1920×1080) : à reprendre tels quels pour placer la capture d'écran et la webcam
+const FR=MODE==='ecran'?{fscreen:[40,96,1240,698],fcam:[1320,96,560,315]}:{};
+const VW=LAY?LAY.w:CAMP?1280:1920,VH=LAY?LAY.h:1080,OX=LAY?LAY.x:CAMP==='gauche'?640:0,COLFEED=FEED&&CAMP&&!PORTRAIT;
 if(CAMP){document.body.classList.add('cam');if(PORTRAIT)document.body.classList.add('portrait');
  const v=document.getElementById('view'),h=document.getElementById('head');v.style.left=OX+'px';v.style.width=VW+'px';h.style.left=OX+'px';h.style.right=(1920-OX-VW)+'px';
  document.getElementById('camcol').style.left=(CAMP==='gauche'?0:1280)+'px'}
 const feedEl=document.getElementById('feed');
 if(FEED){document.body.classList.add('feed');if(COLFEED)document.getElementById('camcol').appendChild(feedEl);else feedEl.style.setProperty('--fw',(CAMP?760:1000)+'px');
  feedEl.innerHTML='<div class="line hint"><span>Écris dans le chat pour monter en tribune</span></div>'}
-const DISPO=CAMP?'centre':['centre','cote','bas'].includes(P.get('disposition'))?P.get('disposition'):'coins';document.body.classList.add('dispo-'+DISPO);if(P.get('zones')==='1')document.body.classList.add('zones'); // où placer compteur + fil d'alertes
-const RES=DISPO==='centre'?(FEED&&!COLFEED?480:360):DISPO==='coins'?450:300; // hauteur réservée en haut (titre + fil + couloir des banderoles)
+if(LAY){document.body.classList.add('mode-'+MODE);const v=document.getElementById('view');Object.assign(v.style,{left:LAY.x+'px',top:LAY.y+'px',width:LAY.w+'px',height:LAY.h+'px'});
+ for(const [id,[x,y,w,h]] of Object.entries(FR)){const e=document.getElementById(id);Object.assign(e.style,{left:x+'px',top:y+'px',width:w+'px',height:h+'px'});e.querySelector('em').textContent+=` · ${x},${y} · ${w}×${h}`}}
+const DISPO=LAY?'coins':CAMP?'centre':['centre','cote','bas'].includes(P.get('disposition'))?P.get('disposition'):'coins';document.body.classList.add('dispo-'+DISPO);if(P.get('zones')==='1')document.body.classList.add('zones'); // où placer compteur + fil d'alertes
+const RES=LAY?(MODE==='cam'?40:30):DISPO==='centre'?(FEED&&!COLFEED?480:360):DISPO==='coins'?450:300; // hauteur réservée en haut (titre + fil + couloir des banderoles)
 const hash=s=>{let h=2166136261;for(const c of s)h=Math.imul(h^c.charCodeAt(0),16777619);return h>>>0};
 const rng=seed=>()=>{seed=Math.imul(seed^seed>>>15,seed|1);seed^=seed+Math.imul(seed^seed>>>7,seed|61);return((seed^seed>>>14)>>>0)/4294967296};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -651,7 +675,7 @@ ${neon('M32 45Q50 40 68 45',2.2)}${seam('M36 66L44 70M64 66L56 70',.5)}${neon('M
  return `<svg viewBox="0 0 100 118">${defs}${shadow}${suit}${collar}${chest}${pad(0)}${pad(1)}${ant}${ears}${helm[h]}</svg>`}
 /* projecteurs du stade (style Frag) : deux rampes dans les coins hauts de l'écran, faisceaux qui balaient doucement, poussière dans la lumière.
    Calque à l'échelle de l'écran (pas du stade) : identique à tous les niveaux de zoom. */
-function fragLights(){const W=VW,H=1080,R=rng(17);
+function fragLights(){const W=VW,H=VH,R=rng(17);
  const rig=(cx,cy,rot)=>{let l='';for(let r=0;r<3;r++)for(let c=0;c<6;c++){const x=cx-114+c*38,y=cy-40+r*28;l+=`<rect x="${x}" y="${y}" width="32" height="22" rx="3" fill="#dfffea"/><rect x="${x+5}" y="${y+4}" width="22" height="6" rx="2" fill="#fff"/>`}
   return `<g transform="rotate(${rot} ${cx} ${cy})"><rect x="${cx-128}" y="${cy-54}" width="256" height="108" rx="6" fill="#0c0d10" stroke="#2b2e37" stroke-width="3"/>${l}<path d="M${cx-128} ${cy+54}H${cx+128}" stroke="var(--acc)" stroke-width="3" opacity=".6"/></g><ellipse class="bloom" cx="${cx}" cy="${cy}" rx="300" ry="190" fill="url(#lampG)"/><g class="bloom" opacity=".55"><circle cx="${cx+(cx<W/2?150:-150)}" cy="${cy+90}" r="14" fill="none" stroke="#eafff2" stroke-width="2" opacity=".35"/><circle cx="${cx+(cx<W/2?230:-230)}" cy="${cy+140}" r="7" fill="#eafff2" opacity=".2"/></g>`};
  const beam=(cx,cy,tx,sp,d)=>`<g class="beamg" style="transform-origin:${cx}px ${cy}px;animation-delay:${d}s"><path d="M${cx-50} ${cy}L${cx+50} ${cy}L${tx+sp} ${H+80}L${tx-sp} ${H+80}Z" fill="url(#beamG)"/></g>`;
@@ -713,8 +737,8 @@ geo.forEach((g,r)=>{const gap=g.w*.06,pitch=g.w+gap,n=Math.floor((WW+pitch*.5)/p
 
 /* ---------- caméra : zoom serré au début, dézoome par paliers quand la partie visible se remplit ---------- */
 const world=document.getElementById('world'),sfx=document.getElementById('sfx');
-const FULL=Math.max(VW/WW,1080/WH),ZOOM=P.get('zoom')!=='0',FILL=+(P.get('remplissage')||75)/100;
-function camAt(S){const vw=VW/S,vh=1080/S,x0=Math.min(Math.max(WW/2-vw/2,0),WW-vw),y0=Math.max(Math.min(STAND_TOP-vh*.5,STAND_TOP-RES/S,WH-vh),-400);
+const FULL=Math.max(VW/WW,VH/WH),ZOOM=P.get('zoom')!=='0',FILL=+(P.get('remplissage')||75)/100;
+function camAt(S){const vw=VW/S,vh=VH/S,x0=Math.min(Math.max(WW/2-vw/2,0),WW-vw),y0=Math.max(Math.min(STAND_TOP-vh*.5,STAND_TOP-RES/S,WH-vh),-400);
  const vis=seats.filter(t=>t.x>=x0+2&&t.x+t.g.w<=x0+vw-2&&t.g.b-t.g.h>=y0+RES/S&&t.g.b+t.g.h*.2<=y0+vh);return{S,x0,y0,vw,vh,vis}}
 const LEVELS=[],LVT=[]; // LVT : nombre exact de places ouvertes à chaque palier
 function camLv(i){const c=camAt(LEVELS[i]),t=LVT[i];if(t&&c.vis.length>t){const cx=c.x0+c.vw/2;c.vis=c.vis.slice().sort((a,b)=>(a.row-b.row)||Math.abs(a.x+a.g.w/2-cx)-Math.abs(b.x+b.g.w/2-cx)).slice(0,t)}return c}
@@ -780,7 +804,8 @@ function deco(f){const fan=f.seat.el.querySelector('.fan:not(.leaving)');if(!fan
  const b=f.badges||{},list=BADGES?['sub','mod','vip'].filter(k=>b[k]):[];
  if(list.length){const d=document.createElement('div');d.className='badges';d.innerHTML=list.map(k=>`<i>${ICON[k]}</i>`).join('');fan.appendChild(d)}
  if(f.crown){const c=document.createElement('div');c.className='crown';c.innerHTML=ICON.crown;fan.appendChild(c)}
- if(f.medal){const m=document.createElement('div');m.className='medal m'+f.medal;m.textContent=f.medal;fan.appendChild(m)}}
+ if(f.medal){const m=document.createElement('div');m.className='medal m'+f.medal;const C=[['#fff3b0','#ffc21a','#9a6a00'],['#ffffff','#c9ced6','#6b7280'],['#ffd2a8','#d9823f','#7a3d12'],['#e8ebf0','#8a919e','#3a3f4a'],['#e8ebf0','#8a919e','#3a3f4a']][f.medal-1],id='md'+f.login.replace(/\W/g,'');
+  m.innerHTML=`<svg viewBox="0 0 40 52"><defs><radialGradient id="${id}" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="${C[0]}"/><stop offset=".55" stop-color="${C[1]}"/><stop offset="1" stop-color="${C[2]}"/></radialGradient></defs><path d="M10 0H18L22 14H14ZM30 0H22L18 14H26Z" fill="var(--acc,#3dff8f)"/><path d="M10 0H18L22 14H14Z" fill="#000" opacity=".3"/><circle cx="20" cy="32" r="17" fill="#0b0c10"/><circle cx="20" cy="32" r="15" fill="url(#${id})"/><circle cx="20" cy="32" r="11" fill="none" stroke="#000" stroke-opacity=".25" stroke-width="1.2"/><text x="20" y="38.5" text-anchor="middle" font-family="Barlow Condensed,Arial" font-weight="800" font-size="18" fill="#111">${f.medal}</text></svg>`;fan.appendChild(m)}}
 function place(login,f,quiet){const seat=f.seat,fan=document.createElement('div');
  const w=!quiet&&WALK;
  fan.className='fan'+(quiet||w?'':' in')+(f.lurk?' lurk':'');fan.innerHTML=th.fan(f.look);
@@ -930,7 +955,7 @@ function endScene(){SCENE='end';document.body.classList.add('scene-end');
  const top=[...crowd.values()].filter(f=>(f.count||0)>0).sort((a,b)=>b.count-a.count).slice(0,5);
  const fr=Math.max(...cam.vis.map(s=>s.row)),cx=cam.x0+cam.vw/2;const frontRow=cam.vis.filter(s=>s.row===fr).sort((a,b)=>Math.abs(a.x+a.g.w/2-cx)-Math.abs(b.x+b.g.w/2-cx));
  const order=[0,1,2,3,4].map(i=>frontRow[i]).filter(Boolean);
- top.forEach((f,i)=>{const target=order[i];if(f.seat===target)return;const other=[...crowd.values()].find(o=>o.seat===target);
+ top.forEach((f,i)=>{const target=order[i];if(!target||f.seat===target)return;const other=[...crowd.values()].find(o=>o.seat===target);
   if(other){const free=freeSeat(other.lurk)||f.seat;moveTo(other,free===target?f.seat:free)}moveTo(f,target)});
  top.forEach((f,i)=>{f.medal=i+1;deco(f)});
  mvpEl.innerHTML='';top.forEach((f,i)=>{const c=document.createElement('span');const r=document.createElement('b');r.textContent=i+1;const nm=document.createElement('em');nm.textContent=f.name;const ct=document.createElement('small');ct.textContent=f.count+' msg';c.append(r,nm,ct);mvpEl.appendChild(c)})}
