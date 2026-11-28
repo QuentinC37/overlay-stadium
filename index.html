@@ -180,7 +180,7 @@ body.calm #space{display:none}
 .t-arena .burst.hi{color:#ff7a1a;border-color:#ff7a1a}
 
 /* 6. FRAG CARDS */
-body{--acc:#3dff8f;--accA:rgba(61,255,143,.18)}
+body{--acc:#3dff8f;--accA:rgba(61,255,143,.18);--accR:61,255,143}
 body.rgb{--acc:hsl(var(--hue) 92% 60%);--accA:hsla(var(--hue),92%,60%,.18)}
 .seat.owned .chair .ln{stroke:var(--sc)!important}
 .t-frag #bg{background:radial-gradient(ellipse 60% 55% at 18% 0%,rgba(61,255,143,.10),transparent 70%),linear-gradient(#0e0f13,#0a0b0d 60%,#060607)}
@@ -287,6 +287,51 @@ body.mode-cam,body.mode-ecran{background:transparent}
 .frame em{position:absolute;inset:0;display:none;place-items:center;font:italic 800 34px "Barlow Condensed",sans-serif;text-transform:uppercase;color:rgba(255,255,255,.3);background:repeating-linear-gradient(45deg,rgba(255,255,255,.03) 0 18px,transparent 18px 36px)}
 body:not(.nohud) .frame em{display:grid}
 .mode-ecran .frame,.mode-cam .frame#fcam{display:block}
+
+/* ===== alertes « carte » (DA Frag) : carte à coins coupés + réaction du stade, aux couleurs de l'accent ===== */
+#alert{position:absolute;left:0;top:0;width:1920px;height:1080px;z-index:230;pointer-events:none}
+.acard{position:absolute;left:var(--ax,960px);top:var(--ay,252px);transform:translateX(-50%);display:flex;align-items:center;gap:26px;min-width:560px;max-width:var(--aw,860px);box-sizing:border-box;padding:24px 44px 28px 30px;
+ background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,0) 45%,rgba(0,0,0,.28)),repeating-linear-gradient(90deg,rgba(255,255,255,.02) 0 1px,transparent 1px 3px),#14161b;
+ clip-path:polygon(0 0,calc(100% - 26px) 0,100% 26px,100% 100%,26px 100%,0 calc(100% - 26px));
+ box-shadow:inset 0 3px 0 var(--acc),inset 8px 0 0 var(--acc);filter:drop-shadow(0 0 22px rgba(var(--accR),.45)) drop-shadow(0 18px 30px rgba(0,0,0,.6));
+ animation:acIn .55s cubic-bezier(.2,.9,.2,1) both}
+.acard.out{animation:acOut .45s cubic-bezier(.6,0,.8,.3) forwards}
+@keyframes acIn{from{clip-path:polygon(0 0,0 0,0 0,0 100%,0 100%,0 100%);opacity:.4}}
+@keyframes acOut{to{transform:translateX(-50%) translateY(-14px) scale(.96);opacity:0}}
+.acard .sw{position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(var(--accR),.55) 48%,rgba(255,255,255,.85) 50%,rgba(var(--accR),.55) 52%,transparent 70%);background-size:300% 100%;mix-blend-mode:screen;animation:acSw 1.1s .15s ease-out both}
+@keyframes acSw{from{background-position:120% 0}to{background-position:-60% 0;opacity:0}}
+.acard .ic{flex:none;width:88px;height:88px;display:grid;place-items:center;background:rgba(var(--accR),.12);box-shadow:inset 0 0 0 2px rgba(var(--accR),.55);clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px));animation:acPop .5s .25s cubic-bezier(.2,1.6,.4,1) both}
+.acard .ic svg{width:52px;height:52px;fill:none;stroke:var(--acc);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 6px var(--acc))}
+@keyframes acPop{from{transform:scale(0) rotate(-20deg)}}
+.acard .tx{display:flex;flex-direction:column;gap:6px;min-width:0}
+.acard small{font:800 24px/1 "Barlow Condensed",sans-serif;letter-spacing:4px;text-transform:uppercase;color:var(--acc);text-shadow:0 0 12px rgba(var(--accR),.6)}
+.acard b{font:800 72px/.95 "Barlow Condensed",sans-serif;text-transform:uppercase;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.5px;animation:acName .5s .3s cubic-bezier(.2,.9,.2,1) both}
+@keyframes acName{from{transform:translateX(-30px);opacity:0;filter:blur(6px)}}
+.acard em{font:600 28px/1 "Barlow Condensed",sans-serif;font-style:normal;color:#c9ced6;text-transform:uppercase;letter-spacing:1px}
+.acard em i{font-style:normal;color:var(--acc)}
+.acard .bar{position:absolute;left:8px;right:0;bottom:0;height:4px;background:var(--acc);transform-origin:0 50%;animation:acBar var(--t) linear both;box-shadow:0 0 10px var(--acc)}
+@keyframes acBar{to{transform:scaleX(0)}}
+.acard.raid{--aw:1100px;padding:30px 54px 34px 36px}.acard.raid b{font-size:90px}.acard.raid .ic{width:104px;height:104px}.acard.raid .ic svg{width:62px;height:62px}
+.acard.raid::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 2px var(--acc);animation:acBlink .5s steps(2) 4}
+@keyframes acBlink{50%{opacity:0}}
+/* réaction du stade */
+#hype{position:absolute;inset:0;z-index:149;pointer-events:none;opacity:0;background:radial-gradient(ellipse 70% 55% at 50% 0%,rgba(var(--accR),.42),transparent 70%),linear-gradient(transparent 60%,rgba(var(--accR),.16))}
+#hype.on{animation:hype 1.8s ease-out}
+#hype.big{animation:hype 1.2s ease-out 3}
+@keyframes hype{0%{opacity:0}12%{opacity:1}100%{opacity:0}}
+.hyping #spots{animation:spotsFl 1.8s ease-out}
+@keyframes spotsFl{15%{filter:brightness(1.9) saturate(1.4)}}
+.t-frag .hyping .step::before,.hyping .t-frag .step::before{animation:ledWave 1.6s ease-out}
+@keyframes ledWave{20%{filter:brightness(2.4) drop-shadow(0 0 10px var(--acc))}}
+.t-frag .puff{background:radial-gradient(circle,rgba(var(--accR),.75),rgba(var(--accR),.3) 45%,rgba(var(--accR),0) 70%)}
+.t-frag .puff.big{background:radial-gradient(circle,rgba(var(--accR),.45),rgba(var(--accR),.18) 45%,rgba(var(--accR),0) 70%)}
+.t-frag .flare{box-shadow:0 0 20px 10px var(--acc),0 0 60px 30px rgba(var(--accR),.55)}
+.t-frag .boom .fla{background:radial-gradient(circle,#fff 0 12%,rgba(var(--accR),.9) 30%,rgba(var(--accR),0) 70%)}
+/* emplacements selon la scène */
+.mode-cam .acard{--ax:328px;--ay:150px;--aw:600px;min-width:0;max-width:600px}
+.mode-cam .acard b{font-size:56px}.mode-cam .acard .ic{width:70px;height:70px}.mode-cam .acard .ic svg{width:42px;height:42px}
+.mode-ecran .acard{--ax:1696px;--ay:790px;--aw:384px;min-width:384px;max-width:384px;padding:16px 24px 20px 20px;gap:14px}
+.mode-ecran .acard b{font-size:42px}.mode-ecran .acard small,.mode-ecran .acard em{white-space:nowrap}.mode-ecran .acard small{font-size:18px;letter-spacing:2.5px}.mode-ecran .acard em{font-size:20px}.mode-ecran .acard .ic{width:56px;height:56px}.mode-ecran .acard .ic svg{width:34px;height:34px}
 /* ===== bulles de chat, badges, événements (communs) ===== */
 #front{position:absolute;inset:0;z-index:180;pointer-events:none;overflow:hidden}
 .chat{position:absolute;left:50%;bottom:104%;transform:translateX(-50%);z-index:6;display:flex;flex-direction:column;align-items:flex-start;width:max-content;max-width:calc(460px * var(--inv));font:600 var(--fs)/1.15 "Barlow Condensed",sans-serif;pointer-events:none;animation:chatIn .3s ease-out both}
@@ -350,9 +395,10 @@ body.nohud .panel{display:none}
  <div id="front"></div>
 </div>
 <div id="spots"></div>
-<div id="sfx"></div>
+<div id="sfx"></div><div id="hype"></div>
 </div>
  <div class="frame" id="fscreen"><b>Écran</b><em>Partage d'écran</em></div><div class="frame" id="fcam"><b>Cam</b><em>Ta caméra</em></div><div id="safe"><i style="top:0;height:86px">Barre Twitch au survol (haut)</i><i style="bottom:0;height:110px;display:flex;align-items:flex-end">Barre Twitch au survol (bas)</i></div>
+ <div id="alert"></div>
  <div id="head"><div id="title">Le live va commencer</div><br><div id="hrow"><div id="count"><i></i><span><b>0</b> <span id="cl">supporter en tribune</span></span></div><div id="feed"></div></div><div id="evt"></div><div id="mvp"></div></div>
  <div id="camcol"><div id="camframe"><i>Live</i><em>Ta caméra ici</em></div></div>
  <div id="fx"></div>
@@ -399,6 +445,8 @@ const stage=document.getElementById('stage');
 const fit=()=>{const s=Math.min(innerWidth/1920,innerHeight/1080);stage.style.transform=`translate(${(innerWidth-1920*s)/2}px,${(innerHeight-1080*s)/2}px) scale(${s})`};
 addEventListener('resize',fit);fit();
 // mise en page : fil de chat sous le titre (chat=bulles pour l'ancien mode) et emplacement caméra (cam=droite|gauche, camformat=paysage|portrait)
+// couleur d'accent de tout l'overlay (accent=00ff9c, sans #) : bandeaux, néons, alertes
+{const a=(P.get('accent')||'').replace(/^#/,'');if(/^[0-9a-f]{6}$/i.test(a)){const r=parseInt(a.slice(0,2),16),g=parseInt(a.slice(2,4),16),b=parseInt(a.slice(4,6),16),B=document.body.style;B.setProperty('--acc','#'+a);B.setProperty('--accA',`rgba(${r},${g},${b},.18)`);B.setProperty('--accR',`${r},${g},${b}`)}}
 const FEED=showMsg&&P.get('chat')!=='bulles';
 const NOCHAT=P.get('chat')!=='fil'; // scène tribune : le fil ne montre que les événements (chat=fil pour y remettre les messages)
 const PORTRAIT=P.get('camformat')==='portrait'||P.get('cam')==='portrait',CAMP=P.get('cam')==='gauche'?'gauche':(P.get('cam')==='droite'||PORTRAIT||P.get('cam')==='paysage')?'droite':'';
@@ -892,7 +940,20 @@ function laneTop(h){const hd=document.getElementById('head');const sr=stage.getB
  let st=1080;for(const t of cam.vis){const y=(t.g.b-t.g.h*1.75-cam.y0)*cam.S;if(y<st)st=y}
  const free=st-hb;return Math.round(free>=h?hb+(free-h)/2:hb)}
 const shipQ=[];let shipOn=false;
-function alertShip(label,text,cls,then){shipQ.push({label,text,cls,then});if(!shipOn)nextShip()}
+const CARDS=P.get('alertes')!=='vaisseau'; // alertes en carte (DA) ; alertes=vaisseau pour l'ancien vaisseau-banderole
+function alertShip(label,text,cls,then,info){shipQ.push({label,text,cls,then,info});if(!shipOn)(CARDS&&info&&th===T.frag?nextCard:nextShip)()}
+const AICON={follow:'<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><path d="M19 3v6M16 6h6"/>',
+ sub:'<path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z"/>',
+ raid:'<path d="M3 12h13M12 6l6 6-6 6"/><path d="M20 4v16"/>',
+ bits:'<path d="M12 2L4 9l8 13 8-13z"/><path d="M4 9h16M9 9l3 13 3-13M8.5 2.5L9 9M15.5 2.5L15 9"/>'};
+function nextCard(){const a=shipQ.shift();if(!a){shipOn=false;return}shipOn=true;if(!a.info){nextShip();return}
+ const big=a.cls==='raid',t=big?7:5.2,I=a.info,box=document.getElementById('alert'),c=document.createElement('div');c.className='acard '+a.cls;c.style.setProperty('--t',t+'s');
+ const ic=document.createElement('div');ic.className='ic';ic.innerHTML=`<svg viewBox="0 0 24 24">${AICON[a.cls]||AICON.follow}</svg>`;
+ const tx=document.createElement('div');tx.className='tx';const sm=document.createElement('small');sm.textContent=I.kind;const nm=document.createElement('b');nm.textContent=I.name;tx.append(sm,nm);
+ if(I.sub){const em=document.createElement('em');em.innerHTML=I.sub.map(x=>Array.isArray(x)?`<i>${esc(x[0])}</i>`:esc(x)).join('');tx.append(em)}
+ const sw=document.createElement('i');sw.className='sw';const bar=document.createElement('span');bar.className='bar';c.append(sw,ic,tx,bar);box.appendChild(c);
+ hypeOn(big);setTimeout(()=>{c.classList.add('out');setTimeout(()=>c.remove(),500)},t*1000);if(a.then)setTimeout(a.then,big?1200:700);setTimeout(nextCard,t*1000+650)}
+function hypeOn(big){const h=document.getElementById('hype');h.className='';void h.offsetWidth;h.className=big?'big':'on';document.body.classList.add('hyping');clearTimeout(hypeOn.t);hypeOn.t=setTimeout(()=>{document.body.classList.remove('hyping')},big?3600:1900)}
 function nextShip(){const a=shipQ.shift();if(!a){shipOn=false;return}shipOn=true;
  const big=a.cls==='raid',S=SHIPS[big?2:a.cls==='bits'?1:0],t=big?8:6.5;
  const el=document.createElement('div');el.className='ship tow '+a.cls;el.style.top=(big?210:236)+'px';
@@ -903,11 +964,11 @@ function nextShip(){const a=shipQ.shift();if(!a){shipOn=false;return}shipOn=true
  setTimeout(()=>el.remove(),t*1000+200);if(a.then)setTimeout(a.then,t*1000*.38);setTimeout(nextShip,t*1000*.55)}
 function onSub(login,name,months,gifter){
  const go=()=>{const g=crowd.get(login);if(!g)return;g.badges=Object.assign(g.badges||{},{sub:1});deco(g);smoke(g.seat,12)};
- alertShip(gifter?'Sub offert':'Sub',gifter?`${gifter} → ${name}`:(months>1?`${name} · ${months} mois`:name),'sub',()=>{if(!crowd.get(login)){arrive(login,name,{});setTimeout(go,2600)}else go();standSmoke()})}
-function onRaid(login,name,count){alertShip('Raid',`${name} débarque avec ${count} viewers`,'raid',()=>{arrive(login,name,{});standSmoke()});
+ alertShip(gifter?'Sub offert':'Sub',gifter?`${gifter} → ${name}`:(months>1?`${name} · ${months} mois`:name),'sub',()=>{if(!crowd.get(login)){arrive(login,name,{});setTimeout(go,2600)}else go();if(!MODE)standSmoke()},{kind:gifter?'Sub offert':'Nouvel abonné',name,sub:gifter?['Offert par ',[gifter]]:months>1?['Abonné depuis ',[months+' mois']]:['Bienvenue dans le club']})}
+function onRaid(login,name,count){alertShip('Raid',`${name} débarque avec ${count} viewers`,'raid',()=>{arrive(login,name,{});if(!MODE)standSmoke()},{kind:'Raid en approche',name,sub:['Débarque avec ',[count+' viewers']]});
  const n=Math.min(count,+(P.get('raidmax')||24));for(let i=0;i<n;i++)setTimeout(()=>arrive('raid~'+login+'~'+i,'Raider '+name,{raid:true}),3400+i*180)}
-function onBits(f,bits){alertShip('Bits',`${f.name} · ${bits} bits`,'bits',()=>fireworks(f.seat))}
-function onFollow(login,name){alertShip('Follow',name,'follow',()=>arrive(login,name,{}))}
+function onBits(f,bits){alertShip('Bits',`${f.name} · ${bits} bits`,'bits',()=>fireworks(f.seat),{kind:'Bits',name:f.name,sub:['Envoie ',[bits+' bits']]})}
+function onFollow(login,name){alertShip('Follow',name,'follow',()=>arrive(login,name,{}),{kind:'Nouveau follow',name,sub:['Rejoint la tribune']})}
 
 /* ---------- arrivée / départ ---------- */
 function freeSeat(lurk,prefer){let empty=cam.vis.filter(s=>!s.user);
