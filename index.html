@@ -959,7 +959,7 @@ function endScene(){SCENE='end';document.body.classList.add('scene-end');
  top.forEach((f,i)=>{const target=order[i];if(!target||f.seat===target)return;const other=[...crowd.values()].find(o=>o.seat===target);
   if(other){const free=freeSeat(other.lurk)||f.seat;moveTo(other,free===target?f.seat:free)}moveTo(f,target)});
  top.forEach((f,i)=>{f.medal=i+1;deco(f)});
- mvpEl.innerHTML='';top.forEach((f,i)=>{const c=document.createElement('span');const r=document.createElement('b');r.textContent=i+1;const nm=document.createElement('em');nm.textContent=f.name;const ct=document.createElement('small');ct.textContent=f.count+' msg';c.append(r,nm,ct);mvpEl.appendChild(c)})}
+ mvpEl.innerHTML='';top.forEach((f,i)=>{const c=document.createElement('span');const r=document.createElement('b');r.textContent=i+1;const nm=document.createElement('em');nm.textContent=f.name;c.append(r,nm);mvpEl.appendChild(c)})}
 
 /* ---------- chat Twitch anonyme (IRC WebSocket, sans compte) ---------- */
 const st=document.getElementById('st'),warn=document.getElementById('warn');
