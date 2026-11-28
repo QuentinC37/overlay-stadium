@@ -417,6 +417,7 @@ body.nohud .panel{display:none}
  <button id="braid">Raid</button>
  <button id="bfol">Follow</button>
  <button id="bbits">Bits</button>
+ <button id="bdefi">Défi couleur</button>
  <button id="bend">Écran de fin</button>
  <button id="bx">Vider</button>
  <span id="st" style="padding:0 6px">Mode démo</span>
@@ -437,7 +438,8 @@ if(P.get('hud')==='0'||(channel&&!P.has('hud')))document.body.classList.add('noh
 // les liserés des sièges sont RGB par défaut (sieges=fixe pour les couleurs fixes) ; rgb=1 étend le cycle au fond et à l'accent
 const RGBS=P.get('rgb')==='1'?90:Math.max(0,+P.get('rgb')||0),SEATRGB=P.get('sieges')!=='fixe',HUES=RGBS||90;
 if(RGBS)document.body.classList.add('rgb');
-if(RGBS||SEATRGB){const tick=()=>document.body.style.setProperty('--hue',((Date.now()/1000/HUES*360)%360).toFixed(1));tick();setInterval(tick,200)}
+{const tick=()=>{const h=(Date.now()/1000/HUES*360)%360;document.body.style.setProperty('--hue',h.toFixed(1));
+  if(document.body.classList.contains('rgb')){const f=n=>{const k=(n+h/30)%12,a=.92*Math.min(.6,.4);return Math.round(255*(.6-a*Math.max(-1,Math.min(k-3,9-k,1))))};document.body.style.setProperty('--accR',`${f(0)},${f(8)},${f(4)}`)}};tick();setInterval(tick,200)}
 function setTitle(t){const el=document.getElementById('title'),i=t.trim().lastIndexOf(' ');el.textContent=i>0?t.trim().slice(0,i+1):'';const h=document.createElement('span');h.className='hl';h.textContent=i>0?t.trim().slice(i+1):t;el.append(h)}
 if(P.has('title')&&P.get('title')==='0')document.body.classList.add('notitle');else setTitle(P.get('title')||'Le live va commencer');
 {const a=(P.get('accent')||'').toLowerCase(),A={orange:'#f26b1d',vert:'#3dff8f',bleu:'#3aa0ff',violet:'#9b6bff',or:'#f5c242'};const v=A[a]||(/^[0-9a-f]{6}$/.test(a)?'#'+a:'');if(v&&!RGBS){document.body.style.setProperty('--acc',v);const n=parseInt(v.slice(1),16);document.body.style.setProperty('--accA',`rgba(${n>>16},${n>>8&255},${n&255},.18)`)}}
@@ -445,8 +447,18 @@ const stage=document.getElementById('stage');
 const fit=()=>{const s=Math.min(innerWidth/1920,innerHeight/1080);stage.style.transform=`translate(${(innerWidth-1920*s)/2}px,${(innerHeight-1080*s)/2}px) scale(${s})`};
 addEventListener('resize',fit);fit();
 // mise en page : fil de chat sous le titre (chat=bulles pour l'ancien mode) et emplacement caméra (cam=droite|gauche, camformat=paysage|portrait)
-// couleur d'accent de tout l'overlay (accent=00ff9c, sans #) : bandeaux, néons, alertes
-{const a=(P.get('accent')||'').replace(/^#/,'');if(/^[0-9a-f]{6}$/i.test(a)){const r=parseInt(a.slice(0,2),16),g=parseInt(a.slice(2,4),16),b=parseInt(a.slice(4,6),16),B=document.body.style;B.setProperty('--acc','#'+a);B.setProperty('--accA',`rgba(${r},${g},${b},.18)`);B.setProperty('--accR',`${r},${g},${b}`)}}
+// couleur d'accent de tout l'overlay : accent=b6ff00 (sans #), un nom (rose, cyan…) ou accent=rgb (arc-en-ciel qui défile)
+const ACC={'vert-jaune':'b6ff00',jaune:'b6ff00',vert:'3dff8f',frag:'3dff8f',menthe:'00ffa6',neon:'39ff14',cyan:'00e5ff',bleu:'2f8cff',violet:'8b5cff',rose:'ff3dbb',rouge:'ff4d4d',orange:'ff8a1f',or:'ffd21f',blanc:'e8edf5',rgb:'rgb',arcenciel:'rgb'};
+const ACCN=['b6ff00','3dff8f','00ffa6','39ff14','00e5ff','2f8cff','8b5cff','ff3dbb','ff4d4d','ff8a1f','ffd21f','e8edf5','rgb'];
+const ACCL={'b6ff00':'vert-jaune','3dff8f':'vert','00ffa6':'menthe','39ff14':'vert néon','00e5ff':'cyan','2f8cff':'bleu','8b5cff':'violet',ff3dbb:'rose',ff4d4d:'rouge',ff8a1f:'orange',ffd21f:'or',e8edf5:'blanc acier',rgb:'RGB'};
+function accOf(v){v=String(v||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/^#/,'').trim();const k=v.replace(/[^a-z0-9]/g,'');
+ if(/^[0-9a-f]{6}$/.test(v))return v;if(ACC[v])return ACC[v];if(ACC[k])return ACC[k];if(/^\d{1,2}$/.test(v)&&ACCN[+v-1])return ACCN[+v-1];
+ for(const w of v.split(/[^a-z0-9-]+/)){if(ACC[w])return ACC[w]}return null}
+let ACCV='';
+function setAccent(v){ACCV=v;const B=document.body.style;if(v==='rgb'){document.body.classList.add('rgb');['--acc','--accA'].forEach(x=>B.removeProperty(x));return}
+ document.body.classList.remove('rgb');const r=parseInt(v.slice(0,2),16),g=parseInt(v.slice(2,4),16),b=parseInt(v.slice(4,6),16);B.setProperty('--acc','#'+v);B.setProperty('--accA',`rgba(${r},${g},${b},.18)`);B.setProperty('--accR',`${r},${g},${b}`)}
+// couleur de départ : accent= de l'URL (vert-jaune par défaut), ou celle choisie par un viewer via un défi points de chaîne (gardée 6 h, partagée entre les scènes)
+{const u=accOf(P.get('accent')||(RGBS?'rgb':''))||'b6ff00';let v=u;try{const d=JSON.parse(localStorage.getItem('tribune-accent:'+(channel||'demo'))||'null');if(d&&Date.now()-d.t<6*3600e3&&P.get('defi')!=='0')v=d.v}catch(e){}setAccent(v)}
 const FEED=showMsg&&P.get('chat')!=='bulles';
 const NOCHAT=P.get('chat')!=='fil'; // scène tribune : le fil ne montre que les événements (chat=fil pour y remettre les messages)
 const PORTRAIT=P.get('camformat')==='portrait'||P.get('cam')==='portrait',CAMP=P.get('cam')==='gauche'?'gauche':(P.get('cam')==='droite'||PORTRAIT||P.get('cam')==='paysage')?'droite':'';
@@ -942,7 +954,7 @@ function laneTop(h){const hd=document.getElementById('head');const sr=stage.getB
 const shipQ=[];let shipOn=false;
 const CARDS=P.get('alertes')!=='vaisseau'; // alertes en carte (DA) ; alertes=vaisseau pour l'ancien vaisseau-banderole
 function alertShip(label,text,cls,then,info){shipQ.push({label,text,cls,then,info});if(!shipOn)(CARDS&&info&&th===T.frag?nextCard:nextShip)()}
-const AICON={follow:'<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><path d="M19 3v6M16 6h6"/>',
+const AICON={defi:'<circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18" fill="currentColor" stroke="none" opacity=".0"/><circle cx="8.5" cy="10" r="1.4"/><circle cx="12" cy="7.5" r="1.4"/><circle cx="15.5" cy="10" r="1.4"/><path d="M12 21c-1.5 0-2-1-2-2s1-1.5 2-2 2-1 2-2"/>',follow:'<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><path d="M19 3v6M16 6h6"/>',
  sub:'<path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z"/>',
  raid:'<path d="M3 12h13M12 6l6 6-6 6"/><path d="M20 4v16"/>',
  bits:'<path d="M12 2L4 9l8 13 8-13z"/><path d="M4 9h16M9 9l3 13 3-13M8.5 2.5L9 9M15.5 2.5L15 9"/>'};
@@ -1022,6 +1034,16 @@ function endScene(){SCENE='end';document.body.classList.add('scene-end');
  top.forEach((f,i)=>{f.medal=i+1;deco(f)});
  mvpEl.innerHTML='';top.forEach((f,i)=>{const c=document.createElement('span');const r=document.createElement('b');r.textContent=i+1;const nm=document.createElement('em');nm.textContent=f.name;c.append(r,nm);mvpEl.appendChild(c)})}
 
+/* ---------- défi points de chaîne : un viewer change la couleur du stade ----------
+   Sur Twitch : une récompense « Changer la couleur du stade » avec « Le spectateur doit saisir du texte ».
+   Le viewer écrit une couleur (rose, cyan, rgb, 1 à 13…). Le chat anonyme voit ces messages, pas besoin de connexion.
+   defi=ID pour n'écouter qu'une récompense précise, defi=0 pour couper. */
+const DEFI=P.get('defi')||'',KEYC='tribune-accent:'+(channel||'demo');
+function redeem(id,login,name,msg){if(DEFI==='0'||(DEFI&&id!==DEFI))return;const v=accOf(msg);if(!v||v===ACCV)return;
+ try{localStorage.setItem(KEYC,JSON.stringify({v,t:Date.now(),by:name}))}catch(e){}applyDefi(v,name)}
+function applyDefi(v,name){alertShip('Défi',`${name} → ${ACCL[v]||v}`,'defi',()=>setAccent(v),{kind:'Défi points de chaîne',name,sub:['Passe le stade en ',[ACCL[v]||'#'+v]]})}
+addEventListener('storage',e=>{if(e.key!==KEYC||!e.newValue)return;try{const d=JSON.parse(e.newValue);if(d.v&&d.v!==ACCV)applyDefi(d.v,d.by||'Un viewer')}catch(x){}}); // les autres scènes OBS suivent
+
 /* ---------- chat Twitch anonyme (IRC WebSocket, sans compte) ---------- */
 const st=document.getElementById('st'),warn=document.getElementById('warn');
 let chatWs=null,chatSeen=0;
@@ -1049,6 +1071,7 @@ function connect(delay=1000){let ws;try{ws=new WebSocket('wss://irc-ws.chat.twit
   if(m[2]==='PRIVMSG'){let msg=m[3]||'';const act=msg.match(/^\u0001ACTION (.*)\u0001$/);if(act)msg=act[1];
    if(m[1]===channel){if(FEED&&(!NOCHAT||COLFEED))feedLine(tags['display-name']||m[1],tokens(msg,tags.emotes),'host')}else // le streamer : dans le fil, sans siège
    arrive(m[1],tags['display-name']||m[1],{msg,emotes:tags.emotes,color:tags.color,badges:parseBadges(tags.badges)});hype(m[1],msg);
+   if(tags['custom-reward-id'])redeem(tags['custom-reward-id'],m[1],tags['display-name']||m[1],msg);
    if(+tags.bits>0){const f=crowd.get(m[1]);if(f)setTimeout(()=>onBits(f,+tags.bits),300)}}
   else if(m[2]==='JOIN')arrive(m[1],m[1],{lurk:true});
   else{const f=crowd.get(m[1]);if(f&&f.lurk)leave(m[1])}})};
@@ -1095,6 +1118,7 @@ $('bola').onclick=()=>{const v=[...crowd.values()].slice(0,4);v.forEach((f,i)=>s
 $('bsub').onclick=()=>{const f=anyFan();if(f)onSub(f.login,f.name,1+Math.floor(Math.random()*24))};
 $('braid').onclick=()=>{const r=fake();onRaid(r.toLowerCase(),r,12)};
 $('bfol').onclick=()=>{const r=fake();onFollow(r.toLowerCase(),r)};
+$('bdefi').onclick=()=>{const f=anyFan();const c=['rose','cyan','rgb','violet','orange','vert-jaune'].filter(x=>accOf(x)!==ACCV);redeem('demo',f?f.login:'demo',f?f.name:'Viewer',c[Math.floor(Math.random()*c.length)])};
 $('bbits').onclick=()=>{const f=anyFan();if(f)onBits(f,[100,500,1000][Math.floor(Math.random()*3)])};
 $('bend').onclick=()=>{setAuto(false);endScene()};
 $('bx').onclick=()=>{[...crowd.keys()].forEach(leave);try{localStorage.removeItem(KEY)}catch(e){}setTimeout(()=>setLevel(0),900)};

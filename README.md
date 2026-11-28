@@ -53,6 +53,7 @@ https://quentinc37.github.io/overlay-stadium/?channel=TACHAINE
 | `paliers=10,20,30,40,50,75` | Paliers de places visibles avant le plafond `max` (100) |
 | `disposition=coins` | Placement du titre, du compteur et du fil : `coins` (titre en haut à gauche, compteur et fil en haut à droite, par défaut), `centre`, `cote`, `bas`. Le haut et le bas restent libres pour les barres Twitch qui apparaissent au survol |
 | `zones=1` | Affiche en rouge les zones couvertes par les barres Twitch au survol (pour vérifier une mise en page) |
-| `accent=3dff8f` | Couleur d'accent de tout l'overlay, sans le # (ex. `00ffa6` vert plus flashy, `b6ff00` vert-jaune) |
+| `accent=b6ff00` | Couleur d'accent de tout l'overlay : code sans # (vert-jaune `b6ff00` par défaut), un nom (`vert`, `menthe`, `neon`, `cyan`, `bleu`, `violet`, `rose`, `rouge`, `orange`, `or`, `blanc`) ou `rgb` pour un arc-en-ciel qui défile (`rgb=30` règle la vitesse en secondes) |
+| `defi=` | Défi points de chaîne « Changer la couleur du stade » : crée sur Twitch une récompense avec « Le spectateur doit saisir du texte » ; le viewer écrit une couleur (nom, `rgb` ou numéro 1 à 13) et tout l'overlay change, scènes comprises, pendant 6 h. `defi=ID` limite à une récompense précise, `defi=0` désactive |
 | `alertes=vaisseau` | Revient à l'ancienne alerte (vaisseau qui tire une banderole) au lieu de la carte d'alerte |
 | `chat=fil` | Remet les messages du chat dans le fil en haut à droite (par défaut, la scène tribune n'y montre que les événements ; une petite bulle signale qui parle) |
