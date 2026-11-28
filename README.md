@@ -32,6 +32,7 @@ https://quentinc37.github.io/overlay-stadium/?channel=TACHAINE
 | `scene=end` | Écran de fin : « Merci d'être venus » et les 5 MVP du live au premier rang |
 | `scene=cam` | Full cam verticale : fond transparent, cadre caméra 9:16 au centre (656,0 · 608×1080), tribune de chaque côté (aucun siège derrière la cam), compteur et événements en haut à droite |
 | `scene=ecran` | Partage d'écran + cam verticale + tribune : écran à 32,90 (1440×810), cam 9:16 à 1504,90 (384×683), tribune en bandeau en bas. Ni compteur ni chat, les alertes restent. Place tes sources OBS exactement à ces positions, sous l'overlay |
+| `scene=pause&pause=5` | Scène pause / BRB : compte à rebours (en minutes) puis « On revient ! », la tribune fait une ola de temps en temps |
 | `names=talk` | Pseudos affichés seulement quand le viewer parle |
 | `bulles=3` | Nombre maximum de bulles de chat affichées en même temps |
 | `chat=bulles` | Revenir aux grandes bulles au-dessus des avatars (par défaut : petite bulle vide + fil de chat sous le titre) |
@@ -55,5 +56,8 @@ https://quentinc37.github.io/overlay-stadium/?channel=TACHAINE
 | `zones=1` | Affiche en rouge les zones couvertes par les barres Twitch au survol (pour vérifier une mise en page) |
 | `accent=b6ff00` | Couleur d'accent de tout l'overlay : code sans # (vert-jaune `b6ff00` par défaut), un nom (`vert`, `menthe`, `neon`, `cyan`, `bleu`, `violet`, `rose`, `rouge`, `orange`, `or`, `blanc`) ou `rgb` pour un arc-en-ciel qui défile (`rgb=30` règle la vitesse en secondes) |
 | `defi=` | Défi points de chaîne « Changer la couleur du stade » : crée sur Twitch une récompense avec « Le spectateur doit saisir du texte » ; le viewer écrit une couleur (nom, `rgb` ou numéro 1 à 13) et tout l'overlay change, scènes comprises, pendant 2 min (`defi_duree=120`, en secondes), puis revient à la couleur de base. `defi=ID` limite à une récompense précise, `defi=0` désactive |
+| `objectifs=10,20,30,40,50,75,100` | Paliers de supporters : à chaque palier, carte « Objectif atteint », ola et fumigènes |
+| `r_ola=` `r_fumi=` `r_vip=` | Récompenses points de chaîne Ola, Fumigènes, Place VIP. Sans ID, reconnues par leur titre (« ola », « fumigène », « VIP ») avec connect.html, ou par le texte saisi par le viewer sans connect.html |
+| `vip_duree=10` | Durée de la place VIP au premier rang, en minutes |
 | `alertes=vaisseau` | Revient à l'ancienne alerte (vaisseau qui tire une banderole) au lieu de la carte d'alerte |
 | `chat=fil` | Remet les messages du chat dans le fil en haut à droite (par défaut, la scène tribune n'y montre que les événements ; une petite bulle signale qui parle) |
