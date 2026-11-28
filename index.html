@@ -276,18 +276,17 @@ body.clear.t-frag #fx{background:none}
 /* ===== scènes caméra (scene=cam | scene=ecran) : fond transparent, la caméra et l'écran OBS passent dessous ===== */
 body.mode-cam,body.mode-ecran{background:transparent}
 .mode-cam #fx,.mode-ecran #fx{display:none}
-.mode-cam #view{-webkit-mask-image:linear-gradient(transparent,#000 22%);mask-image:linear-gradient(transparent,#000 22%)}
+.mode-cam #view{-webkit-mask-image:linear-gradient(90deg,#000 640px,transparent 656px 1264px,#000 1280px);mask-image:linear-gradient(90deg,#000 640px,transparent 656px 1264px,#000 1280px)}
 .mode-cam #title,.mode-ecran #title{display:none}
-.mode-ecran #head{left:1320px!important;right:40px!important;top:440px}
-.mode-ecran #hrow{position:static;flex-direction:column;align-items:stretch;gap:14px;width:100%}
-.mode-ecran #count{width:100%;box-sizing:border-box}
-.mode-ecran #feed{--fw:560px!important;width:560px;height:230px;align-items:flex-end}
-.mode-ecran #view{-webkit-mask-image:linear-gradient(transparent,#000 26%);mask-image:linear-gradient(transparent,#000 26%)}
+.mode-cam .frame b{top:auto;bottom:24px;left:auto;right:-3px;transform:none;clip-path:polygon(10px 0,100% 0,100% 100%,0 100%)}
+.mode-cam #fcam{border-top:0;border-bottom:0}
+.mode-ecran #hrow{display:none}
+.mode-ecran #view{-webkit-mask-image:linear-gradient(transparent,#000 30%);mask-image:linear-gradient(transparent,#000 30%)}
 .frame{display:none;position:absolute;z-index:205;pointer-events:none;box-sizing:border-box;border:3px solid var(--acc,#3dff8f);box-shadow:0 0 0 1px rgba(0,0,0,.6),0 0 24px rgba(61,255,143,.25),0 18px 40px rgba(0,0,0,.5)}
 .frame b{position:absolute;left:-3px;top:-3px;transform:translateY(-100%);font:800 22px/1 "Barlow Condensed",sans-serif;letter-spacing:1.5px;text-transform:uppercase;background:var(--acc,#3dff8f);color:#000;padding:7px 14px 5px;clip-path:polygon(0 0,100% 0,calc(100% - 10px) 100%,0 100%)}
 .frame em{position:absolute;inset:0;display:none;place-items:center;font:italic 800 34px "Barlow Condensed",sans-serif;text-transform:uppercase;color:rgba(255,255,255,.3);background:repeating-linear-gradient(45deg,rgba(255,255,255,.03) 0 18px,transparent 18px 36px)}
 body:not(.nohud) .frame em{display:grid}
-.mode-ecran .frame{display:block}
+.mode-ecran .frame,.mode-cam .frame#fcam{display:block}
 /* ===== bulles de chat, badges, événements (communs) ===== */
 #front{position:absolute;inset:0;z-index:180;pointer-events:none;overflow:hidden}
 .chat{position:absolute;left:50%;bottom:104%;transform:translateX(-50%);z-index:6;display:flex;flex-direction:column;align-items:flex-start;width:max-content;max-width:calc(460px * var(--inv));font:600 var(--fs)/1.15 "Barlow Condensed",sans-serif;pointer-events:none;animation:chatIn .3s ease-out both}
@@ -312,7 +311,7 @@ body:not(.nohud) .frame em{display:grid}
 @keyframes evIn{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0)}}@keyframes evOut{to{opacity:0;transform:translateX(-50%) translateY(-10px)}}
 #mvp{display:none;justify-content:center;gap:12px;margin-top:16px}.dispo-coins #mvp{justify-content:flex-start;align-items:center}.dispo-coins #mvp::before{content:'MVP du live';font:800 26px/1 "Barlow Condensed",sans-serif;text-transform:uppercase;letter-spacing:2px;color:var(--acc,#3dff8f);margin-right:6px}.scene-end #mvp{display:flex}
 #mvp span{display:inline-flex;align-items:center;gap:10px;background:#000;border:2px solid #fff;padding:6px 14px 4px;font:700 28px/1 "Barlow Condensed",sans-serif;color:#fff;text-transform:uppercase}
-#mvp b{background:#ffc21a;color:#000;padding:2px 8px}#mvp em{font-style:normal}#mvp small{color:#f26b1d;font-size:.75em}
+#mvp b{background:#ffc21a;color:#000;padding:2px 8px}.t-frag #mvp span{background:#14161b;border:0;box-shadow:inset 0 3px 0 var(--acc),0 10px 20px rgba(0,0,0,.4)}.t-frag #mvp b{background:var(--acc)}.t-frag #mvp small{color:var(--acc);opacity:.85}#mvp em{font-style:normal}#mvp small{color:#f26b1d;font-size:.75em}
 .puff{position:absolute;width:60px;height:60px;margin:-30px 0 0 -30px;border-radius:50%;background:radial-gradient(circle,rgba(255,140,60,.75),rgba(242,107,29,.35) 45%,rgba(242,107,29,0) 70%);animation:puff 3.8s ease-out both}
 .puff.big{width:130px;height:130px;margin:-65px 0 0 -65px;background:radial-gradient(circle,rgba(255,150,80,.5),rgba(242,107,29,.22) 45%,rgba(242,107,29,0) 70%);animation-duration:4.6s}
 @keyframes puff{0%{transform:translate(0,0) scale(.3);opacity:0}15%{opacity:1}100%{transform:translate(var(--dx),-340px) scale(var(--s));opacity:0}}
@@ -406,9 +405,10 @@ const PORTRAIT=P.get('camformat')==='portrait'||P.get('cam')==='portrait',CAMP=P
 const BADGES=P.get('badges')==='1'; // badges Twitch (mod/vip/sub) masqués : la personnalisation passera par le site
 // scènes avec caméra : scene=cam (plein écran caméra, tribune en bandeau bas) ; scene=ecran (partage d'écran + caméra + tribune en colonne)
 const MODE=['cam','ecran'].includes(P.get('scene'))?P.get('scene'):'';
-const LAY=MODE==='cam'?{x:0,y:720,w:1920,h:360}:MODE==='ecran'?{x:0,y:800,w:1920,h:280}:null;
+const LAY=MODE==='cam'?{x:0,y:0,w:1920,h:1080}:MODE==='ecran'?{x:0,y:900,w:1920,h:180}:null;
 // emplacements OBS (px sur 1920×1080) : à reprendre tels quels pour placer la capture d'écran et la webcam
-const FR=MODE==='ecran'?{fscreen:[40,96,1240,698],fcam:[1320,96,560,315]}:{};
+const FR=MODE==='ecran'?{fscreen:[32,90,1440,810],fcam:[1504,90,384,683]}:MODE==='cam'?{fcam:[656,0,608,1080]}:{};
+const EXC=MODE==="cam"?[FR.fcam[0]-56,FR.fcam[0]+FR.fcam[2]+56]:null; // cam verticale au centre : aucun siège derrière (au dézoom, ceux qui passeraient sous la cam changent de place)
 const VW=LAY?LAY.w:CAMP?1280:1920,VH=LAY?LAY.h:1080,OX=LAY?LAY.x:CAMP==='gauche'?640:0,COLFEED=FEED&&CAMP&&!PORTRAIT;
 if(CAMP){document.body.classList.add('cam');if(PORTRAIT)document.body.classList.add('portrait');
  const v=document.getElementById('view'),h=document.getElementById('head');v.style.left=OX+'px';v.style.width=VW+'px';h.style.left=OX+'px';h.style.right=(1920-OX-VW)+'px';
@@ -419,7 +419,7 @@ if(FEED){document.body.classList.add('feed');if(COLFEED)document.getElementById(
 if(LAY){document.body.classList.add('mode-'+MODE);const v=document.getElementById('view');Object.assign(v.style,{left:LAY.x+'px',top:LAY.y+'px',width:LAY.w+'px',height:LAY.h+'px'});
  for(const [id,[x,y,w,h]] of Object.entries(FR)){const e=document.getElementById(id);Object.assign(e.style,{left:x+'px',top:y+'px',width:w+'px',height:h+'px'});e.querySelector('em').textContent+=` · ${x},${y} · ${w}×${h}`}}
 const DISPO=LAY?'coins':CAMP?'centre':['centre','cote','bas'].includes(P.get('disposition'))?P.get('disposition'):'coins';document.body.classList.add('dispo-'+DISPO);if(P.get('zones')==='1')document.body.classList.add('zones'); // où placer compteur + fil d'alertes
-const RES=LAY?(MODE==='cam'?40:30):DISPO==='centre'?(FEED&&!COLFEED?480:360):DISPO==='coins'?450:300; // hauteur réservée en haut (titre + fil + couloir des banderoles)
+const RES=LAY?(MODE==='cam'?300:24):DISPO==='centre'?(FEED&&!COLFEED?480:360):DISPO==='coins'?450:300; // hauteur réservée en haut (titre + fil + couloir des banderoles)
 const hash=s=>{let h=2166136261;for(const c of s)h=Math.imul(h^c.charCodeAt(0),16777619);return h>>>0};
 const rng=seed=>()=>{seed=Math.imul(seed^seed>>>15,seed|1);seed^=seed+Math.imul(seed^seed>>>7,seed|61);return((seed^seed>>>14)>>>0)/4294967296};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -739,7 +739,7 @@ geo.forEach((g,r)=>{const gap=g.w*.06,pitch=g.w+gap,n=Math.floor((WW+pitch*.5)/p
 const world=document.getElementById('world'),sfx=document.getElementById('sfx');
 const FULL=Math.max(VW/WW,VH/WH),ZOOM=P.get('zoom')!=='0',FILL=+(P.get('remplissage')||75)/100;
 function camAt(S){const vw=VW/S,vh=VH/S,x0=Math.min(Math.max(WW/2-vw/2,0),WW-vw),y0=Math.max(Math.min(STAND_TOP-vh*.5,STAND_TOP-RES/S,WH-vh),-400);
- const vis=seats.filter(t=>t.x>=x0+2&&t.x+t.g.w<=x0+vw-2&&t.g.b-t.g.h>=y0+RES/S&&t.g.b+t.g.h*.2<=y0+vh);return{S,x0,y0,vw,vh,vis}}
+ const vis=seats.filter(t=>t.x>=x0+2&&t.x+t.g.w<=x0+vw-2&&!(EXC&&(t.x+t.g.w-x0)*S>EXC[0]&&(t.x-x0)*S<EXC[1])&&t.g.b-t.g.h>=y0+RES/S&&t.g.b+t.g.h*.2<=y0+vh);return{S,x0,y0,vw,vh,vis}}
 const LEVELS=[],LVT=[]; // LVT : nombre exact de places ouvertes à chaque palier
 function camLv(i){const c=camAt(LEVELS[i]),t=LVT[i];if(t&&c.vis.length>t){const cx=c.x0+c.vw/2;c.vis=c.vis.slice().sort((a,b)=>(a.row-b.row)||Math.abs(a.x+a.g.w/2-cx)-Math.abs(b.x+b.g.w/2-cx)).slice(0,t)}return c}
 {const MAXS=Math.max(20,+P.get('max')||100); // plafond de places à l'écran (100 par défaut) ; au-delà, le moins actif cède sa place
@@ -752,7 +752,8 @@ function camLv(i){const c=camAt(LEVELS[i]),t=LVT[i];if(t&&c.vis.length>t){const 
 let lvl=0,cam=null;
 function setLevel(i,instant){lvl=Math.max(0,Math.min(i,LEVELS.length-1));if(!ZOOM)lvl=LEVELS.length-1;cam=camLv(lvl);cam.set=new Set(cam.vis);
  if(instant)world.style.transition='none';world.style.transform=`scale(${cam.S}) translate(${-cam.x0}px,${-cam.y0}px)`;world.style.setProperty('--inv',(1/cam.S).toFixed(4));
- if(instant){void world.offsetWidth;world.style.transition=''}tiny()}
+ if(instant){void world.offsetWidth;world.style.transition=''}tiny();
+ if(EXC&&!instant)for(const f of [...crowd.values()])if(f.seat&&!cam.set.has(f.seat)){const t=freeSeat(f.lurk);if(t)moveTo(f,t)}}
 function tiny(){const rs=document.getElementById('rows').children;geo.forEach((g,r)=>rs[r]&&rs[r].classList.toggle('tiny',g.w*cam.S<50))}
 function fillCheck(){if(lvl>=LEVELS.length-1)return void updateCount();const used=cam.vis.filter(t=>t.user).length;if(used>=Math.ceil(cam.vis.length*FILL))setLevel(lvl+1);updateCount()}
 function levelFor(n){let i=0;while(i<LEVELS.length-1&&n>=Math.ceil(camLv(i).vis.length*FILL))i++;return i}
