@@ -332,6 +332,43 @@ body:not(.nohud) .frame em{display:grid}
 .mode-cam .acard b{font-size:56px}.mode-cam .acard .ic{width:70px;height:70px}.mode-cam .acard .ic svg{width:42px;height:42px}
 .mode-ecran .acard{--ax:1696px;--ay:790px;--aw:384px;min-width:384px;max-width:384px;padding:16px 24px 20px 20px;gap:14px}
 .mode-ecran .acard b{font-size:42px}.mode-ecran .acard small,.mode-ecran .acard em{white-space:nowrap}.mode-ecran .acard small{font-size:18px;letter-spacing:2.5px}.mode-ecran .acard em{font-size:20px}.mode-ecran .acard .ic{width:56px;height:56px}.mode-ecran .acard .ic svg{width:34px;height:34px}
+
+/* ===== objectifs, défis, hype train, prédictions, pause, récap ===== */
+.fan.vipf::after{content:"VIP";position:absolute;left:50%;top:-14%;transform:translateX(-50%);font:800 calc(20px * var(--inv)) / 1 "Barlow Condensed",sans-serif;letter-spacing:1px;color:#000;background:var(--acc);padding:.2em .5em .1em;clip-path:polygon(0 0,100% 0,calc(100% - .35em) 100%,.35em 100%);box-shadow:0 0 12px var(--acc);z-index:8}
+.fan.vipf svg{filter:drop-shadow(0 0 calc(10px * var(--inv)) var(--acc)) drop-shadow(0 0 calc(4px * var(--inv)) var(--acc))}
+#htrain{display:none;position:absolute;right:64px;top:250px;width:346px;z-index:220;padding:12px 18px 14px;box-sizing:border-box;background:#14161b;box-shadow:inset 0 3px 0 var(--acc),0 10px 24px rgba(0,0,0,.5);clip-path:polygon(0 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%)}
+.htrain #htrain{display:block;animation:lineIn .4s both}
+#htrain small{display:block;font:800 18px/1 "Barlow Condensed",sans-serif;letter-spacing:3px;text-transform:uppercase;color:var(--acc)}
+#htrain b{display:block;font:800 40px/1.05 "Barlow Condensed",sans-serif;text-transform:uppercase;color:#fff}
+#htrain i{display:block;height:10px;margin-top:6px;background:rgba(255,255,255,.08)}#htrain s{display:block;height:100%;width:var(--hp,0%);background:var(--acc);box-shadow:0 0 12px var(--acc);transition:width .8s}
+.htrain #feed{visibility:hidden}
+.mode-cam #htrain{right:64px;top:250px}.mode-ecran #htrain{right:32px;top:790px;width:384px}
+.htrain .fan:not(.lurk) svg{animation:bounce .5s ease-in-out infinite alternate}
+.htrain .fan:nth-child(odd) svg{animation-delay:.25s}
+@keyframes bounce{to{transform:translateY(-7%) scale(1.02,1.05)}}
+#predi{display:none;position:absolute;left:50%;top:252px;transform:translateX(-50%);z-index:220;width:900px;padding:16px 24px 18px;box-sizing:border-box;background:#14161b;text-align:center;box-shadow:inset 0 3px 0 var(--acc),0 12px 28px rgba(0,0,0,.55);clip-path:polygon(0 0,calc(100% - 20px) 0,100% 20px,100% 100%,20px 100%,0 calc(100% - 20px))}
+.predi #predi{display:block;animation:lineIn .4s both}
+#predi small{display:block;font:800 18px/1 "Barlow Condensed",sans-serif;letter-spacing:3px;text-transform:uppercase;color:var(--acc)}
+#predi b{display:block;font:800 40px/1.1 "Barlow Condensed",sans-serif;color:#fff;text-transform:uppercase;margin:4px 0 10px}
+#predi .po{display:flex;gap:8px;font:800 26px/1 "Barlow Condensed",sans-serif;text-transform:uppercase}
+#predi .po span{flex:var(--w,1);display:flex;justify-content:space-between;align-items:center;padding:10px 14px 8px;color:#fff;transition:flex .8s;min-width:150px}
+#predi .po span:first-child{background:linear-gradient(90deg,#2f8cff,#1b5fd0)}#predi .po span:last-child{background:linear-gradient(90deg,#d0309a,#ff3dbb)}
+#predi .po span.win{box-shadow:0 0 0 3px #fff,0 0 24px #fff}#predi .po span.lose{opacity:.35}
+.mode-cam #predi{left:328px;width:600px;top:120px}.mode-ecran #predi{left:752px;top:118px;width:760px}
+.predi .acard{--ay:480px}.mode-cam.predi .acard{--ay:380px}.mode-ecran.predi .acard{--ay:790px}.mode-pause .acard{--ay:560px}.mode-ecran.htrain .acard{--ay:900px}
+#ptint{position:absolute;inset:0;z-index:149;pointer-events:none;display:none}.predi #ptint{display:block}
+#ptint i{position:absolute;top:0;bottom:0;width:50%;mix-blend-mode:screen;animation:lineIn .6s both}
+#ptint i:first-child{left:0;background:linear-gradient(90deg,rgba(47,140,255,.32),rgba(47,140,255,.05))}#ptint i:last-child{right:0;background:linear-gradient(270deg,rgba(255,61,187,.32),rgba(255,61,187,.05))}
+#brb{display:none;position:absolute;left:50%;top:260px;transform:translateX(-50%);z-index:220;min-width:520px;padding:22px 50px 26px;box-sizing:border-box;text-align:center;background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(0,0,0,.25)),#14161b;box-shadow:inset 0 3px 0 var(--acc),0 0 30px rgba(var(--accR),.25),0 14px 30px rgba(0,0,0,.6);clip-path:polygon(0 0,calc(100% - 24px) 0,100% 24px,100% 100%,24px 100%,0 calc(100% - 24px))}
+.mode-pause #brb{display:block}
+#brb small{display:block;font:800 26px/1 "Barlow Condensed",sans-serif;letter-spacing:5px;text-transform:uppercase;color:var(--acc)}
+#brb b{display:block;font:800 120px/1 "Barlow Condensed",sans-serif;color:#fff;letter-spacing:4px;text-shadow:0 0 24px rgba(var(--accR),.45);font-variant-numeric:tabular-nums}
+#brb i{display:block;height:6px;margin-top:10px;background:var(--acc);transform-origin:0 50%;transform:scaleX(var(--bp,1));box-shadow:0 0 12px var(--acc);transition:transform 1s linear}
+#brb.back b{font-size:92px;animation:acPop .5s both}
+#recap{display:none;justify-content:flex-start;gap:12px;margin-top:12px}.scene-end #recap{display:flex}
+#recap span{display:inline-flex;align-items:center;gap:10px;background:#14161b;box-shadow:inset 0 3px 0 rgba(var(--accR),.55);padding:7px 14px 5px;font:700 24px/1 "Barlow Condensed",sans-serif;color:#c9ced6;text-transform:uppercase}
+#recap span em{font-style:normal;color:#fff;font-weight:800}
+.acard.goal{--aw:900px}.acard.goal b{font-size:84px}
 /* ===== bulles de chat, badges, événements (communs) ===== */
 #front{position:absolute;inset:0;z-index:180;pointer-events:none;overflow:hidden}
 .chat{position:absolute;left:50%;bottom:104%;transform:translateX(-50%);z-index:6;display:flex;flex-direction:column;align-items:flex-start;width:max-content;max-width:calc(460px * var(--inv));font:600 var(--fs)/1.15 "Barlow Condensed",sans-serif;pointer-events:none;animation:chatIn .3s ease-out both}
@@ -395,11 +432,14 @@ body.nohud .panel{display:none}
  <div id="front"></div>
 </div>
 <div id="spots"></div>
-<div id="sfx"></div><div id="hype"></div>
+<div id="sfx"></div><div id="hype"></div><div id="ptint"><i></i><i></i></div>
 </div>
  <div class="frame" id="fscreen"><b>Écran</b><em>Partage d'écran</em></div><div class="frame" id="fcam"><b>Cam</b><em>Ta caméra</em></div><div id="safe"><i style="top:0;height:86px">Barre Twitch au survol (haut)</i><i style="bottom:0;height:110px;display:flex;align-items:flex-end">Barre Twitch au survol (bas)</i></div>
  <div id="alert"></div>
- <div id="head"><div id="title">Le live va commencer</div><br><div id="hrow"><div id="count"><i></i><span><b>0</b> <span id="cl">supporter en tribune</span></span></div><div id="feed"></div></div><div id="evt"></div><div id="mvp"></div></div>
+ <div id="brb"><small>De retour dans</small><b>05:00</b><i></i></div>
+ <div id="predi"><small></small><b></b><div class="po"></div></div>
+ <div id="htrain"><small>Hype train</small><b>Niveau 1</b><i><s></s></i></div>
+ <div id="head"><div id="title">Le live va commencer</div><br><div id="hrow"><div id="count"><i></i><span><b>0</b> <span id="cl">supporter en tribune</span></span></div><div id="feed"></div></div><div id="evt"></div><div id="mvp"></div><div id="recap"></div></div>
  <div id="camcol"><div id="camframe"><i>Live</i><em>Ta caméra ici</em></div></div>
  <div id="fx"></div>
  <div id="warn"></div>
@@ -418,6 +458,11 @@ body.nohud .panel{display:none}
  <button id="bfol">Follow</button>
  <button id="bbits">Bits</button>
  <button id="bdefi">Défi couleur</button>
+ <button id="bola2">Défi ola</button>
+ <button id="bfumi">Défi fumigènes</button>
+ <button id="bvip">Défi VIP</button>
+ <button id="bht">Hype train</button>
+ <button id="bpr">Prédiction</button>
  <button id="bend">Écran de fin</button>
  <button id="bx">Vider</button>
  <span id="st" style="padding:0 6px">Mode démo</span>
@@ -866,6 +911,7 @@ function deco(f){const fan=f.seat.el.querySelector('.fan:not(.leaving)');if(!fan
  fan.querySelector('.badges')?.remove();fan.querySelector('.crown')?.remove();fan.querySelector('.medal')?.remove();
  const b=f.badges||{},list=BADGES?['sub','mod','vip'].filter(k=>b[k]):[];
  if(list.length){const d=document.createElement('div');d.className='badges';d.innerHTML=list.map(k=>`<i>${ICON[k]}</i>`).join('');fan.appendChild(d)}
+ fan.classList.toggle('vipf',!!(f.vip&&Date.now()<f.vip));
  if(f.crown){const c=document.createElement('div');c.className='crown';c.innerHTML=ICON.crown;fan.appendChild(c)}
  if(f.medal){const m=document.createElement('div');m.className='medal m'+f.medal;const C=[['#fff3b0','#ffc21a','#9a6a00'],['#ffffff','#c9ced6','#6b7280'],['#ffd2a8','#d9823f','#7a3d12'],['#e8ebf0','#8a919e','#3a3f4a'],['#e8ebf0','#8a919e','#3a3f4a']][f.medal-1],id='md'+f.login.replace(/\W/g,'');
   m.innerHTML=`<svg viewBox="0 0 40 52"><defs><radialGradient id="${id}" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="${C[0]}"/><stop offset=".55" stop-color="${C[1]}"/><stop offset="1" stop-color="${C[2]}"/></radialGradient></defs><path d="M10 0H18L22 14H14ZM30 0H22L18 14H26Z" fill="var(--acc,#3dff8f)"/><path d="M10 0H18L22 14H14Z" fill="#000" opacity=".3"/><circle cx="20" cy="32" r="17" fill="#0b0c10"/><circle cx="20" cy="32" r="15" fill="url(#${id})"/><circle cx="20" cy="32" r="11" fill="none" stroke="#000" stroke-opacity=".25" stroke-width="1.2"/><text x="20" y="38.5" text-anchor="middle" font-family="Barlow Condensed,Arial" font-weight="800" font-size="18" fill="#111">${f.medal}</text></svg>`;fan.appendChild(m)}}
@@ -930,7 +976,7 @@ const norm=m=>m.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[
 function hype(login,msg){const k=norm(msg);if(!k||k.length>20)return;const now=Date.now();recent.push({k,login,t:now});
  while(recent.length&&now-recent[0].t>20000)recent.shift();
  const who=new Set(recent.filter(r=>r.k===k).map(r=>r.login));if(who.size>=OLA&&now-lastWave>25000){lastWave=now;wave(msg.slice(0,24),who.size)}}
-function wave(label,n){const tx=label?`« ${label} » ×${n}`:'La tribune se lève';if(FEED)feedLine('Ola !',Array.from(tx),'ola');else notify('Ola !',tx,'ola');
+function wave(label,n){const tx=label?`« ${label} »`+(n?` ×${n}`:''):'La tribune se lève';if(FEED)feedLine('Ola !',Array.from(tx),'ola');else notify('Ola !',tx,'ola');
  for(const [,f] of crowd){const s=f.seat.el.querySelector('.fan:not(.leaving) svg');if(!s)continue;const d=Math.max(0,(f.seat.x-cam.x0)/cam.vw)*1500;
   s.animate([{transform:'none'},{transform:'translateY(-30%) scale(1.06,1.1)',offset:.4},{transform:'translateY(-30%) scale(1.06,1.1)',offset:.55},{transform:'none'}],{duration:800,delay:d,easing:'ease-out'})}}
 
@@ -956,7 +1002,7 @@ function laneTop(h){const hd=document.getElementById('head');const sr=stage.getB
 const shipQ=[];let shipOn=false;
 const CARDS=P.get('alertes')!=='vaisseau'; // alertes en carte (DA) ; alertes=vaisseau pour l'ancien vaisseau-banderole
 function alertShip(label,text,cls,then,info){shipQ.push({label,text,cls,then,info});if(!shipOn)(CARDS&&info&&th===T.frag?nextCard:nextShip)()}
-const AICON={defi:'<circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18" fill="currentColor" stroke="none" opacity=".0"/><circle cx="8.5" cy="10" r="1.4"/><circle cx="12" cy="7.5" r="1.4"/><circle cx="15.5" cy="10" r="1.4"/><path d="M12 21c-1.5 0-2-1-2-2s1-1.5 2-2 2-1 2-2"/>',follow:'<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><path d="M19 3v6M16 6h6"/>',
+const AICON={goal:'<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 6h3a3 3 0 0 1-3 4M7 6H4a3 3 0 0 0 3 4"/>',ola:'<path d="M2 16c3 0 3-6 6-6s3 6 6 6 3-6 6-6"/><path d="M2 20c3 0 3-3 6-3s3 3 6 3 3-3 6-3"/>',fumi:'<path d="M12 22c-4 0-6-3-6-6 0-4 4-5 4-9 2 1 3 3 3 5 1-1 2-2 2-4 2 2 3 5 3 8 0 3-2 6-6 6z"/>',vip:'<path d="M3 7l4 10h10l4-10-5 4-4-6-4 6z"/>',htrain:'<path d="M4 15V7a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3z"/><path d="M4 11h16M8 18l-2 3M16 18l2 3"/><circle cx="8.5" cy="14.5" r=".8"/><circle cx="15.5" cy="14.5" r=".8"/>',predi:'<path d="M12 3v18M5 8l-3 5h6zM19 8l-3 5h6zM5 8h14"/>',defi:'<circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18" fill="currentColor" stroke="none" opacity=".0"/><circle cx="8.5" cy="10" r="1.4"/><circle cx="12" cy="7.5" r="1.4"/><circle cx="15.5" cy="10" r="1.4"/><path d="M12 21c-1.5 0-2-1-2-2s1-1.5 2-2 2-1 2-2"/>',follow:'<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><path d="M19 3v6M16 6h6"/>',
  sub:'<path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z"/>',
  raid:'<path d="M3 12h13M12 6l6 6-6 6"/><path d="M20 4v16"/>',
  bits:'<path d="M12 2L4 9l8 13 8-13z"/><path d="M4 9h16M9 9l3 13 3-13M8.5 2.5L9 9M15.5 2.5L15 9"/>'};
@@ -976,13 +1022,13 @@ function nextShip(){const a=shipQ.shift();if(!a){shipOn=false;return}shipOn=true
  el.innerHTML=`<div class="in">${S.svg}</div>`;el.prepend(ban);sfx.appendChild(el);
  el.style.top=laneTop(el.offsetHeight)+'px';
  setTimeout(()=>el.remove(),t*1000+200);if(a.then)setTimeout(a.then,t*1000*.38);setTimeout(nextShip,t*1000*.55)}
-function onSub(login,name,months,gifter){
+function onSub(login,name,months,gifter){stPush('subs',name);
  const go=()=>{const g=crowd.get(login);if(!g)return;g.badges=Object.assign(g.badges||{},{sub:1});deco(g);smoke(g.seat,12)};
  alertShip(gifter?'Sub offert':'Sub',gifter?`${gifter} → ${name}`:(months>1?`${name} · ${months} mois`:name),'sub',()=>{if(!crowd.get(login)){arrive(login,name,{});setTimeout(go,2600)}else go();if(!MODE)standSmoke()},{kind:gifter?'Sub offert':'Nouvel abonné',name,sub:gifter?['Offert par ',[gifter]]:months>1?['Abonné depuis ',[months+' mois']]:['Bienvenue dans le club']})}
-function onRaid(login,name,count){alertShip('Raid',`${name} débarque avec ${count} viewers`,'raid',()=>{arrive(login,name,{});if(!MODE)standSmoke()},{kind:'Raid en approche',name,sub:['Débarque avec ',[count+' viewers']]});
+function onRaid(login,name,count){stPush('raids',name);alertShip('Raid',`${name} débarque avec ${count} viewers`,'raid',()=>{arrive(login,name,{});if(!MODE)standSmoke()},{kind:'Raid en approche',name,sub:['Débarque avec ',[count+' viewers']]});
  const n=Math.min(count,+(P.get('raidmax')||24));for(let i=0;i<n;i++)setTimeout(()=>arrive('raid~'+login+'~'+i,'Raider '+name,{raid:true}),3400+i*180)}
 function onBits(f,bits){alertShip('Bits',`${f.name} · ${bits} bits`,'bits',()=>fireworks(f.seat),{kind:'Bits',name:f.name,sub:['Envoie ',[bits+' bits']]})}
-function onFollow(login,name){alertShip('Follow',name,'follow',()=>arrive(login,name,{}),{kind:'Nouveau follow',name,sub:['Rejoint la tribune']})}
+function onFollow(login,name){stPush('follows',name);alertShip('Follow',name,'follow',()=>arrive(login,name,{}),{kind:'Nouveau follow',name,sub:['Rejoint la tribune']})}
 
 /* ---------- arrivée / départ ---------- */
 function freeSeat(lurk,prefer){let empty=cam.vis.filter(s=>!s.user);
@@ -1009,6 +1055,7 @@ const f=crowd.get(login),lurk=!!o.lurk;
  const seat=freeSeat(lurk);if(!seat)return;seat.user=login;
  const nf={login,seat,last:lurk?0:Date.now(),seen:Date.now(),lurk,raid:!!o.raid,name:display||login,look:getLook(login),color:o.color||'',badges:o.badges||{},count:o.count||0};
  crowd.set(login,nf);const t=place(login,nf,!!o.quiet);if(!o.quiet)setTimeout(fillCheck,t);
+ if(!ST.first&&!o.raid&&!o.quiet){ST.first={n:nf.name,t:Date.now()};stSave()}if(!o.raid)goalCheck(!!o.quiet);
  if(!o.quiet)beam(seat,th.tag(nf.look));updateCount();
  if(!lurk&&!o.quiet&&!o.raid)setTimeout(()=>say(nf,'join',Array.from('arrive en tribune')),t);
  if(o.msg){nf.count++;setTimeout(()=>say(nf,'msg',tokens(o.msg,o.emotes)),t+300);crownCheck()}save()}
@@ -1022,6 +1069,10 @@ setInterval(()=>{if(SCENE==='end')return;const now=Date.now();
 /* ---------- mémoire entre Starting et Ending (6 h) ---------- */
 const KEY='tribune4:'+(channel||'demo');let saveT=0;
 function save(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify({t:Date.now(),u:[...crowd].filter(([,v])=>!v.raid).map(([k,v])=>[k,v.name,v.lurk,v.count||0,v.badges||{},v.color||''])}))}catch(e){}},500)}
+const KEYS=KEY+':stats';let ST={t:Date.now(),first:null,follows:[],subs:[],raids:[],olas:0,defis:0,peak:0,goals:[]};
+try{const d=JSON.parse(localStorage.getItem(KEYS)||'null');if(d&&Date.now()-d.t<6*3600e3&&!demo)ST=Object.assign(ST,d)}catch(e){}
+function stSave(){ST.t=Date.now();try{localStorage.setItem(KEYS,JSON.stringify(ST))}catch(e){}}
+function stPush(k,v){ST[k]=(ST[k]||[]).concat([v]).slice(-50);stSave()}
 
 /* ---------- 8. écran de fin : MVP au premier rang ---------- */
 const mvpEl=document.getElementById('mvp');
@@ -1035,14 +1086,65 @@ function endScene(){SCENE='end';document.body.classList.add('scene-end');
   if(other){const free=freeSeat(other.lurk)||f.seat;moveTo(other,free===target?f.seat:free)}moveTo(f,target)});
  top.forEach((f,i)=>{f.medal=i+1;deco(f)});
  mvpEl.innerHTML='';top.forEach((f,i)=>{const c=document.createElement('span');const r=document.createElement('b');r.textContent=i+1;const nm=document.createElement('em');nm.textContent=f.name;c.append(r,nm);mvpEl.appendChild(c)})}
+ const rc=document.getElementById('recap');rc.innerHTML='';const chip=(l,v)=>{if(!v)return;const c=document.createElement('span');c.append(l+' ');const e=document.createElement('em');e.textContent=v;c.append(e);rc.appendChild(c)};
+ chip('Premier arrivé',ST.first&&ST.first.n);chip('Record',Math.max(ST.peak,crowd.size)?Math.max(ST.peak,crowd.size)+' supporters':'');chip('Follows',ST.follows.length?String(ST.follows.length):'');chip('Subs',ST.subs.length?String(ST.subs.length):'');chip('Raid',ST.raids.slice(-1)[0]||'');chip('Olas',ST.olas?String(ST.olas):'');
+
+/* ---------- statistiques du live (pour le récap de fin), gardées 6 h et partagées entre les scènes ---------- */
+
+/* ---------- 1. objectifs de supporters : ola + célébration à chaque palier ---------- */
+const GOALS=(P.get('objectifs')||'10,20,30,40,50,75,100').split(',').map(Number).filter(n=>n>0);let goalT=0;
+function goalCheck(quiet){const n=crowd.size;if(n>ST.peak){ST.peak=n;stSave()}clearTimeout(goalT);goalT=setTimeout(()=>{
+ for(const g of GOALS){if(n>=g&&!ST.goals.includes(g)){ST.goals.push(g);stSave();if(!quiet&&SCENE!=='end')alertShip('Objectif',`${g} supporters`,'goal',()=>{wave('');standSmoke2()},{kind:'Objectif atteint',name:g+' supporters',sub:['La tribune ',['fête ça'],' !']})}}},quiet?0:1500)}
+function standSmoke2(){if(!MODE)standSmoke();else cam.vis.filter(t=>t.user).slice(0,6).forEach(t=>smoke(t,6))}
+
+/* ---------- 2. défis points de chaîne : couleur, ola, fumigènes, place VIP ----------
+   Avec la connexion (connect.html), l'overlay reconnaît les récompenses par leur titre : « couleur », « ola », « fumigène », « VIP ».
+   Sans connexion, seules les récompenses « avec texte » sont visibles : le viewer écrit une couleur, « ola », « fumigènes » ou « vip ». */
+const RID={ola:P.get('r_ola'),fumi:P.get('r_fumi'),vip:P.get('r_vip')},VIPT=Math.max(1,+P.get('vip_duree')||10)*60e3;
+function kindOf(title,text){const t=norm(title||''),x=norm(text||'');
+ if(/couleur|color/.test(t))return 'couleur';if(/ola|vague/.test(t))return 'ola';if(/fumi|smoke|fumee|craquer/.test(t))return 'fumi';if(/vip|premierrang|place/.test(t))return 'vip';
+ if(!title){if(x==='ola')return 'ola';if(/^fumi/.test(x))return 'fumi';if(x==='vip')return 'vip';if(accOf(text))return 'couleur'}return null}
+function reward(kind,login,name,text){login=(login||'').toLowerCase();
+ if(kind==='couleur'){const v=accOf(text);if(!v||v===ACCV)return;ST.defis++;stSave();try{localStorage.setItem(KEYC,JSON.stringify({v,t:Date.now(),by:name}))}catch(e){}applyDefi(v,name);return}
+ if(kind==='ola'){ST.olas++;stSave();const lab=text&&norm(text)!=='ola'?text.slice(0,40):'';alertShip('Ola',name,'ola',()=>{wave(lab);hypeOn(false)},{kind:'Ola lancée',name,sub:lab?['« ',[lab],' »']:['Toute la tribune ',['se lève']]});return}
+ if(kind==='fumi'){alertShip('Fumigènes',name,'fumi',()=>{standSmoke2();cam.vis.filter(t=>t.user).sort(()=>Math.random()-.5).slice(0,8).forEach((t,i)=>setTimeout(()=>smoke(t,8),i*160));hypeOn(true)},{kind:'Fumigènes',name,sub:['Craque les ',['fumigènes'],' !']});return}
+ if(kind==='vip'){alertShip('VIP',name,'vip',()=>makeVip(login,name),{kind:'Place VIP',name,sub:['Premier rang pendant ',[Math.round(VIPT/60000)+' min']]})}}
+function frontSeats(){const fr=Math.max(...cam.vis.map(s=>s.row)),cx=cam.x0+cam.vw/2;return cam.vis.filter(s=>s.row===fr).sort((a,b)=>Math.abs(a.x+a.g.w/2-cx)-Math.abs(b.x+b.g.w/2-cx))}
+function makeVip(login,name){if(!crowd.get(login))arrive(login,name,{});setTimeout(()=>{const f=crowd.get(login);if(!f)return;
+ const target=frontSeats().find(s=>!(crowd.get(s.user)||{}).vip)||frontSeats()[0];
+ if(target&&f.seat!==target){const other=[...crowd.values()].find(o=>o.seat===target);if(other){const free=freeSeat(other.lurk)||f.seat;moveTo(other,free===target?f.seat:free)}moveTo(f,target)}
+ f.vip=Date.now()+VIPT;deco(f);smoke(f.seat,10);setTimeout(()=>{if(f.vip&&Date.now()>=f.vip-500){f.vip=0;deco(f)}},VIPT)},crowd.get(login)?50:2600)}
+
+/* ---------- 3. hype train et prédictions (avec la connexion connect.html) ---------- */
+const htEl=document.getElementById('htrain');let htEndT=0;
+function hypeTrain(st,level,pct){clearTimeout(htEndT);
+ if(st==='begin'){document.body.classList.add('htrain');alertShip('Hype train','','htrain',()=>hypeOn(true),{kind:'Hype train',name:'C\'est parti !',sub:['Toute la tribune ',['saute']]})}
+ if(st!=='end'){document.body.classList.add('htrain');htEl.querySelector('b').textContent='Niveau '+(level||1);htEl.style.setProperty('--hp',Math.max(0,Math.min(100,pct||0))+'%')}
+ else{htEl.querySelector('b').textContent='Niveau '+(level||1)+' atteint';htEl.style.setProperty('--hp','100%');alertShip('Hype train','','htrain',()=>{wave('');hypeOn(true)},{kind:'Hype train terminé',name:'Niveau '+(level||1),sub:['Merci la ',['tribune'],' !']});htEndT=setTimeout(()=>document.body.classList.remove('htrain'),9000)}}
+const prEl=document.getElementById('predi');let prT=0;
+function prediction(st,title,outs,winId){clearTimeout(prT);const po=prEl.querySelector('.po');
+ if(st==='begin'){document.body.classList.add('predi');alertShip('Prédiction',title,'predi',null,{kind:'Prédiction',name:title,sub:['Choisis ton ',['camp']]})}
+ document.body.classList.add('predi');prEl.querySelector('small').textContent=st==='lock'?'Prédiction · votes fermés':st==='end'?'Prédiction · résultat':'Prédiction · votez !';prEl.querySelector('b').textContent=title;
+ const two=outs.slice(0,2),tot=two.reduce((a,o)=>a+(o.channel_points||0),0);po.innerHTML='';
+ two.forEach(o=>{const sp=document.createElement('span');const pc=tot?Math.round((o.channel_points||0)/tot*100):50;sp.style.setProperty('--w',Math.max(20,pc));const a=document.createElement('em');a.textContent=o.title;a.style.fontStyle='normal';const b=document.createElement('b');b.textContent=pc+'%';b.style.cssText='font:inherit;margin:0';sp.append(a,b);
+  if(st==='end'&&winId)sp.classList.add(o.id===winId?'win':'lose');po.appendChild(sp)});
+ if(st==='end'){const w=two.find(o=>o.id===winId);if(w)alertShip('Prédiction',w.title,'predi',()=>{wave(w.title);hypeOn(true)},{kind:'Prédiction gagnée',name:w.title,sub:['Bravo aux ',['bons pronostics']]});prT=setTimeout(()=>document.body.classList.remove('predi'),15000)}}
+
+/* ---------- 4. scène pause : compte à rebours (scene=pause&pause=5) ---------- */
+if(P.get('scene')==='pause'){document.body.classList.add('mode-pause');if(!P.has('title'))setTitle('Petite pause');
+ const brb=document.getElementById('brb'),tot=Math.max(.5,+P.get('pause')||5)*60e3,end=Date.now()+tot;
+ const tk=()=>{const r=Math.max(0,end-Date.now());const m=Math.floor(r/60000),sec=Math.floor(r/1000)%60;brb.querySelector('b').textContent=r>0?`${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`:'On revient !';brb.style.setProperty('--bp',(r/tot).toFixed(4));
+  if(r<=0&&!brb.classList.contains('back')){brb.classList.add('back');brb.querySelector('small').textContent='Ça repart';wave('');hypeOn(true)}};tk();setInterval(tk,1000);
+ setInterval(()=>{if(Date.now()<end)wave('')},150e3)}
 
 /* ---------- défi points de chaîne : un viewer change la couleur du stade ----------
    Sur Twitch : une récompense « Changer la couleur du stade » avec « Le spectateur doit saisir du texte ».
    Le viewer écrit une couleur (rose, cyan, rgb, 1 à 13…). Le chat anonyme voit ces messages, pas besoin de connexion.
    defi=ID pour n'écouter qu'une récompense précise, defi=0 pour couper. */
 const DEFI=P.get('defi')||'',KEYC='tribune-accent:'+(channel||'demo');
-function redeem(id,login,name,msg){if(DEFI==='0'||(DEFI&&id!==DEFI))return;const v=accOf(msg);if(!v||v===ACCV)return;
- try{localStorage.setItem(KEYC,JSON.stringify({v,t:Date.now(),by:name}))}catch(e){}applyDefi(v,name)}
+function redeem(id,login,name,msg){if(token&&CLIENT_ID&&id!=='demo')return; // avec la connexion, EventSub s'en charge (titre de la récompense connu)
+ let k=id===RID.ola?'ola':id===RID.fumi?'fumi':id===RID.vip?'vip':(DEFI&&DEFI!=='0'&&id===DEFI)?'couleur':kindOf('',msg);
+ if(k==='couleur'&&(DEFI==='0'||(DEFI&&id!==DEFI&&id!=='demo')))return;if(k)reward(k,login,name,msg)}
 function applyDefi(v,name){alertShip('Défi',`${name} → ${ACCL[v]||v}`,'defi',()=>{setAccent(v);defiTimer(DEFIT)},{kind:'Défi points de chaîne',name,sub:['Passe le stade en ',[ACCL[v]||'#'+v],' pour '+Math.round(DEFIT/60000)+' min']})}
 addEventListener('storage',e=>{if(e.key!==KEYC||!e.newValue)return;try{const d=JSON.parse(e.newValue);if(d.v&&d.v!==ACCV)applyDefi(d.v,d.by||'Un viewer')}catch(x){}}); // les autres scènes OBS suivent
 
@@ -1097,8 +1199,15 @@ async function pollChatters(){
   if(e.message!=='expired')setTimeout(pollChatters,120e3)}}
 function followEvents(url='wss://eventsub.wss.twitch.tv/ws'){let ws;try{ws=new WebSocket(url)}catch(e){return}
  ws.onmessage=async e=>{let m;try{m=JSON.parse(e.data)}catch(x){return}const t=m.metadata&&m.metadata.message_type;
-  if(t==='session_welcome'){try{const u=await me();await helix('eventsub/subscriptions',{method:'POST',body:JSON.stringify({type:'channel.follow',version:'2',condition:{broadcaster_user_id:u.id,moderator_user_id:u.id},transport:{method:'websocket',session_id:m.payload.session.id}})})}catch(x){console.warn('follow:',x.message)}}
+  if(t==='session_welcome'){try{const u=await me(),sid=m.payload.session.id,sub=(type,version,cond)=>helix('eventsub/subscriptions',{method:'POST',body:JSON.stringify({type,version,condition:cond,transport:{method:'websocket',session_id:sid}})}).catch(x=>console.warn(type,x.message)),B={broadcaster_user_id:u.id};
+   await sub('channel.follow','2',{broadcaster_user_id:u.id,moderator_user_id:u.id});
+   for(const ty of ['channel.channel_points_custom_reward_redemption.add','channel.prediction.begin','channel.prediction.progress','channel.prediction.lock','channel.prediction.end'])await sub(ty,'1',B);
+   for(const ty of ['channel.hype_train.begin','channel.hype_train.progress','channel.hype_train.end'])await sub(ty,'2',B)}catch(x){console.warn('eventsub:',x.message)}}
   else if(t==='notification'&&m.payload.subscription.type==='channel.follow'){const ev=m.payload.event;onFollow(ev.user_login,ev.user_name)}
+  else if(t==='notification'){const ty=m.payload.subscription.type,ev=m.payload.event;
+   if(ty==='channel.channel_points_custom_reward_redemption.add'){const k=ev.reward.id===RID.ola?'ola':ev.reward.id===RID.fumi?'fumi':ev.reward.id===RID.vip?'vip':kindOf(ev.reward.title,ev.user_input);if(k&&!(k==='couleur'&&DEFI==='0'))reward(k,ev.user_login,ev.user_name,ev.user_input||'')}
+   else if(ty.startsWith('channel.hype_train.')){const tot=ev.goal?Math.round((ev.progress||0)/ev.goal*100):0;hypeTrain(ty.endsWith('begin')?'begin':ty.endsWith('end')?'end':'progress',ev.level,tot)}
+   else if(ty.startsWith('channel.prediction.')){const st=ty.split('.').pop();prediction(st==='begin'?'begin':st==='lock'?'lock':st==='end'?'end':'progress',ev.title,ev.outcomes||[],ev.winning_outcome_id)}}
   else if(t==='session_reconnect'){ws.onclose=null;followEvents(m.payload.session.reconnect_url)}};
  ws.onclose=()=>setTimeout(()=>followEvents(),15000)}
 
@@ -1123,6 +1232,11 @@ $('bsub').onclick=()=>{const f=anyFan();if(f)onSub(f.login,f.name,1+Math.floor(M
 $('braid').onclick=()=>{const r=fake();onRaid(r.toLowerCase(),r,12)};
 $('bfol').onclick=()=>{const r=fake();onFollow(r.toLowerCase(),r)};
 $('bdefi').onclick=()=>{const f=anyFan();const c=['rose','cyan','rgb','violet','orange','vert-jaune'].filter(x=>accOf(x)!==ACCV);redeem('demo',f?f.login:'demo',f?f.name:'Viewer',c[Math.floor(Math.random()*c.length)])};
+$('bola2').onclick=()=>{const f=anyFan();reward('ola',f?f.login:'demo',f?f.name:'Viewer','allez la tribune')};
+$('bfumi').onclick=()=>{const f=anyFan();reward('fumi',f?f.login:'demo',f?f.name:'Viewer','')};
+$('bvip').onclick=()=>{const f=anyFan();if(f)reward('vip',f.login,f.name,'')};
+{let hl=0;$('bht').onclick=()=>{hl++;if(hl===1)hypeTrain('begin',1,20);else if(hl<4)hypeTrain('progress',hl,30*hl);else{hypeTrain('end',3,100);hl=0}}}
+{let ps=0;const O=[{id:'a',title:'Victoire',channel_points:1200},{id:'b',title:'Défaite',channel_points:800}];$('bpr').onclick=()=>{ps++;if(ps===1)prediction('begin','On gagne la prochaine game ?',O);else if(ps===2){O[0].channel_points+=900;prediction('lock','On gagne la prochaine game ?',O)}else{prediction('end','On gagne la prochaine game ?',O,'a');ps=0}}}
 $('bbits').onclick=()=>{const f=anyFan();if(f)onBits(f,[100,500,1000][Math.floor(Math.random()*3)])};
 $('bend').onclick=()=>{setAuto(false);endScene()};
 $('bx').onclick=()=>{[...crowd.keys()].forEach(leave);try{localStorage.removeItem(KEY)}catch(e){}setTimeout(()=>setLevel(0),900)};

@@ -53,7 +53,7 @@ else if(h.get('access_token')){
 }else{
  sessionStorage.setItem('cid',cid);
  const st=crypto.getRandomValues(new Uint32Array(4)).join('');sessionStorage.setItem('st',st);
- const a=el('a',{className:'btn alt',href:`https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=${cid}&redirect_uri=${encodeURIComponent(redirect)}&scope=moderator%3Aread%3Achatters%20moderator%3Aread%3Afollowers&state=${st}&force_verify=true`},'Se connecter avec Twitch');
+ const a=el('a',{className:'btn alt',href:`https://id.twitch.tv/oauth2/authorize?response_type=token&client_id=${cid}&redirect_uri=${encodeURIComponent(redirect)}&scope=moderator%3Aread%3Achatters%20moderator%3Aread%3Afollowers%20channel%3Aread%3Aredemptions%20channel%3Aread%3Ahype_train%20channel%3Aread%3Apredictions&state=${st}&force_verify=true`},'Se connecter avec Twitch');
  box.append(a);
  if(h.get('error'))box.append(el('p',{className:'err'},'Twitch a refusé : '+h.get('error_description')));
 }
